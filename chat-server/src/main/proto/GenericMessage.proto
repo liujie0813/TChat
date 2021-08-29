@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package message;
+
+option java_outer_classname = "ProtobufMessage";
+option java_package = "com.timberliu.chat.server.message.protobuf";
+
+message GenericMessage {
+  enum MessageType {
+    LoginRequest      = 0;
+    LoginResponse     = 1;
+    LogoutRequest     = 2;
+    LogoutResponse    = 3;
+    C2CSendRequest    = 4;
+    C2CSendResponse   = 5;
+    C2CPushRequest    = 6;
+    C2CPushResponse   = 7;
+    C2GSendRequest    = 8;
+    C2GSendResponse   = 9;
+    C2GPushRequest    = 10;
+    C2GPushResponse   = 11;
+    HeartBeatRequest  = 12;
+    HeartBeatResponse = 13;
+  }
+
+  int32 magic_number       = 1; // 魔数
+  int32 version            = 2; // 版本号
+  int32 serial_algo        = 3; // 序列化算法
+  MessageType message_type = 4; // 消息类型
+  int32 length             = 5; // body 长度
+
+  oneof content {
+    LoginRequest login_request            = 10; // 登录
+    LoginResponse login_response          = 11; //
+    LogoutRequest logout_request          = 12; // 登出
+    LogoutResponse logout_response        = 13; //
+
+    C2CSendRequest c2c_send_request       = 14; // 单聊
+    C2CSendResponse c2c_send_response     = 15; //
+    C2CPushRequest c2c_push_request       = 16; //
+    C2CPushResponse c2c_push_response     = 17; //
+
+    C2GSendRequest c2g_send_request       = 18; // 群聊
+    C2GSendResponse c2g_send_response     = 19; //
+    C2GPushRequest c2g_push_request       = 20; //
+    C2GPushResponse c2g_push_response     = 21; //
+
+    HeartBeatRequest heart_beat_request   = 22; // 心跳
+    HeartBeatResponse heart_beat_response = 23; //
+  }
+}
+
+message LoginRequest {
+  string user_id = 1;
+  string user_name = 2;
+  string password = 3;
+}
+message LoginResponse {
+  bool   success = 1;
+  string err_msg = 2;
+}
+
+message LogoutRequest {
+  string user_id = 1;
+  string user_name = 2;
+  string password = 3;
+}
+message LogoutResponse {
+  bool   success = 1;
+  string err_msg = 2;
+}
+
+message C2CSendRequest {
+  string from = 1;
+  string to = 2;
+  string content = 3;
+  int64  timestamp = 4;
+}
+message C2CSendResponse {
+  int64 msg_id = 1;
+}
+
+message C2CPushRequest {
+  string from = 1;
+  string to = 2;
+  string content = 3;
+  int64  timestamp = 4;
+}
+message C2CPushResponse {
+  int64 msg_id = 1;
+}
+
+message C2GSendRequest {
+  string from = 1;
+  string group = 2;
+  string content = 3;
+}
+message C2GSendResponse {
+  int64 msg_id = 1;
+  int64 timestamp = 2;
+}
+
+message C2GPushRequest {
+  string from = 1;
+  string group = 2;
+  string content = 3;
+  int64  msg_id = 4;
+  int64  timestamp = 5;
+}
+message C2GPushResponse {
+  int64 msg_id = 1;
+}
+
+message HeartBeatRequest {
+}
+message HeartBeatResponse {
+}
