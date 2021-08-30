@@ -1,24 +1,21 @@
-import {useEffect, useState} from "react";
-import axios from 'axios';
+import React, { Fragment } from 'react'
+import Login from './containers/login'
+import Home from './containers/home'
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom'
 
 function App() {
-  const [ val, setVal ] = useState()
-
-  useEffect(() => {
-    axios.get("http://localhost:18080/test/hello")
-        .then(res => {
-          setVal(res.data)
-        })
-        .catch(err => {
-            console.log(err);
-        })
-  })
-
   return (
-    <div>
-      <h1>{val}</h1>
-    </div>
-  );
+    <Fragment>
+      <HashRouter>
+        <Switch>
+          <Route path="/login" component={Login} />
+          <Route path="/home" component={Home} />
+          <Route exact path="/" component={Home} />
+          <Redirect to={"/home"} />
+        </Switch>
+      </HashRouter>
+    </Fragment>
+  )
 }
 
 export default App;
