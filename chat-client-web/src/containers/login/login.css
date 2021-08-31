@@ -1,13 +1,9 @@
-.P-layout {
-	height: 100vh;
-}
-
-.P-header {
+.P-L-header {
 	background: #fff !important;
 }
 
-.P-content {
-	height: 100%;
-	padding: 24px;
-	background: #fff;
+.P-L-background {
+	background-image: url(../../common/images/background01.jpg) !important;
+	background-position: center;
+	background-repeat: no-repeat;
 }
