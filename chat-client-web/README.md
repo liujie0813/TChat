@@ -1,3 +1,5 @@
+## 项目结构
+
 ```
 ├─ /node_modules
 ├─ package.json
@@ -31,3 +33,10 @@
 |  └─ index.js           <-- 项目入口文件
 └─ yarn.lock
 ```
+
+## 项目规范
+
+- 全局公用级别（不需要模块化）的 className，用 G-xxx。例如 G-autocut(截字)、G-color-red(文字红色)。
+- 页面级别的 className，用 P-xxx。
+- 模块级别的 className，用 M-xxx。
+
