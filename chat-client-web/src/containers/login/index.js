@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import {Button, Form, Input, Layout} from 'antd'
+import { connect } from 'react-redux'
+import * as actionCreators from '../../store/actionCreators'
 import './login.css'
 
 const { Header, Content } = Layout;
@@ -67,4 +69,17 @@ class Login extends Component {
 	}
 }
 
-export default Login
+// 把store中的数据映射到组件的props
+const mapStateToProps = (state) => ({
+  myData: state.getIn(['login', 'myData']),
+})
+
+// 把store的Dispatch映射到组件的props
+const mapDispatchToProps = (dispatch) => ({
+  getData(data) {
+    const action = actionCreators.getData(data);
+    dispatch(action)
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
