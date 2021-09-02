@@ -1,32 +1,47 @@
-import React, {useEffect} from 'react'
-import {Button, Form, Input, Layout} from 'antd'
+import React from 'react'
+import axios from "axios";
+import {useHistory} from 'react-router-dom'
 import {useDispatch} from 'react-redux'
-import { login } from '../../store/features/UserSlice'
+import {Button, Form, Input, Layout, message} from 'antd'
 import './login.css'
+
+import {setUserInfo} from "../../store/features/UserSlice";
 
 const { Header, Content } = Layout;
 
 export default function Login() {
+	const history = useHistory();
 	const dispatch = useDispatch();
 
-	const onFinish = (params) => {
-		dispatch(login(params))
-	}
+	const onFinish = async (params) => {
+		try {
+			const res = await axios.get('http://localhost:18080/user/login', { params: params });
+			const payload = res.data;
+			if (payload.code === 0) {
+				dispatch(setUserInfo(payload.data));
+				history.push('/home')
+			} else {
+				message.warn(payload.msg)
+			}
+		} catch (err) {
+			message.error(err.message)
+		}
+	};
 
 	return (
 		<Layout style={{ height: '100vh' }}>
 			<Header className="P-L-header">
-				<div style={{ margin: '18px 150px', font: 'italic 1.8em Georgia, serif' }}>
+				<div style={{ margin: '18px 13%', font: 'italic 1.8em Georgia, serif' }}>
 					TChat
 				</div>
 			</Header>
 			<Content className='P-background'>
-				<div style={{ margin: '80px 200px', padding: '220px', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
-					<div style={{ width: '70%' }}>
+				<div style={{ margin: '3% 15%', padding: '13% 10%', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
+					<div>
 						<Form
 							name="basic"
-							labelCol={{ span: 12 }}
-							wrapperCol={{ span: 12 }}
+							labelCol={{ span: 8 }}
+							wrapperCol={{ span: 8 }}
 							onFinish={onFinish}
 						>
 							<Form.Item label="昵称" name="username"
@@ -53,7 +68,7 @@ export default function Login() {
 							>
 								<Input.Password />
 							</Form.Item>
-							<Form.Item wrapperCol={{ offset: 12, span: 12 }}>
+							<Form.Item wrapperCol={{ offset: 8, span: 8 }}>
 								<Button type="primary" htmlType="submit">
 									登录
 								</Button>

@@ -1,34 +1,21 @@
-import { message } from 'antd';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-export const login = createAsyncThunk(
-	"user/login",
-	async (params) => {
-		const { data } = await axios.get('http://localhost:18080/user/login', { params: params })
-		return data
-	},
-)
+import {createSlice} from '@reduxjs/toolkit';
+import img2 from '../../common/images/chat_unactive.png';
+import img4 from '../../common/images/contact_unacitve.png';
+import {act} from "@testing-library/react";
 
 export const userSlice = createSlice({
 	name: 'user',
 	initialState: {
 		userInfo: {},
 	},
-	reducers: {},
-	extraReducers: {
-		[login.fulfilled]: (state, { data }) => {
-			console.log(data)
-			if (data.code === 0) {
-				this.props.push('/home')
-			} else {
-				message.warn(data.msg)
-			}
-		},
-		[login.rejected]: (state, action) => {
-			message.error(state, action)
-		},
-	}
-})
+	reducers: {
+		setUserInfo: (state, action) => {
+			state.userInfo = action.payload;
+		}
+	},
+	extraReducers: {}
+});
+
+export const { setUserInfo } = userSlice.actions;
 
 export default userSlice.reducer

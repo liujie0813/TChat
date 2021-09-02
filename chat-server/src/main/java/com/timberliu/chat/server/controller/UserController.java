@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -27,7 +28,7 @@ public class UserController {
 		loginResponseDTO.setUserId(1L);
 		loginResponseDTO.setUsername(loginRequestDTO.getUsername());
 		loginResponseDTO.setToken(UUID.randomUUID().toString());
-		return ApiResult.success(loginResponseDTO);
+		return new Random().nextBoolean() ? ApiResult.success(loginResponseDTO) : ApiResult.error(100001, "账号或密码错误");
 	}
 
 }

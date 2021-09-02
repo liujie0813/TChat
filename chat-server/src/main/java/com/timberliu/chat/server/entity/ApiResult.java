@@ -15,12 +15,12 @@ public class ApiResult<T> {
 
 	private Integer code;
 	private String msg;
-	private T payload;
+	private T data;
 
-	public static <T> ApiResult<T> success(T payload) {
+	public static <T> ApiResult<T> success(T data) {
 		ApiResult<T> result = new ApiResult<>();
 		result.code = 0;
-		result.payload = payload;
+		result.data = data;
 		result.msg = "";
 		return result;
 	}
