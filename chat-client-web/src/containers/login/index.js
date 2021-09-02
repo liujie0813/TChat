@@ -1,85 +1,68 @@
-import React, {Component} from 'react'
+import React, {useEffect} from 'react'
 import {Button, Form, Input, Layout} from 'antd'
-import { connect } from 'react-redux'
-import * as actionCreators from '../../store/actionCreators'
+import {useDispatch} from 'react-redux'
+import { login } from '../../store/features/UserSlice'
 import './login.css'
 
 const { Header, Content } = Layout;
 
-class Login extends Component {
+export default function Login() {
+	const dispatch = useDispatch();
 
-	onFinish = (values) => {
-		console.log('Success:', values);
-		this.props.history.push('/home')
+	const onFinish = (params) => {
+		dispatch(login(params))
 	}
 
-	render() {
-		return (
-			<Layout style={{ height: '100vh' }}>
-				<Header className="P-L-header">
-					<div style={{ margin: '18px 150px', font: 'italic 1.8em Georgia, serif' }}>
-						TChat
-					</div>
-				</Header>
-				<Content className='P-background'>
-					<div style={{ margin: '80px 200px', padding: '220px', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
-						<div style={{ width: '70%' }}>
-							<Form
-								name="basic"
-								labelCol={{ span: 12 }}
-								wrapperCol={{ span: 12 }}
-								onFinish={this.onFinish}
+	return (
+		<Layout style={{ height: '100vh' }}>
+			<Header className="P-L-header">
+				<div style={{ margin: '18px 150px', font: 'italic 1.8em Georgia, serif' }}>
+					TChat
+				</div>
+			</Header>
+			<Content className='P-background'>
+				<div style={{ margin: '80px 200px', padding: '220px', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
+					<div style={{ width: '70%' }}>
+						<Form
+							name="basic"
+							labelCol={{ span: 12 }}
+							wrapperCol={{ span: 12 }}
+							onFinish={onFinish}
+						>
+							<Form.Item label="昵称" name="username"
+								rules={[
+									{
+										required: true,
+										message: '请输入昵称',
+									},
+									{
+										min: 6,
+										message: '用户名不能少于 6 个字符'
+									}
+								]}
 							>
-								<Form.Item label="昵称" name="username"
-									rules={[
-										{
-											required: true,
-											message: '请输入昵称',
-										},
-										{
-											min: 6,
-											message: '用户名不能少于 6 个字符'
-										}
-									]}
-								>
-									<Input />
-								</Form.Item>
-								<Form.Item label="密码" name="password"
-									rules={[
-										{
-											required: true,
-											message: '请输入密码',
-										},
-									]}
-								>
-									<Input.Password />
-								</Form.Item>
-								<Form.Item wrapperCol={{ offset: 12, span: 12 }}>
-									<Button type="primary" htmlType="submit">
-										登录
-									</Button>
-								</Form.Item>
-							</Form>
-						</div>
+								<Input />
+							</Form.Item>
+							<Form.Item label="密码" name="password"
+								rules={[
+									{
+										required: true,
+										message: '请输入密码',
+									},
+								]}
+							>
+								<Input.Password />
+							</Form.Item>
+							<Form.Item wrapperCol={{ offset: 12, span: 12 }}>
+								<Button type="primary" htmlType="submit">
+									登录
+								</Button>
+							</Form.Item>
+						</Form>
 					</div>
+				</div>
 
-				</Content>
-			</Layout>
-		)
-	}
+			</Content>
+		</Layout>
+	)
 }
-
-// 把store中的数据映射到组件的props
-const mapStateToProps = (state) => ({
-  myData: state.getIn(['login', 'myData']),
-})
-
-// 把store的Dispatch映射到组件的props
-const mapDispatchToProps = (dispatch) => ({
-  getData(data) {
-    const action = actionCreators.getData(data);
-    dispatch(action)
-  }
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
