@@ -1,31 +1,43 @@
-import React, {useState} from 'react'
-import {Avatar, Input, Layout, message, Space} from 'antd'
+import React, {useEffect, useState} from 'react'
+import {Avatar, Layout, message, Tabs} from 'antd'
 import './home.css'
 import img1 from '../../common/images/head_portrait.png';
-import img2 from '../../common/images/chat_unactive.png';
-import img3 from '../../common/images/chat_active.png';
-import img4 from '../../common/images/contact_unacitve.png';
-import img5 from '../../common/images/contact_active.png';
 import img6 from '../../common/images/quit.png';
+import SearchBox from "../../components/search";
+import {useDispatch, useSelector} from "react-redux";
+import {setMenuImg, setContactList, setActiveMenu} from "../../store/features/UserSlice";
+import axios from "axios";
 
 const { Content } = Layout;
-const { Search } = Input;
+const { TabPane } = Tabs;
 
 export default function Home() {
-	const {chatMenu, setMenu} = useState({});
+	const { userInfo, chatMenuImg, activeMenu, contactMenuImg, contactList  } = useSelector(state => state.user)
+	const dispatch = useDispatch();
 
-	const onSearch = value => {
-		message.warn('这是个假的搜索，哈哈哈');
-	}
+	useEffect(() => {
+		async function getContactList() {
+			try {
+				const params = {
+					userId: userInfo.userId
+				}
+				const res = await axios.get('http://localhost:18080/contact/getContactList', { params } );
+				const payload = res.data;
+				if (payload.code === 0) {
+					dispatch(setContactList(payload.data));
+				} else {
+					message.warn(payload.msg)
+				}
+			} catch (err) {
+				message.error(err.message)
+			}
+		}
+		getContactList();
+	},[]);
 
-	const onChatPage = e => {
-		e.target.src = img3;
-		console.log('chat page');
-	}
-
-	const onContactPage = e => {
-		e.target.src = img5;
-		console.log('contact page');
+	const tabClick = (key, event) => {
+		dispatch(setActiveMenu(key))
+		dispatch(setMenuImg(key))
 	}
 
 	return (
@@ -33,35 +45,60 @@ export default function Home() {
 			<Content className='P-background'>
 				<div style={{ margin: '5% 15%', height: '80%', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
 					<div style={{ height: '100%', }}>
-						<div style={{ height: '100%', width: '60px', backgroundColor: '#e5e5e4', float: 'left', position: 'relative' }}>
-							<div style={{ padding: '10px' }}>
-								<Avatar size={40} src={img1} />
-							</div>
-
-							<div style={{ padding: '18px' }} id='chatPageMenu'>
-								<a onClick={ onChatPage }>
-									<Avatar shape="square" size={24} src={img2}/>
-								</a>
-							</div>
-
-							<div style={{ padding: '18px' }} id='contactPageMenu'>
-								<a onClick={ onContactPage }>
-									<Avatar shape="square" size={24} src={img4}/>
-								</a>
-							</div>
-
-							<div style={{ padding: '18px', position: 'absolute', left: '0', bottom: '0' }}>
-								<Avatar shape="square" size={24} src={img6} />
-							</div>
-						</div>
-
-						<div style={{ height: '100%', width: '270px', backgroundColor: '#f7f7f7', borderRight: 'solid 1px #e0e0e0', float: 'left' }}>
-							<div style={{ borderBottom: 'solid 1px #e0e0e0', height: '60px' }}>
-								<Space direction="vertical" style={{ marginLeft: '10px', marginTop: '20px' }}>
-									<Search placeholder="搜索" allowClear onSearch={ onSearch } style={{ width: '250px' }}/>
-								</Space>
-							</div>
-						</div>
+						<Tabs tabPosition='left' style={{ height: '100%', backgroundColor: '#e5e5e4', float: 'left' }}
+									defaultActiveKey={activeMenu.key}
+									onTabClick={ tabClick }>
+							<TabPane tab={
+								  <div style={{ padding: '10px' }}>
+										<Avatar size={40} src={img1} />
+									</div>
+								}
+							  disabled
+							  key="avator">
+							</TabPane>
+							<TabPane tab={
+									<div style={{ padding: '18px' }}>
+										<Avatar shape="square" size={24} src={chatMenuImg.img}/>
+									</div>
+								} key="chatMenu">
+								<div style={{ height: '100%', width: '270px', backgroundColor: '#f7f7f7', borderRight: 'solid 1px #e0e0e0' }}>
+									<SearchBox/>
+									<div style={{ height: 'auto', padding: '5px' }}>Content of Tab 1</div>
+								</div>
+							</TabPane>
+							<TabPane tab={
+									<div style={{ padding: '2px 18px 18px' }}>
+										<Avatar shape="square" size={24} src={contactMenuImg.img}/>
+									</div>
+								} key="contactMenu">
+								<div style={{ height: '100%', width: '270px', backgroundColor: '#f7f7f7', borderRight: 'solid 1px #e0e0e0' }}>
+									<SearchBox/>
+									<div style={{ height: 'auto' }}>
+										<Tabs tabPosition='left'>
+											{contactList.map((contact, index) => {
+												return (
+													<TabPane tab={
+														<div style={{ width: '270px', padding: (index === 0 ? '20' : '4') + 'px 0 20px 0', borderBottom: 'solid 1px #e0e0e0' }}>
+															{contact.username}
+														</div>
+													} key={contact.userId}>
+														{contact.username}
+													</TabPane>
+												)
+											})}
+										</Tabs>
+									</div>
+								</div>
+							</TabPane>
+							<TabPane tab={
+									<div style={{ padding: '2px 18px 18px' }}>
+										<Avatar shape="square" size={24} src={img6}/>
+									</div>
+								}
+							  disabled
+							  key="quitMenu">
+							</TabPane>
+						</Tabs>
 
 						<div style={{ height: '100%', width: 'auto', backgroundColor: '#f3f3f3' }}>
 							<div style={{ borderBottom: 'solid 1px #e0e0e0', height: '60px' }}>

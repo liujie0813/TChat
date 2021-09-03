@@ -1,0 +1,20 @@
+.ant-tabs-left>.ant-tabs-nav .ant-tabs-tab {
+	padding: 0 !important;
+}
+
+.ant-tabs-ink-bar {
+	background: none;
+	display: none;
+}
+
+.ant-tabs-left>.ant-tabs-content-holder {
+	border-left: none !important;
+}
+
+.ant-tabs-left>.ant-tabs-content-holder>.ant-tabs-content>.ant-tabs-tabpane {
+	padding-left: 0 !important;
+}
+
+.ant-tabs-content {
+	height: 100%;
+}
