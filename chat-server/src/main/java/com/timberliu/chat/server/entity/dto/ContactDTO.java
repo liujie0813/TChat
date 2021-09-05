@@ -13,7 +13,17 @@ import lombok.*;
 @AllArgsConstructor
 public class ContactDTO {
 
-	private Integer userId;
+	private Long userId;
 
 	private String username;
+
+	private Integer sex;
+
+	private String signature;
+
+	private String account;
+
+	private String province;
+
+	private String city;
 }
