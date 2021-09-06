@@ -1,14 +1,16 @@
 package com.timberliu.chat.server.controller;
 
 import com.timberliu.chat.server.entity.ApiResult;
-import com.timberliu.chat.server.entity.dto.LoginRequestDTO;
-import com.timberliu.chat.server.entity.dto.LoginResponseDTO;
+import com.timberliu.chat.server.entity.dto.UserInfoDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.Random;
 import java.util.UUID;
 
@@ -22,13 +24,14 @@ import java.util.UUID;
 public class UserController {
 
 	@GetMapping("/login")
-	public ApiResult login(@Valid LoginRequestDTO loginRequestDTO) {
-		log.info("[login] request param: {}", loginRequestDTO);
-		LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+	public ApiResult<UserInfoDTO> login(@RequestParam("username") String username,
+										@RequestParam("password") String password) {
+		log.info("[login] request param, username: {}, password: {}", username, password);
+		UserInfoDTO loginResponseDTO = new UserInfoDTO();
 		loginResponseDTO.setUserId(1L);
-		loginResponseDTO.setUsername(loginRequestDTO.getUsername());
+		loginResponseDTO.setUsername(username);
 		loginResponseDTO.setToken(UUID.randomUUID().toString());
-		return new Random().nextBoolean() ? ApiResult.success(loginResponseDTO) : ApiResult.error(100001, "账号或密码错误");
+		return ApiResult.success(loginResponseDTO);
 	}
 
 }

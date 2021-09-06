@@ -15,6 +15,9 @@ export const userSlice = createSlice({
 		contactList: [],
 		contactMap: {},
 		activeContact: null,
+		chatList: [],
+		chatMap: {},
+		activeChat: null,
 		page: {
 			type: 'chatPage', // chatPage：聊天页；groupInfoPage：群组信息页；contactInfoPage：联系人信息页
 			data: {}
@@ -47,19 +50,34 @@ export const userSlice = createSlice({
 		setActiveContact: (state, action) => {
 			state.activeContact = action.payload;
 		},
+		setChatList: (state, action) => {
+			state.chatList = action.payload
+			let chatMap = new Map();
+			action.payload.forEach(chat => {
+				chatMap.set(chat.conversationId, chat)
+			})
+			state.chatMap = chatMap
+		},
+		setActiveChat: (state, action) => {
+			state.activeChat = action.payload;
+		},
 		setPage: (state, action) => {
 			state.page.type = action.payload.type;
-			state.contactMap.forEach(function(value, key) {
-				if (parseInt(key) == action.payload.data) {
-					console.log(value);
-					state.page.data = value;
-				}
-			});
+			let value
+			if (action.payload.type === 'contactInfoPage') {
+				value = state.contactMap.get(parseInt(action.payload.data))
+			} else if (action.payload.type === 'chatPage') {
+				value = state.contactMap.get(parseInt(action.payload.data))
+			}
+			state.page.data = value;
 		}
 	},
 	extraReducers: {}
 });
 
-export const { setUserInfo, setMenuImg, setActiveMenu, setContactList, setActiveContact, setPage } = userSlice.actions;
+export const {
+	setUserInfo, setMenuImg, setActiveMenu, setContactList, setActiveContact, setPage,
+	setChatList, setActiveChat
+} = userSlice.actions;
 
 export default userSlice.reducer

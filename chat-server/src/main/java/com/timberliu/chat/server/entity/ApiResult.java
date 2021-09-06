@@ -17,6 +17,10 @@ public class ApiResult<T> {
 	private String msg;
 	private T data;
 
+	public static <T> ApiResult<T> success() {
+		return success(null);
+	}
+
 	public static <T> ApiResult<T> success(T data) {
 		ApiResult<T> result = new ApiResult<>();
 		result.code = 0;

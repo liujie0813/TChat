@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LoginResponseDTO {
+public class UserInfoDTO {
 
 	private Long userId;
 

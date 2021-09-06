@@ -5,18 +5,18 @@ import {useSelector} from "react-redux";
 import img1 from '../../common/images/avator.png'
 
 export default function ChatPage() {
-	const { activeMenu, userInfo, page } = useSelector(state => state.user);
+	const { activeMenu, activeChat, userInfo, page } = useSelector(state => state.user);
 	const type = page.type;
 	const data = page.data;
 
 	if (activeMenu.key === 'chatMenu' && type === 'chatPage') {
 		return (
-			<div style={{height: '100%', width: 'auto', backgroundColor: '#f3f3f3'}}>
-				<div style={{borderBottom: 'solid 1px #e0e0e0', height: '60px'}}>
+			<div style={{height: '100%', width: 'calc(100% - 370px)', backgroundColor: '#f3f3f3'}}>
+				<div style={{borderBottom: 'solid 1px #e0e0e0', height: '80px'}}>
 					<div>会话名</div>
 				</div>
 
-				<div style={{borderBottom: 'solid 1px #e0e0e0', height: '70%'}}>
+				<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc((100% - 80px) * 0.7)'}}>
 					<div>聊天记录区</div>
 				</div>
 
