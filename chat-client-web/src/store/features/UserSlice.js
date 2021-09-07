@@ -3,7 +3,6 @@ import img2 from '../../common/images/chat_unactive.png';
 import img3 from '../../common/images/chat_active.png';
 import img4 from '../../common/images/contact_unacitve.png';
 import img5 from '../../common/images/contact_active.png';
-import {act} from "@testing-library/react";
 
 export const userSlice = createSlice({
 	name: 'user',
@@ -27,57 +26,53 @@ export const userSlice = createSlice({
 		setUserInfo: (state, action) => {
 			state.userInfo = action.payload;
 		},
-		setMenuImg: (state, action) => {
-			if (action.payload === 'chatMenu') {
-				state.chatMenuImg.img = img3
-				state.contactMenuImg.img = img4
-			} else if (action.payload === 'contactMenu') {
-				state.chatMenuImg.img = img2
-				state.contactMenuImg.img = img5
-			}
-		},
-		setActiveMenu: (state, action) => {
-			state.activeMenu.key = action.payload
+		setChatList: (state, action) => {
+			state.chatList = action.payload;
+			let chatMap = new Map();
+			action.payload.forEach(chat => {
+				chatMap.set(chat.talkId, chat)
+			});
+			state.chatMap = chatMap
 		},
 		setContactList: (state, action) => {
-			state.contactList = action.payload
+			state.contactList = action.payload;
 			let contactMap = new Map();
 			action.payload.forEach(contact => {
 				contactMap.set(contact.userId, contact)
-			})
+			});
 			state.contactMap = contactMap
 		},
-		setActiveContact: (state, action) => {
-			state.activeContact = action.payload;
-		},
-		setChatList: (state, action) => {
-			state.chatList = action.payload
-			let chatMap = new Map();
-			action.payload.forEach(chat => {
-				chatMap.set(chat.conversationId, chat)
-			})
-			state.chatMap = chatMap
-		},
-		setActiveChat: (state, action) => {
-			state.activeChat = action.payload;
-		},
-		setPage: (state, action) => {
-			state.page.type = action.payload.type;
-			let value
-			if (action.payload.type === 'contactInfoPage') {
-				value = state.contactMap.get(parseInt(action.payload.data))
-			} else if (action.payload.type === 'chatPage') {
-				value = state.contactMap.get(parseInt(action.payload.data))
+		setMenuData: (state, action) => {
+			console.log(action.payload);
+			state.activeMenu = action.payload;
+			if (action.payload === 'chatMenu') {
+				state.chatMenuImg.img = img3;
+				state.contactMenuImg.img = img4;
+			} else if (action.payload === 'contactMenu') {
+				state.chatMenuImg.img = img2;
+				state.contactMenuImg.img = img5;
 			}
-			state.page.data = value;
+		},
+		setChatData: (state, action) => {
+			console.log(action.payload);
+			state.activeChat = action.payload;
+			state.page.type = "chatPage";
+			state.page.data = state.chatMap.get(parseInt(action.payload))
+		},
+		setContactData: (state, action) => {
+			console.log(action.payload);
+			state.activeContact = action.payload;
+			state.page.type = "contactInfoPage";
+			state.page.data = state.contactMap.get(parseInt(action.payload))
 		}
 	},
 	extraReducers: {}
 });
 
 export const {
-	setUserInfo, setMenuImg, setActiveMenu, setContactList, setActiveContact, setPage,
-	setChatList, setActiveChat
+	setUserInfo,
+	setChatList, setContactList,
+	setMenuData, setChatData, setContactData
 } = userSlice.actions;
 
 export default userSlice.reducer

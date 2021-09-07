@@ -36,7 +36,7 @@ export default function Login() {
 				</div>
 			</Header>
 			<Content className='P-background'>
-				<div style={{ margin: '3% 15%', padding: '13% 10%', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+				<div style={{ margin: '3% 15%', padding: '13% 10%', backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
 					<div>
 						<Form
 							name="basic"

@@ -1,33 +1,71 @@
-import React, {useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import './chatPage.css'
-import { Image, Button, Input } from 'antd'
-import ReactWEditor from 'wangeditor-for-react';
+import {Button, Image, Input, Tooltip, message} from 'antd'
+import Picker, { SKIN_TONE_NEUTRAL } from 'emoji-picker-react';
 import {useSelector} from "react-redux";
 import img1 from '../../common/images/avator.png'
+import img2 from '../../common/images/emoji.svg'
 
-const { TextArea } = Input;
+const {TextArea} = Input;
 
 export default function ChatPage() {
-	const { activeMenu, activeChat, userInfo, page } = useSelector(state => state.user);
+	const [content, setContent] = useState('');
+
+	const { activeMenu, page } = useSelector(state => state.user);
 	const type = page.type;
 	const data = page.data;
 
+	const onEmojiClick = (event, emojiObject) => {
+		console.log(emojiObject);
+		setContent(content + emojiObject.emoji)
+	};
+
 	if (activeMenu === 'chatMenu' && type === 'chatPage') {
 		return (
-			<div style={{height: '100%', width: 'calc(100% - 370px)', backgroundColor: '#f3f3f3'}}>
-				<div style={{borderBottom: 'solid 1px #e0e0e0', height: '70px'}}>
-					<div style={{ fontSize: '20px', paddingTop: '25px', paddingLeft: '25px' }}>
+			<div style={{height: '100%', width: 'calc(100% - 330px)', backgroundColor: '#f3f3f3'}}>
+				<div style={{borderBottom: 'solid 1px #e0e0e0', height: '60px'}}>
+					<div style={{ fontSize: '16px', paddingTop: '20px', paddingLeft: '20px' }}>
 						{data.talkName}
 					</div>
 				</div>
 
-				<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc((100% - 80px) * 0.7)'}}>
-					<div>聊天记录区</div>
+				<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc(100% - 260px)'}}>
+					<div style={{ paddingLeft: '20px' }}>
+						聊天记录区
+					</div>
 				</div>
 
-				<div style={{height: 'calc((100% - 70px) * 0.3)'}}>
-					<div style={{ }}>
-						
+				<div style={{height: '200px', backgroundColor: '#fff'}}>
+					<div style={{ padding: '10px 0 0 16px' }}>
+						<Tooltip
+							trigger='click'
+							title={
+								<Picker
+									onEmojiClick={onEmojiClick}
+									skinTone={SKIN_TONE_NEUTRAL}
+									disableSkinTonePicker={false}
+									pickerStyle={{ width: '500px' }}
+								/>
+							}
+							overlayInnerStyle={{ padding: '0px'}}
+						>
+							<Image src={img2} height={28} preview={false} />
+						</Tooltip>
+					</div>
+					<div style={{ paddingLeft: '6px' }}>
+						<TextArea
+							style={{
+								resize: 'none',
+								width: '100%',
+								fontSize: '14px',
+								lineHeight: '24px'
+							}}
+							spellCheck={false}
+							rows={5}
+							value={content}
+							bordered={false}
+							placeholder='Hello, TChat !!!'
+							/>
 					</div>
 
 				</div>

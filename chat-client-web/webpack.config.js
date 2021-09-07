@@ -17,10 +17,13 @@ module.exports = {
             loader: 'babel-loader',
             exclude: /node_modules/
         }, {
-            test: /\.css$/,
-            loader: "style-loader!css-loader"
+            test: /\.(sass|less|css)$/,
+            loaders: ['style-loader', 'css-loader', 'less-loader']
         }, {
             test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
-            loader: 'url-loader?limit=100000' }]
+            loader: 'url-loader?limit=100000'
+        }, {
+
+        }]
     }
 };
