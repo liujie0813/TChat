@@ -8,7 +8,7 @@ export const userSlice = createSlice({
 	name: 'user',
 	initialState: {
 		userInfo: {},
-		activeMenu: { key: 'chatMenu' },
+		activeMenu: 'chatMenu',
 		chatMenuImg: { img: img3 },
 		contactMenuImg: { img: img4 },
 		contactList: [],
@@ -18,7 +18,7 @@ export const userSlice = createSlice({
 		chatMap: {},
 		activeChat: null,
 		page: {
-			type: 'chatPage', // chatPage：聊天页；groupInfoPage：群组信息页；contactInfoPage：联系人信息页
+			type: null, // chatPage：聊天页；groupInfoPage：群组信息页；contactInfoPage：联系人信息页
 			data: {}
 		}
 	},

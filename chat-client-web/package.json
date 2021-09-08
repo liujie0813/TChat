@@ -27,6 +27,7 @@
     "react-router-dom": "^5.2.1",
     "react-router-redux": "^4.0.8",
     "react-scripts": "4.0.3",
+    "react-use-websocket": "^2.7.1",
     "redux": "^4.1.1",
     "redux-immutable": "^4.0.0",
     "redux-persist": "^5.10.0",
@@ -35,7 +36,8 @@
     "style-loader": "^2.0.0",
     "url-loader": "^4.1.1",
     "web-vitals": "^1.0.1",
-    "webpack": "^4.44.2"
+    "webpack": "^4.44.2",
+    "websocket": "^1.0.34"
   },
   "scripts": {
     "start": "react-scripts start",

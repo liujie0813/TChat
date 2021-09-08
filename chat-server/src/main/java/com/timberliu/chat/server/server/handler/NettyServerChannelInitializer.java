@@ -1,9 +1,7 @@
 package com.timberliu.chat.server.server.handler;
 
-import com.google.protobuf.MessageLite;
-import com.google.protobuf.MessageLiteOrBuilder;
 import com.timberliu.chat.server.codec.MessageCodecHandler;
-import com.timberliu.chat.server.message.protobuf.ProtobufMessage;
+import com.timberliu.chat.server.dispatcher.MessageDispatcher;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,19 +13,15 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -56,6 +50,9 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
     private MessageCodecHandler messageCodecHandler;
 
     @Resource
+    private MessageDispatcher messageDispatcher;
+
+    @Resource
     private NettyServerHandler nettyServerHandler;
 
     @Override
@@ -75,7 +72,7 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
                 .addLast(new HttpObjectAggregator(8192))
                 .addLast(new WebSocketServerCompressionHandler())
                 .addLast(new WebSocketServerProtocolHandler(
-                        "/ws", "WebSocket", true, 65536 * 10));
+                        "/tchat", "WebSocket", true, 65536 * 10));
 
         pipeline.addLast(new MessageToMessageDecoder<WebSocketFrame>() {
             @Override
@@ -88,9 +85,9 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
                     list.add(buf);
                     buf.retain();
                 } else if (webSocketFrame instanceof PongWebSocketFrame) {
-                    System.out.println();
+//                    System.out.println();
                 } else if (webSocketFrame instanceof CloseWebSocketFrame) {
-                    channel.close();
+//                    channel.close();
                 }
             }
         });
@@ -98,6 +95,7 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new MessageToMessageEncoder<ByteBuf>() {
             @Override
             protected void encode(ChannelHandlerContext ctx, ByteBuf bytebuf, List<Object> out) throws Exception {
+                System.out.println("hahah");
                 BinaryWebSocketFrame binaryWebSocketFrame = new BinaryWebSocketFrame(bytebuf);
                 out.add(binaryWebSocketFrame);
             }
@@ -112,6 +110,8 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
 //                .addLast(new ProtobufEncoder());
 
         pipeline.addLast(messageCodecHandler);
+
+        pipeline.addLast(messageDispatcher);
 
         // 消息分发
         pipeline.addLast(nettyServerHandler);

@@ -46,11 +46,14 @@ public class MessageCodec implements InitializingBean {
      * IMessage 编码为 byteBuf
      */
     public void encode(AbstractMessage message, ByteBuf byteBuf) {
+        System.out.println("hahahah");
         byteBuf.writeInt(Constant.MAGIC_NUMBER);
         byteBuf.writeByte(message.getVersion());
         byte serialAlgoByte = SerializerAlgorithmEnum.getByDesc(serialAlgo);
         byteBuf.writeByte(serialAlgoByte);
         byteBuf.writeByte(message.getCommand());
+        // 保留位
+        byteBuf.writeByte(0);
 
         ISerializer serializer = getSerializer(serialAlgoByte);
         byte[] body = serializer.serialize(message);
@@ -65,9 +68,11 @@ public class MessageCodec implements InitializingBean {
         if (byteBuf.readInt() != Constant.MAGIC_NUMBER) {
             throw new InvalidProtocolException(String.format("invalid magic_number: %s, close channel directly", byteBuf.readInt()));
         }
-        byteBuf.skipBytes(1);
+        byte version = byteBuf.readByte();
         byte serializerAlgorithm = byteBuf.readByte();
         byte command = byteBuf.readByte();
+        // 保留位，跳过
+        byteBuf.skipBytes(1);
         int dataLen = byteBuf.readInt();
 
         byte[] body = new byte[dataLen];
@@ -102,12 +107,14 @@ public class MessageCodec implements InitializingBean {
         applicationContext.getBeansOfType(ISerializer.class).values().forEach(iSerializer -> {
             serializerMap.put(iSerializer.getSerializerAlgorithm(), iSerializer);
         });
+        log.info("[initSerialization] serializer size: {}", serializerMap.size());
     }
 
     private void initPacketType() {
         for (CommandEnum commandEnum : CommandEnum.values()) {
             packetTypeMap.put(commandEnum.getCode(), commandEnum.getClazz());
         }
+        log.info("[initPacketType] command size: {}", packetTypeMap.size());
     }
 
 }

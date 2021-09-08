@@ -1,14 +1,16 @@
 package com.timberliu.chat.server.dispatcher;
 
-import com.timberliu.chat.server.message.protobuf.ProtobufMessage;
+import com.timberliu.chat.server.entity.enums.CommandEnum;
 import com.timberliu.chat.server.message.protobuf.ProtobufMessage.GenericMessage;
 import com.timberliu.chat.server.protocol.handler.MessageHandler;
+import com.timberliu.chat.server.protocol.message.AbstractMessage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -21,25 +23,27 @@ import java.util.concurrent.Executors;
  * @date 2021/8/24
  */
 @Slf4j
+@Component
 @ChannelHandler.Sharable
-public class MessageDispatcher extends SimpleChannelInboundHandler<ProtobufMessage.GenericMessage> implements InitializingBean {
+public class MessageDispatcher extends SimpleChannelInboundHandler<AbstractMessage> implements InitializingBean {
 
-    private final Map<GenericMessage.MessageType, MessageHandler<GenericMessage>> handlers = new HashMap<>();
+    private final Map<Byte, MessageHandler<AbstractMessage>> handlers = new HashMap<>();
 
     private final ExecutorService handlerExecutor = Executors.newFixedThreadPool(200);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, ProtobufMessage.GenericMessage message) throws Exception {
-        GenericMessage.MessageType messageType = message.getMessageType();
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, AbstractMessage message) throws Exception {
+        log.info("[MessageDispatcher] recv msg: {}", message);
+        byte command = message.getCommand();
         // 根据 message_type 获取 messageHandler 并调用
-        MessageHandler<GenericMessage> messageHandler = getMessageHandler(messageType);
+        MessageHandler<AbstractMessage> messageHandler = getMessageHandler(command);
         handlerExecutor.execute(() -> {
-            messageHandler.execute(channelHandlerContext, message);
+            messageHandler.execute(channelHandlerContext.channel(), message);
         });
     }
 
-    private MessageHandler<GenericMessage> getMessageHandler(GenericMessage.MessageType messageType) {
-        MessageHandler<GenericMessage> handler = handlers.get(messageType);
+    private MessageHandler<AbstractMessage> getMessageHandler(byte messageType) {
+        MessageHandler<AbstractMessage> handler = handlers.get(messageType);
         if (handler == null) {
             throw new IllegalArgumentException(String.format("can not find MessageHandler(%s)", messageType));
         }
@@ -54,7 +58,7 @@ public class MessageDispatcher extends SimpleChannelInboundHandler<ProtobufMessa
     public void afterPropertiesSet() throws Exception {
         // 加载所有 MessageHandler
         applicationContext.getBeansOfType(MessageHandler.class).values().forEach(messageHandler -> {
-            handlers.put(messageHandler.getType(), (MessageHandler<GenericMessage>) messageHandler);
+            handlers.put(messageHandler.getType(), (MessageHandler<AbstractMessage>) messageHandler);
         });
         log.info("[afterPropertiesSet] message handler size: {}", handlers.size());
     }

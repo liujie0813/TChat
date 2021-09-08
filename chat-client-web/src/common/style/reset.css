@@ -14,7 +14,3 @@
 .ant-tabs-left>.ant-tabs-content-holder>.ant-tabs-content>.ant-tabs-tabpane {
 	padding-left: 0 !important;
 }
-
-.ant-tabs-content {
-	/*height: 100%;*/
-}

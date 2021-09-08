@@ -1,17 +1,60 @@
 import React from 'react'
 import axios from "axios";
 import {useHistory} from 'react-router-dom'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {Button, Form, Input, Layout, message} from 'antd'
 import './login.css'
 
-import {setUserInfo} from "../../store/features/UserSlice";
+import {setChatList, setContactList, setUserInfo} from "../../store/features/UserSlice";
+import {createWebSocket} from "../../components/websocket";
 
 const { Header, Content } = Layout;
 
 export default function Login() {
+	const { userInfo } = useSelector(state => state.user)
+
 	const history = useHistory();
 	const dispatch = useDispatch();
+
+	async function establishConnect() {
+		createWebSocket()
+	}
+
+	// 获取会话列表
+	async function getTalkList() {
+		try {
+			const params = {
+				userId: userInfo.userId
+			}
+			const res = await axios.get('http://localhost:18080/chat/talkList', { params });
+			const payload = res.data;
+			if (payload.code === 0) {
+				dispatch(setChatList([{talkId: -1}, ...payload.data]));
+			} else {
+				message.warn(payload.msg)
+			}
+		} catch (err) {
+			message.error(err.message)
+		}
+	}
+
+	// 获取联系人列表
+	async function getContactList() {
+		try {
+			const params = {
+				userId: userInfo.userId
+			}
+			const res = await axios.get('http://localhost:18080/contact/getContactList', { params } );
+			const payload = res.data;
+			if (payload.code === 0) {
+				dispatch(setContactList([{userId: -2}, ...payload.data]));
+			} else {
+				message.warn(payload.msg)
+			}
+		} catch (err) {
+			message.error(err.message)
+		}
+	}
 
 	const onFinish = async (params) => {
 		try {
@@ -19,6 +62,9 @@ export default function Login() {
 			const payload = res.data;
 			if (payload.code === 0) {
 				dispatch(setUserInfo(payload.data));
+				establishConnect();
+				getTalkList();
+				getContactList();
 				history.push('/home')
 			} else {
 				message.warn(payload.msg)
