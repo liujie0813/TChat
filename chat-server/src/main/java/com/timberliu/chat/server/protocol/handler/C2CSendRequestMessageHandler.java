@@ -24,7 +24,7 @@ public class C2CSendRequestMessageHandler implements MessageHandler<C2CSendReque
 		// 推送
 
 		// ack
-		C2CSendResponseMessage c2cSendResponseMessage = new C2CSendResponseMessage(c2cSendRequestMessage.getMsgId());
+		C2CSendResponseMessage c2cSendResponseMessage = new C2CSendResponseMessage(c2cSendRequestMessage.getSeqId());
 		log.info("[C2CSend] ack resp: {}", c2cSendResponseMessage);
 		channel.writeAndFlush(c2cSendResponseMessage);
 	}

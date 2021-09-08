@@ -17,12 +17,10 @@ export default function ChatPage() {
 	const data = page.data;
 
 	const onChange = (e) => {
-		console.log(e.target.value)
 		setContent(e.target.value)
-	}
+	};
 
 	const onEmojiClick = (event, emojiObject) => {
-		console.log(emojiObject);
 		setContent(content + emojiObject.emoji)
 	};
 
@@ -34,27 +32,25 @@ export default function ChatPage() {
 			// 阻止换行行为
 			e.preventDefault()
 		}
-		const v = e.target.value
+		const v = e.target.value;
 		if (v.replace(/(^\s+)|(\s+$)/g, '') === '') {
-			message.warn("不能发送空格")
+			message.warn("不能发送空格");
 			return
 		}
 		/**
-		 * String msgId
      * String from
      * String to
      * String content
      * Long timestamp
 		 */
 		sendMsg(4,{
-			msgId: '123',
 			from: userInfo.userId,
 			to: data.talkId,
 			content: v,
 			timestamp: new Date().getTime()
-		})
+		});
 		setContent('')
-	}
+	};
 
 	if (activeMenu === 'chatMenu' && type === 'chatPage') {
 		return (

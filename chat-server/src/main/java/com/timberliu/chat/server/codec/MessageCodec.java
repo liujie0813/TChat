@@ -6,6 +6,7 @@ import com.timberliu.chat.server.entity.enums.CommandEnum;
 import com.timberliu.chat.server.entity.enums.SerializerAlgorithmEnum;
 import com.timberliu.chat.server.exception.InvalidProtocolException;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
+import com.timberliu.chat.server.util.Util;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -46,7 +47,6 @@ public class MessageCodec implements InitializingBean {
      * IMessage 编码为 byteBuf
      */
     public void encode(AbstractMessage message, ByteBuf byteBuf) {
-        System.out.println("hahahah");
         byteBuf.writeInt(Constant.MAGIC_NUMBER);
         byteBuf.writeByte(message.getVersion());
         byte serialAlgoByte = SerializerAlgorithmEnum.getByDesc(serialAlgo);
@@ -54,6 +54,7 @@ public class MessageCodec implements InitializingBean {
         byteBuf.writeByte(message.getCommand());
         // 保留位
         byteBuf.writeByte(0);
+        byteBuf.writeInt(Util.nextSeqId());
 
         ISerializer serializer = getSerializer(serialAlgoByte);
         byte[] body = serializer.serialize(message);
@@ -73,6 +74,7 @@ public class MessageCodec implements InitializingBean {
         byte command = byteBuf.readByte();
         // 保留位，跳过
         byteBuf.skipBytes(1);
+        int seqId = byteBuf.readInt();
         int dataLen = byteBuf.readInt();
 
         byte[] body = new byte[dataLen];
@@ -81,7 +83,9 @@ public class MessageCodec implements InitializingBean {
         ISerializer serializer = getSerializer(serializerAlgorithm);
         Class<? extends AbstractMessage> requestType = getRequestType(command);
         if (requestType != null && serializer != null) {
-            return serializer.deserialize(body, requestType);
+            AbstractMessage abstractMessage = serializer.deserialize(body, requestType);
+            abstractMessage.setSeqId(seqId);
+            return abstractMessage;
         }
         return null;
     }

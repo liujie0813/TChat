@@ -3,10 +3,7 @@ package com.timberliu.chat.server.server.handler;
 import com.timberliu.chat.server.codec.MessageCodecHandler;
 import com.timberliu.chat.server.dispatcher.MessageDispatcher;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.*;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -16,7 +13,9 @@ import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketSe
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static io.netty.buffer.Unpooled.buffer;
 import static io.netty.buffer.Unpooled.wrappedBuffer;
 
 /**
@@ -38,6 +38,7 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
  * @author liujie
  * @date 2021/8/15
  */
+@Slf4j
 @Component
 public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
 
@@ -63,16 +64,16 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
         }
 
         // 空闲检测
-//        pipeline.addLast(new IdleStateHandler(READ_TIMEOUT_SECONDS, 0, 0))；
-        pipeline.addLast(new ReadTimeoutHandler(3 * READ_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+//        pipeline.addLast(new IdleStateHandler(READ_TIMEOUT_SECONDS, 0, 0));
+//        pipeline.addLast(new ReadTimeoutHandler(3 * READ_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         // websocket
         pipeline.addLast(new HttpServerCodec())
+                .addLast(new HttpObjectAggregator(65536))
                 .addLast(new ChunkedWriteHandler())
-                .addLast(new HttpObjectAggregator(8192))
                 .addLast(new WebSocketServerCompressionHandler())
                 .addLast(new WebSocketServerProtocolHandler(
-                        "/tchat", "WebSocket", true, 65536 * 10));
+                        "/tchat", null, true));
 
         pipeline.addLast(new MessageToMessageDecoder<WebSocketFrame>() {
             @Override
@@ -83,6 +84,7 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
                 } else if (webSocketFrame instanceof BinaryWebSocketFrame) {
                     ByteBuf buf = webSocketFrame.content();
                     list.add(buf);
+                    // bytebuf 复用，引用加一
                     buf.retain();
                 } else if (webSocketFrame instanceof PongWebSocketFrame) {
 //                    System.out.println();
@@ -95,9 +97,8 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new MessageToMessageEncoder<ByteBuf>() {
             @Override
             protected void encode(ChannelHandlerContext ctx, ByteBuf bytebuf, List<Object> out) throws Exception {
-                System.out.println("hahah");
-                BinaryWebSocketFrame binaryWebSocketFrame = new BinaryWebSocketFrame(bytebuf);
-                out.add(binaryWebSocketFrame);
+                WebSocketFrame webSocketFrame = new BinaryWebSocketFrame(bytebuf);
+                out.add(webSocketFrame);
             }
         });
 

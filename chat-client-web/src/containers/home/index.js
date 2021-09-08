@@ -70,7 +70,6 @@ export default function Home() {
 							{/* 循环遍历 */}
 							{chatList.map((chat, index) => {
 								if (chat.talkId === -1) {
-									console.log(1)
 									return (
 										<TabPane tab={
 											<div style={{ height: 0}} />

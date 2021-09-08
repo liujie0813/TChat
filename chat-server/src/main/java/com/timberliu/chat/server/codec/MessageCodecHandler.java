@@ -1,5 +1,6 @@
 package com.timberliu.chat.server.codec;
 
+import com.timberliu.chat.server.codec.serialization.JsonSerializer;
 import com.timberliu.chat.server.exception.InvalidProtocolException;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
 import io.netty.buffer.ByteBuf;
@@ -29,6 +30,8 @@ public class MessageCodecHandler extends MessageToMessageCodec<ByteBuf, Abstract
     protected void encode(ChannelHandlerContext ctx, AbstractMessage msg, List<Object> out) throws Exception {
         ByteBuf byteBuf = ctx.channel().alloc().ioBuffer();
         messageCodec.encode(msg, byteBuf);
+        // byteBuf 复用，引用加一
+        byteBuf.retain();
         out.add(byteBuf);
     }
 
