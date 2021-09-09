@@ -43,7 +43,6 @@ export const userSlice = createSlice({
 			state.contactMap = contactMap
 		},
 		setMenuData: (state, action) => {
-			console.log(action.payload);
 			state.activeMenu = action.payload;
 			if (action.payload === 'chatMenu') {
 				state.chatMenuImg.img = img3;
@@ -54,13 +53,11 @@ export const userSlice = createSlice({
 			}
 		},
 		setChatData: (state, action) => {
-			console.log(action.payload);
 			state.activeChat = action.payload;
 			state.page.type = "chatPage";
 			state.page.data = state.chatMap.get(parseInt(action.payload))
 		},
 		setContactData: (state, action) => {
-			console.log(action.payload);
 			state.activeContact = action.payload;
 			state.page.type = "contactInfoPage";
 			state.page.data = state.contactMap.get(parseInt(action.payload))

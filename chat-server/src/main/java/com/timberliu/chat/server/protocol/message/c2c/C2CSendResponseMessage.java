@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class C2CSendResponseMessage extends AbstractMessage {
 
-    private Integer msgId;
+    private Integer seqId;
 
     @Override
     public byte getCommand() {

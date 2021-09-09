@@ -1,0 +1,16 @@
+const messageType = {
+	LoginRequestMessage: 'LoginRequestMessage',
+	LoginResponseMessage: 'LoginResponseMessage',
+	LogoutRequestMessage: 'LogoutRequestMessage',
+	LogoutResponseMessage: 'LogoutResponseMessage',
+	C2CSendRequestMessage: 'C2CSendRequestMessage',
+	C2CSendResponseMessage: 'C2CSendResponseMessage',
+	C2CPushRequestMessage: 'C2CPushRequestMessage',
+	C2CPushResponseMessage: 'C2CPushResponseMessage',
+	C2GSendRequestMessage: 'C2GSendRequestMessage',
+	C2GSendResponseMessage: 'C2GSendResponseMessage',
+	C2GPushRequestMessage: 'C2GPushRequestMessage',
+	C2GPushResponseMessage: 'C2GPushResponseMessage',
+	HeartBeatRequestMessage: 'HeartBeatRequestMessage',
+	HeartBeatResponseMessage: 'HeartBeatResponseMessage',
+}

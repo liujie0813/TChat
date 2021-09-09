@@ -1,7 +1,6 @@
 import {message} from 'antd'
 import {byteToString, stringToByte} from "../../common/js/StringByte";
-import {handleMessage} from "./messagehandler";
-import {enqueue} from "./ackQueue";
+import {addAckQueue, handleMessage} from "./messagehandler";
 
 let socket;
 let seqIdInitVal;
@@ -55,7 +54,7 @@ const sendMsg = (type, data) => {
 	}
 	socket.send(buffer);
 	// msgId 入确认队列
-	enqueue(seqId)
+	addAckQueue(seqId)
 };
 
 const recvMsg = (event) => {

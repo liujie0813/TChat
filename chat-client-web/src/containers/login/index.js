@@ -7,6 +7,7 @@ import './login.css'
 
 import {setChatList, setContactList, setUserInfo} from "../../store/features/UserSlice";
 import {createWebSocket} from "../../components/websocket";
+import {initChatRecord} from "../../store/features/TalkRecord";
 
 const { Header, Content } = Layout;
 
@@ -16,17 +17,15 @@ export default function Login() {
 	const history = useHistory();
 	const dispatch = useDispatch();
 
+	// 建立 websocket
 	async function establishConnect() {
 		createWebSocket()
 	}
 
 	// 获取会话列表
-	async function getTalkList() {
+	async function getTalkList(userId) {
 		try {
-			const params = {
-				userId: userInfo.userId
-			}
-			const res = await axios.get('http://localhost:18080/chat/talkList', { params });
+			const res = await axios.get('http://localhost:18080/chat/talkList', { userId });
 			const payload = res.data;
 			if (payload.code === 0) {
 				dispatch(setChatList([{talkId: -1}, ...payload.data]));
@@ -38,13 +37,24 @@ export default function Login() {
 		}
 	}
 
-	// 获取联系人列表
-	async function getContactList() {
+	async function getChatRecords(userId) {
 		try {
-			const params = {
-				userId: userInfo.userId
+			const res = await axios.get('http://localhost:18080/chat/chatRecords', { userId });
+			const payload = res.data;
+			if (payload.code === 0) {
+				dispatch(initChatRecord(payload));
+			} else {
+				message.warn(payload.msg)
 			}
-			const res = await axios.get('http://localhost:18080/contact/getContactList', { params } );
+		} catch (err) {
+			message.error(err.message)
+		}
+	}
+
+	// 获取联系人列表
+	async function getContactList(userId) {
+		try {
+			const res = await axios.get('http://localhost:18080/contact/getContactList', { userId } );
 			const payload = res.data;
 			if (payload.code === 0) {
 				dispatch(setContactList([{userId: -2}, ...payload.data]));
@@ -55,16 +65,19 @@ export default function Login() {
 			message.error(err.message)
 		}
 	}
-
-	const onFinish = async (params) => {
+	// 登录
+	const toLogin = async (params) => {
+		console.log("login: " + params)
 		try {
 			const res = await axios.get('http://localhost:18080/user/login', { params: params });
 			const payload = res.data;
 			if (payload.code === 0) {
 				dispatch(setUserInfo(payload.data));
+				let userId = payload.data.userId;
 				establishConnect();
-				getTalkList();
-				getContactList();
+				getTalkList(userId);
+				getChatRecords(userId);
+				getContactList(userId);
 				history.push('/home')
 			} else {
 				message.warn(payload.msg)
@@ -88,9 +101,9 @@ export default function Login() {
 							name="basic"
 							labelCol={{ span: 8 }}
 							wrapperCol={{ span: 8 }}
-							onFinish={onFinish}
+							onFinish={toLogin}
 						>
-							<Form.Item label="昵称" name="username"
+							<Form.Item label="账号" name="username"
 								rules={[
 									{
 										required: true,

@@ -13,8 +13,8 @@ export default function ChatPage() {
 	const [content, setContent] = useState('');
 
 	const { userInfo, activeMenu, page } = useSelector(state => state.user);
-	const type = page.type;
 	const data = page.data;
+	const { chatRecords } = useSelector(state => state.talk);
 
 	const onChange = (e) => {
 		setContent(e.target.value)
@@ -52,7 +52,9 @@ export default function ChatPage() {
 		setContent('')
 	};
 
-	if (activeMenu === 'chatMenu' && type === 'chatPage') {
+	if (activeMenu === 'chatMenu' && page.type === 'chatPage') {
+		console.log("talkId: " + data.talkId)
+		console.log("records: " + chatRecords[data.talkId].records.length)
 		return (
 			<div style={{height: '100%', width: 'calc(100% - 330px)', backgroundColor: '#f3f3f3'}}>
 				<div style={{borderBottom: 'solid 1px #e0e0e0', height: '60px'}}>
@@ -63,7 +65,15 @@ export default function ChatPage() {
 
 				<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc(100% - 260px)'}}>
 					<div style={{ paddingLeft: '20px' }}>
-						聊天记录区
+						{
+							data.talkId && chatRecords[data.talkId].records.map((record) => {
+								return (
+									<div key={record.msgId}>
+										{record.content}
+									</div>
+								)
+							})
+						}
 					</div>
 				</div>
 
@@ -105,7 +115,7 @@ export default function ChatPage() {
 				</div>
 			</div>
 		)
-	} else if (activeMenu === 'contactMenu' && type === 'contactInfoPage') {
+	} else if (activeMenu === 'contactMenu' && page.type === 'contactInfoPage') {
 		return (
 			<div style={{ padding: '120px 300px 0 120px', width: 'calc(100% - 330px)', maxWidth: '1200px', display: 'flex', flexDirection: 'column' }}>
 				<div style={{ borderBottom: 'solid 1px #d0d0d0', display: 'flex', paddingBottom: '40px', minWidth: '420px' }}>
