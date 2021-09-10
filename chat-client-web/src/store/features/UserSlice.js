@@ -28,19 +28,15 @@ export const userSlice = createSlice({
 		},
 		setChatList: (state, action) => {
 			state.chatList = action.payload;
-			let chatMap = new Map();
 			action.payload.forEach(chat => {
-				chatMap.set(chat.talkId, chat)
+				state.chatMap[chat.talkId] = chat
 			});
-			state.chatMap = chatMap
 		},
 		setContactList: (state, action) => {
 			state.contactList = action.payload;
-			let contactMap = new Map();
 			action.payload.forEach(contact => {
-				contactMap.set(contact.userId, contact)
+				state.contactMap[contact.userId] = contact
 			});
-			state.contactMap = contactMap
 		},
 		setMenuData: (state, action) => {
 			state.activeMenu = action.payload;
@@ -55,12 +51,12 @@ export const userSlice = createSlice({
 		setChatData: (state, action) => {
 			state.activeChat = action.payload;
 			state.page.type = "chatPage";
-			state.page.data = state.chatMap.get(parseInt(action.payload))
+			state.page.data = state.chatMap[parseInt(action.payload)]
 		},
 		setContactData: (state, action) => {
 			state.activeContact = action.payload;
 			state.page.type = "contactInfoPage";
-			state.page.data = state.contactMap.get(parseInt(action.payload))
+			state.page.data = state.contactMap[parseInt(action.payload)]
 		}
 	},
 	extraReducers: {}

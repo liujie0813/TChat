@@ -1,20 +1,31 @@
 import React, {useState} from "react";
 import './chatPage.css'
-import {Button, Image, Input, message, Tooltip} from 'antd'
+import {Button, Image, Input, message, Tooltip, List, Avatar, Spin} from 'antd'
+import InfiniteScroll from 'react-infinite-scroller';
 import Picker, {SKIN_TONE_NEUTRAL} from 'emoji-picker-react';
 import {useSelector} from "react-redux";
-import img1 from '../../common/images/avator.png'
 import img2 from '../../common/images/emoji.svg'
+import boy_avator01 from '../../common/images/avator/boy_avator01.svg'
+import boy_avator02 from '../../common/images/avator/boy_avator02.svg'
+import boy_avator03 from '../../common/images/avator/boy_avator03.svg'
+import girl_avator01 from '../../common/images/avator/girl_avator01.svg'
+import girl_avator02 from '../../common/images/avator/girl_avator02.svg'
+import girl_avator03 from '../../common/images/avator/girl_avator03.svg'
 import {sendMsg} from "../websocket";
 
 const {TextArea} = Input;
 
 export default function ChatPage() {
 	const [content, setContent] = useState('');
+	const [loading, setLoading] = useState(false);
 
 	const { userInfo, activeMenu, page } = useSelector(state => state.user);
 	const data = page.data;
 	const { chatRecords } = useSelector(state => state.talk);
+
+	const handleInfiniteOnLoad = () => {
+		console.log("handleInfiniteOnLoad: ")
+	}
 
 	const onChange = (e) => {
 		setContent(e.target.value)
@@ -53,8 +64,6 @@ export default function ChatPage() {
 	};
 
 	if (activeMenu === 'chatMenu' && page.type === 'chatPage') {
-		console.log("talkId: " + data.talkId)
-		console.log("records: " + chatRecords[data.talkId].records.length)
 		return (
 			<div style={{height: '100%', width: 'calc(100% - 330px)', backgroundColor: '#f3f3f3'}}>
 				<div style={{borderBottom: 'solid 1px #e0e0e0', height: '60px'}}>
@@ -63,17 +72,52 @@ export default function ChatPage() {
 					</div>
 				</div>
 
-				<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc(100% - 260px)'}}>
-					<div style={{ paddingLeft: '20px' }}>
-						{
-							data.talkId && chatRecords[data.talkId].records.map((record) => {
-								return (
-									<div key={record.msgId}>
-										{record.content}
+				<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc(100% - 260px)', display: 'flex', flexDirection: 'column' }}>
+					<div style={{ overflow: 'auto' }}>
+						{/*<InfiniteScroll*/}
+						{/*	initialLoad={false}*/}
+						{/*	pageStart={0}*/}
+						{/*	loadMore={handleInfiniteOnLoad}*/}
+						{/*	hasMore={true}*/}
+						{/*	useWindow={false}*/}
+						{/*>*/}
+							<List
+								dataSource={chatRecords[data.talkId].records}
+								renderItem={record => (
+									<List.Item key={record.msgId} style={{ height: '80px'}} >
+										<List.Item.Meta
+											avatar={
+												<Avatar size={40} style={{ margin: '0 -6px 0 18px', color: '#f56a00', backgroundColor: '#fde3cf' }}>{record.from}</Avatar>
+											}
+											title={
+												chatRecords[data.talkId].type === 0 ? <div/> : <div>{record.from}</div>
+											}
+											description={
+												<div>{record.content}</div>
+											}
+											style={{ height: '70px', padding: '5px 0 !important' }}
+										/>
+									</List.Item>
+								)}
+							>
+								{ loading && (
+									<div className="demo-loading-container">
+										<Spin />
 									</div>
-								)
-							})
-						}
+								)}
+							</List>
+						{/*</InfiniteScroll>*/}
+						{/*{*/}
+						{/*	data.talkId && chatRecords[data.talkId].records.map((record) => {*/}
+						{/*		return (*/}
+						{/*			<div key={record.msgId} style={{ height: '80px' }}>*/}
+
+						{/*				{record.content}*/}
+
+						{/*			</div>*/}
+						{/*		)*/}
+						{/*	})*/}
+						{/*}*/}
 					</div>
 				</div>
 

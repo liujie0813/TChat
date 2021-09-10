@@ -56,7 +56,7 @@ public class ChatController {
 			chatRecordDTO.setTalkName((i % 2 == 0 ? "user_" : "group_") + i);
 
 			List<ChatRecordDTO.Record> records = new ArrayList<>();
-			for (int j = 0; j < 5; j++) {
+			for (int j = 0; j < 10; j++) {
 				ChatRecordDTO.Record record = new ChatRecordDTO.Record();
 				record.setFromId((long) (i % 2 == 0 ? userId : i));
 				record.setFrom("user_" + record.getFromId());

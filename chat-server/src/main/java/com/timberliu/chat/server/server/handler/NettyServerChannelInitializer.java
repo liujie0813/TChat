@@ -59,9 +59,9 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
     @Override
     protected void initChannel(Channel channel) throws Exception {
         ChannelPipeline pipeline = channel.pipeline();
-        if (nettyDebug) {
-            pipeline.addLast(new LoggingHandler(LogLevel.INFO));
-        }
+//        if (nettyDebug) {
+//            pipeline.addLast(new LoggingHandler(LogLevel.INFO));
+//        }
 
         // 空闲检测
 //        pipeline.addLast(new IdleStateHandler(READ_TIMEOUT_SECONDS, 0, 0));

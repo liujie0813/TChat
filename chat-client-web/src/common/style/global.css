@@ -1,7 +1,4 @@
-.P-background {
-	background-image: url(../../common/images/background01.jpg) !important;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: 100% 100%;
-	height: 100%;
+@font-face {
+	font-family: 'Jandys';
+	src: url("../fonts/Jandys-dua-3.ttf");
 }

@@ -4,6 +4,7 @@ import com.timberliu.chat.server.entity.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,6 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExcpetionHandler {
+
+	@ExceptionHandler(value = MissingServletRequestParameterException.class)
+	public ApiResult missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException ex) {
+		log.warn("[missingServletRequestParameterExceptionHandler]", ex);
+		return ApiResult.error(400, "请求参数缺失:" + ex.getParameterName());
+	}
 
 	@ExceptionHandler(BindException.class)
 	public ApiResult bindExceptionHandler(BindException ex) {

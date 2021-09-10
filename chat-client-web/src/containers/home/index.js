@@ -19,6 +19,7 @@ export default function Home() {
 	const dispatch = useDispatch();
 
 	const tabClick = (key, event) => {
+		console.log("tabClick key: ", key)
 		dispatch(setMenuData(key));
 		if (key === 'chatMenu' && activeChat != null) {
 			dispatch(setChatData(activeChat))
@@ -28,10 +29,12 @@ export default function Home() {
 	};
 
 	const chatTabClick = (key, event) => {
+		console.log("chatTabClick key: ", key)
 		dispatch(setChatData(key))
 	};
 
 	const contactTabClick = (key, event) => {
+		console.log("contactTabClick key: ", key)
 		dispatch(setContactData(key))
 	};
 
