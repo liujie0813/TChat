@@ -34,7 +34,7 @@ export const talkRecord = createSlice({
 			state.chatRecords[talkId].unshift(records)
 		}
 	}
-})
+});
 
 export const {
 	initChatRecord, updateChatRecord, historyUpdateChatRecord

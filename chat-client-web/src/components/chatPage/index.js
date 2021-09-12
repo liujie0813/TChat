@@ -12,6 +12,7 @@ import girl_avator01 from '../../common/images/avator/girl_avator01.svg'
 import girl_avator02 from '../../common/images/avator/girl_avator02.svg'
 import girl_avator03 from '../../common/images/avator/girl_avator03.svg'
 import {sendMsg} from "../websocket";
+import {addAckQueue} from "../websocket/messagehandler";
 
 const {TextArea} = Input;
 
@@ -25,7 +26,7 @@ export default function ChatPage() {
 
 	const handleInfiniteOnLoad = () => {
 		console.log("handleInfiniteOnLoad: ")
-	}
+	};
 
 	const onChange = (e) => {
 		setContent(e.target.value)

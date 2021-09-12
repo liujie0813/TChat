@@ -54,7 +54,7 @@ const sendMsg = (type, data) => {
 	}
 	socket.send(buffer);
 	// msgId 入确认队列
-	addAckQueue(seqId)
+	addAckQueue(seqId, data)
 };
 
 const recvMsg = (event) => {
