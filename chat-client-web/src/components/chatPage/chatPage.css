@@ -1,0 +1,26 @@
+.ant-list-item {
+
+}
+
+.ant-list-item-meta {
+}
+
+
+.keep-left .ant-list-item-meta-avatar {
+	margin-left: 24px;
+	margin-right: 8px;
+}
+
+.keep-left .ant-list-item-meta-content {
+
+}
+
+.keep-right .ant-list-item-meta-avatar {
+	margin-left: 8px;
+	margin-right: 24px;
+	float: right;
+}
+
+.keep-right .ant-list-item-meta-content {
+	float: right;
+}

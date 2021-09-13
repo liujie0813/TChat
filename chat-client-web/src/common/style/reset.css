@@ -14,3 +14,22 @@
 .ant-tabs-left>.ant-tabs-content-holder>.ant-tabs-content>.ant-tabs-tabpane {
 	padding-left: 0 !important;
 }
+
+
+.ant-list-item {
+	display: block !important;
+}
+
+.ant-list-item-meta {
+	display: block !important;
+	position: relative !important;
+}
+
+.ant-list-item-meta-avatar {
+	display: inline-block !important;
+}
+
+.ant-list-item-meta-content {
+	display: inline-block !important;
+	width: auto !important;
+}

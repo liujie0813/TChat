@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import './chatPage.css'
 import {Button, Image, Input, message, Tooltip, List, Avatar, Spin} from 'antd'
 import InfiniteScroll from 'react-infinite-scroller';
@@ -12,17 +12,27 @@ import girl_avator01 from '../../common/images/avator/girl_avator01.svg'
 import girl_avator02 from '../../common/images/avator/girl_avator02.svg'
 import girl_avator03 from '../../common/images/avator/girl_avator03.svg'
 import {sendMsg} from "../websocket";
-import {addAckQueue} from "../websocket/messagehandler";
 
 const {TextArea} = Input;
 
 export default function ChatPage() {
 	const [content, setContent] = useState('');
 	const [loading, setLoading] = useState(false);
+	const recordEnd = useRef(null);
 
 	const { userInfo, activeMenu, page } = useSelector(state => state.user);
 	const data = page.data;
 	const { chatRecords } = useSelector(state => state.talk);
+
+	const scrollToBottom = () => {
+		if (recordEnd && recordEnd.current) {
+			recordEnd.current.scrollIntoView({behavior: "smooth"});
+		}
+	};
+
+	useEffect(() => {
+		scrollToBottom()
+	}, [chatRecords[data.talkId].records]);
 
 	const handleInfiniteOnLoad = () => {
 		console.log("handleInfiniteOnLoad: ")
@@ -83,12 +93,13 @@ export default function ChatPage() {
 						{/*	useWindow={false}*/}
 						{/*>*/}
 							<List
+								// itemLayout="vertical"
 								dataSource={chatRecords[data.talkId].records}
 								renderItem={record => (
-									<List.Item key={record.msgId} style={{ height: '80px'}} >
+									<List.Item key={record.msgId} style={{ height: '80px' }} className={record.fromId === userInfo.userId ? 'keep-right' : 'keep-left'}>
 										<List.Item.Meta
 											avatar={
-												<Avatar size={40} style={{ margin: '0 -6px 0 18px', color: '#f56a00', backgroundColor: '#fde3cf' }}>{record.from}</Avatar>
+												<Avatar size={40} style={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>{record.from}</Avatar>
 											}
 											title={
 												chatRecords[data.talkId].type === 0 ? <div/> : <div>{record.from}</div>
@@ -96,7 +107,6 @@ export default function ChatPage() {
 											description={
 												<div>{record.content}</div>
 											}
-											style={{ height: '70px', padding: '5px 0 !important' }}
 										/>
 									</List.Item>
 								)}
@@ -107,6 +117,7 @@ export default function ChatPage() {
 									</div>
 								)}
 							</List>
+							<div ref={recordEnd}/>
 						{/*</InfiniteScroll>*/}
 						{/*{*/}
 						{/*	data.talkId && chatRecords[data.talkId].records.map((record) => {*/}
@@ -123,7 +134,7 @@ export default function ChatPage() {
 				</div>
 
 				<div style={{height: '200px', backgroundColor: '#fff'}}>
-					<div style={{ padding: '10px 0 0 16px' }}>
+					<div style={{ padding: '10px 0 0 30px' }}>
 						<Tooltip
 							trigger='click'
 							title={
@@ -139,7 +150,7 @@ export default function ChatPage() {
 							<Image src={img2} height={28} preview={false} />
 						</Tooltip>
 					</div>
-					<div style={{ paddingLeft: '6px' }}>
+					<div style={{ paddingLeft: '20px' }}>
 						<TextArea
 							style={{
 								resize: 'none',

@@ -20,17 +20,20 @@ export const talkRecord = createSlice({
 	},
 	reducers: {
 		initChatRecord: (state, { payload }) => {
-			const { data } = payload
+			const { data } = payload;
 			for (const chatRecord of data) {
 				state.chatRecords[chatRecord.talkId] = chatRecord
 			}
 		},
 		updateChatRecord: (state, { payload }) => {
-			const { talkId, records } = payload
-			state.chatRecords[talkId].push(...records)
+			const { talkId, records } = payload;
+			console.log('before: ', state.chatRecords[talkId].records.length);
+			let originRecords = state.chatRecords[talkId].records;
+			state.chatRecords[talkId].records = originRecords.concat(records);
+			console.log('after: ', state.chatRecords[talkId].records.length);
 		},
 		historyUpdateChatRecord: (state, { payload }) => {
-			const { talkId, records } = payload
+			const { talkId, records } = payload;
 			state.chatRecords[talkId].unshift(records)
 		}
 	}
