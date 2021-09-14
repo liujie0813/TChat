@@ -57,15 +57,49 @@ export const userSlice = createSlice({
 			state.activeContact = action.payload;
 			state.page.type = "contactInfoPage";
 			state.page.data = state.contactMap[parseInt(action.payload)]
+		},
+		setOrUpdateChatData: (state, action) => {
+			state.activeMenu = "chatMenu";
+			state.chatMenuImg.img = img3;
+			state.contactMenuImg.img = img4;
+
+			state.activeChat = action.payload.talkId;
+			state.page.type = "chatPage";
+			if (state.chatMap.hasOwnProperty(parseInt(action.payload.talkId))) {
+				state.page.data = state.chatMap[parseInt(action.payload.talkId)]
+			} else {
+				let contact = state.contactMap[parseInt(action.payload.talkId)];
+				let chatListItem = {
+					type: action.payload.type,
+					talkId: action.payload.talkId,
+					talkName: contact.username,
+					latestSender: null,
+					latestMsg: null,
+					msgTime: null,
+				};
+				state.chatList.push(chatListItem);
+				state.chatMap[action.payload.talkId] = chatListItem;
+				state.page.data = chatListItem
+			}
 		}
 	},
 	extraReducers: {}
 });
 
+/**
+ * type(pin):0
+talkId(pin):0
+talkName(pin):"user_0"
+latestSender(pin):null
+latestMsg(pin):"hello, 5"
+msgTime(pin):"2021-09-15 00:35:29"
+ */
+
 export const {
 	setUserInfo,
 	setChatList, setContactList,
-	setMenuData, setChatData, setContactData
+	setMenuData, setChatData, setContactData,
+	setOrUpdateChatData
 } = userSlice.actions;
 
 export default userSlice.reducer

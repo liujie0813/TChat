@@ -6,7 +6,7 @@ import img6 from '../../common/images/quit.png';
 import SearchBox from "../../components/search";
 import {useDispatch, useSelector} from "react-redux";
 import {setChatData, setContactData, setMenuData,} from "../../store/features/UserSlice";
-import ChatPage from "../../components/chatPage";
+import DataPage from "../../components/dataPage";
 
 const { TabPane } = Tabs;
 
@@ -15,11 +15,11 @@ export default function Home() {
 		userInfo,
 		activeMenu, chatMenuImg, contactMenuImg,
 		activeChat, chatList, activeContact, contactList
-	} = useSelector(state => state.user)
+	} = useSelector(state => state.user);
 	const dispatch = useDispatch();
 
 	const tabClick = (key, event) => {
-		console.log("tabClick key: ", key)
+		console.log("tabClick key: ", key);
 		dispatch(setMenuData(key));
 		if (key === 'chatMenu' && activeChat != null) {
 			dispatch(setChatData(activeChat))
@@ -29,19 +29,19 @@ export default function Home() {
 	};
 
 	const chatTabClick = (key, event) => {
-		console.log("chatTabClick key: ", key)
+		console.log("chatTabClick key: ", key);
 		dispatch(setChatData(key))
 	};
 
 	const contactTabClick = (key, event) => {
-		console.log("contactTabClick key: ", key)
+		console.log("contactTabClick key: ", key);
 		dispatch(setContactData(key))
 	};
 
 	return (
 		<div style={{ display: 'flex', height: '100vh' }}>
 			<Tabs tabPosition='left' style={{ backgroundColor: '#e5e5e4', width: '330px', minWidth: '330px' }}
-						defaultActiveKey={activeMenu}
+						activeKey={activeMenu}
 						onTabClick={ tabClick }>
 				{/* 头像 */}
 				<TabPane tab={
@@ -142,7 +142,7 @@ export default function Home() {
 					key="quitMenu">
 				</TabPane>
 			</Tabs>
-			<ChatPage/>
+			<DataPage/>
 		</div>
 	)
 }
