@@ -3,15 +3,11 @@ package com.timberliu.chat.server.controller;
 import com.timberliu.chat.server.entity.ApiResult;
 import com.timberliu.chat.server.entity.dto.UserInfoDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.Min;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -28,9 +24,15 @@ public class UserController {
 										@RequestParam("password") String password) {
 		log.info("[login] request param, username: {}, password: {}", username, password);
 		UserInfoDTO loginResponseDTO = new UserInfoDTO();
+		loginResponseDTO.setToken(UUID.randomUUID().toString());
 		loginResponseDTO.setUserId(1L);
 		loginResponseDTO.setUsername(username);
-		loginResponseDTO.setToken(UUID.randomUUID().toString());
+		loginResponseDTO.setSignature("haha");
+		loginResponseDTO.setAccount("1");
+		loginResponseDTO.setSex(0);
+		loginResponseDTO.setProvince("China");
+		loginResponseDTO.setCity("China");
+		loginResponseDTO.setAvatarUrl("https://oss.timberliu.com/avatars/20210922/head_portrait.png");
 		return ApiResult.success(loginResponseDTO);
 	}
 

@@ -5,8 +5,9 @@ import img1 from '../../common/images/head_portrait.png';
 import img6 from '../../common/images/quit.png';
 import SearchBox from "../../components/search";
 import {useDispatch, useSelector} from "react-redux";
-import {setChatData, setContactData, setMenuData,} from "../../store/features/UserSlice";
+import {setChatData, setContactData, setMenuData, setShowUserInfo,} from "../../store/features/UserSlice";
 import DataPage from "../../components/dataPage";
+import UserInfoModal from "../../components/person/personInfo";
 
 const { TabPane } = Tabs;
 
@@ -20,6 +21,11 @@ export default function Home() {
 
 	const tabClick = (key, event) => {
 		console.log("tabClick key: ", key);
+		if (key === 'avatar') {
+			dispatch(setShowUserInfo(true))
+			return
+		}
+
 		dispatch(setMenuData(key));
 		if (key === 'chatMenu' && activeChat != null) {
 			dispatch(setChatData(activeChat))
@@ -46,11 +52,10 @@ export default function Home() {
 				{/* 头像 */}
 				<TabPane tab={
 						<div style={{ padding: '20px 10px 10px' }}>
-							<Avatar size={40} src={img1} />
+							<Avatar size={40} src={userInfo.avatarUrl} />
 						</div>
 					}
-					disabled
-					key="avator">
+					key="avatar">
 				</TabPane>
 
 				{/* 聊天菜单 */}
@@ -143,6 +148,7 @@ export default function Home() {
 				</TabPane>
 			</Tabs>
 			<DataPage/>
+			<UserInfoModal/>
 		</div>
 	)
 }

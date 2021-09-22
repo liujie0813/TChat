@@ -5,9 +5,10 @@ import img4 from '../../common/images/contact_unacitve.png';
 import img5 from '../../common/images/contact_active.png';
 
 export const userSlice = createSlice({
-	name: 'user',
+	name: 'users',
 	initialState: {
 		userInfo: {},
+		userInfoVisible: false,
 		activeMenu: 'chatMenu',
 		chatMenuImg: { img: img3 },
 		contactMenuImg: { img: img4 },
@@ -25,6 +26,9 @@ export const userSlice = createSlice({
 	reducers: {
 		setUserInfo: (state, action) => {
 			state.userInfo = action.payload;
+		},
+		setShowUserInfo: (state, action) => {
+			state.userInfoVisible = action.payload;
 		},
 		setChatList: (state, action) => {
 			state.chatList = action.payload;
@@ -86,17 +90,8 @@ export const userSlice = createSlice({
 	extraReducers: {}
 });
 
-/**
- * type(pin):0
-talkId(pin):0
-talkName(pin):"user_0"
-latestSender(pin):null
-latestMsg(pin):"hello, 5"
-msgTime(pin):"2021-09-15 00:35:29"
- */
-
 export const {
-	setUserInfo,
+	setUserInfo, setShowUserInfo,
 	setChatList, setContactList,
 	setMenuData, setChatData, setContactData,
 	setOrUpdateChatData

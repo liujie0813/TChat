@@ -13,9 +13,30 @@ import lombok.ToString;
 @ToString
 public class UserInfoDTO {
 
+	/**
+	 * token
+	 */
+	private String token;
+
 	private Long userId;
 
+	/**
+	 * 用户名
+	 */
 	private String username;
 
-	private String token;
+	private String signature;
+
+	private String account;
+
+	private Integer sex;
+
+	private String province;
+
+	private String city;
+
+	/**
+	 * 头像地址
+	 */
+	private String avatarUrl;
 }

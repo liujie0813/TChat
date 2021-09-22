@@ -7,3 +7,10 @@ netty:
   handler:
     protocol: websocket # tcp/websocket
     serial_algo: json # 0: protobuf；1: json
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://123.56.9.126:3306?t_chat
+    username: root
+    password: WfNYnraEOynLn87e

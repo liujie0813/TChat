@@ -78,7 +78,7 @@ export default function ChatPage() {
 				</div>
 			</div>
 
-			<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc(100% - 260px)', display: 'flex', flexDirection: 'column' }}>
+			<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc(100% - 260px)', minHeight: '320px', display: 'flex', flexDirection: 'column' }}>
 				<div style={{ overflow: 'auto' }}>
 					{/*<InfiniteScroll*/}
 					{/*	initialLoad={false}*/}
