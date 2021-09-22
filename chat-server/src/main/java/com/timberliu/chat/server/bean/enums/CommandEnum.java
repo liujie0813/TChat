@@ -1,4 +1,4 @@
-package com.timberliu.chat.server.entity.enums;
+package com.timberliu.chat.server.bean.enums;
 
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
 import com.timberliu.chat.server.protocol.message.c2c.C2CPushRequestMessage;

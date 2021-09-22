@@ -1,7 +1,7 @@
 package com.timberliu.chat.server.controller;
 
-import com.timberliu.chat.server.entity.ApiResult;
-import com.timberliu.chat.server.entity.dto.UserInfoDTO;
+import com.timberliu.chat.server.bean.ApiResult;
+import com.timberliu.chat.server.bean.dto.UserInfoDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

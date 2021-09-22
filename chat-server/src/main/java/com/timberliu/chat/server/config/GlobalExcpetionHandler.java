@@ -1,6 +1,6 @@
 package com.timberliu.chat.server.config;
 
-import com.timberliu.chat.server.entity.ApiResult;
+import com.timberliu.chat.server.bean.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;

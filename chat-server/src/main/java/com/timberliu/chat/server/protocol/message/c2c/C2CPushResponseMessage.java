@@ -1,7 +1,6 @@
 package com.timberliu.chat.server.protocol.message.c2c;
 
-import com.timberliu.chat.server.entity.enums.CommandEnum;
-import com.timberliu.chat.server.message.protobuf.ProtobufMessage.GenericMessage;
+import com.timberliu.chat.server.bean.enums.CommandEnum;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
 import lombok.Data;
 

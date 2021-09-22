@@ -1,7 +1,5 @@
 package com.timberliu.chat.server.dispatcher;
 
-import com.timberliu.chat.server.entity.enums.CommandEnum;
-import com.timberliu.chat.server.message.protobuf.ProtobufMessage.GenericMessage;
 import com.timberliu.chat.server.protocol.handler.MessageHandler;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
 import io.netty.channel.ChannelHandler;

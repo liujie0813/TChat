@@ -1,4 +1,4 @@
-package com.timberliu.chat.server.entity.enums;
+package com.timberliu.chat.server.bean.enums;
 
 import lombok.Getter;
 

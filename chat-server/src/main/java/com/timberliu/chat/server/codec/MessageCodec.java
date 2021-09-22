@@ -1,9 +1,9 @@
 package com.timberliu.chat.server.codec;
 
 import com.timberliu.chat.server.codec.serialization.ISerializer;
-import com.timberliu.chat.server.entity.Constant;
-import com.timberliu.chat.server.entity.enums.CommandEnum;
-import com.timberliu.chat.server.entity.enums.SerializerAlgorithmEnum;
+import com.timberliu.chat.server.bean.Constant;
+import com.timberliu.chat.server.bean.enums.CommandEnum;
+import com.timberliu.chat.server.bean.enums.SerializerAlgorithmEnum;
 import com.timberliu.chat.server.exception.InvalidProtocolException;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
 import com.timberliu.chat.server.util.Util;
@@ -15,9 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 

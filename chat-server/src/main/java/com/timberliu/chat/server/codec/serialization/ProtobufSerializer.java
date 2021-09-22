@@ -1,7 +1,6 @@
 package com.timberliu.chat.server.codec.serialization;
 
-import com.alibaba.fastjson.JSON;
-import com.timberliu.chat.server.entity.enums.SerializerAlgorithmEnum;
+import com.timberliu.chat.server.bean.enums.SerializerAlgorithmEnum;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 

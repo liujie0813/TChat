@@ -30,6 +30,7 @@ public class TChatAutoGenerator {
 		gc.setOutputDir(projectPath + "/chat-server/src/main/java");
 		gc.setAuthor("liujie");
 		gc.setOpen(false);
+		gc.setEntityName("%sEntity");
 		mpg.setGlobalConfig(gc);
 
 		// 数据源配置
@@ -43,6 +44,7 @@ public class TChatAutoGenerator {
 		// 包配置
 		PackageConfig pc = new PackageConfig();
 		pc.setParent("com.timberliu.chat.server");
+		pc.setEntity("bean.entity");
 		mpg.setPackageInfo(pc);
 
 		// 自定义配置
@@ -108,7 +110,7 @@ public class TChatAutoGenerator {
 //		strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
 		// 写于父类中的公共字段
 //		strategy.setSuperEntityColumns("id");
-		strategy.setInclude("person_info");
+		strategy.setInclude("person_info", "person_relation", "group_info", "group_person_info", "history_msg_single", "history_msg_group");
 //		strategy.setControllerMappingHyphenStyle(true);
 //		strategy.setTablePrefix(pc.getModuleName() + "_");
 		mpg.setStrategy(strategy);

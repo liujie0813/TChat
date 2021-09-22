@@ -1,10 +1,9 @@
 package com.timberliu.chat.server.protocol.handler;
 
-import com.timberliu.chat.server.entity.enums.CommandEnum;
+import com.timberliu.chat.server.bean.enums.CommandEnum;
 import com.timberliu.chat.server.protocol.message.c2c.C2CSendRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2c.C2CSendResponseMessage;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

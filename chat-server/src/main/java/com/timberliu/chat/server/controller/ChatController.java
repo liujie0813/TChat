@@ -1,14 +1,11 @@
 package com.timberliu.chat.server.controller;
 
-import com.timberliu.chat.server.entity.ApiResult;
-import com.timberliu.chat.server.entity.dto.ChatRecordDTO;
-import com.timberliu.chat.server.entity.dto.TalkDTO;
+import com.timberliu.chat.server.bean.ApiResult;
+import com.timberliu.chat.server.bean.dto.ChatRecordDTO;
+import com.timberliu.chat.server.bean.dto.TalkDTO;
 import com.timberliu.chat.server.util.Util;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

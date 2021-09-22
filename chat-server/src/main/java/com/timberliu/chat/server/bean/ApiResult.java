@@ -1,4 +1,4 @@
-package com.timberliu.chat.server.entity;
+package com.timberliu.chat.server.bean;
 
 import lombok.Getter;
 import lombok.Setter;

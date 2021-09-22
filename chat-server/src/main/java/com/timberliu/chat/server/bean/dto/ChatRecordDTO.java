@@ -1,4 +1,4 @@
-package com.timberliu.chat.server.entity.dto;
+package com.timberliu.chat.server.bean.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,11 +1,10 @@
 package com.timberliu.chat.server.controller;
 
-import com.timberliu.chat.server.entity.ApiResult;
-import com.timberliu.chat.server.entity.dto.ContactDTO;
-import com.timberliu.chat.server.entity.dto.GroupDTO;
+import com.timberliu.chat.server.bean.ApiResult;
+import com.timberliu.chat.server.bean.dto.ContactDTO;
+import com.timberliu.chat.server.bean.dto.GroupDTO;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
