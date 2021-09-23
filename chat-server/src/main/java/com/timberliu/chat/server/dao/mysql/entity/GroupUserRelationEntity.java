@@ -46,5 +46,9 @@ public class GroupUserRelationEntity extends BaseEntity {
      */
     private LocalDateTime joinTime;
 
+    /**
+     * 是否删除
+     */
+    private Integer deleted;
 
 }

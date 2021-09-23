@@ -40,5 +40,9 @@ public class UserRelationEntity extends BaseEntity {
      */
     private String subNicknameRemark;
 
+    /**
+     * 是否删除
+     */
+    private Integer deleted;
 
 }

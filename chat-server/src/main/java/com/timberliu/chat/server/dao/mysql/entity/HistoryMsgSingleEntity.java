@@ -56,5 +56,9 @@ public class HistoryMsgSingleEntity extends BaseEntity {
      */
     private LocalDateTime sendTime;
 
+    /**
+     * 是否删除
+     */
+    private Integer deleted;
 
 }

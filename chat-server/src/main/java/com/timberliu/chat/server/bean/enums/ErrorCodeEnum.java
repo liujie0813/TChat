@@ -36,10 +36,15 @@ public enum ErrorCodeEnum {
 	METHOD_NOT_ALLOWED(405, "请求方法不正确"),
 	INTERNAL_SERVER_ERROR(500, "系统异常"),
 
-	/**
-	 * 登录模块
-	 */
-	ACCOUNT_EXIST(101001, "账号已存在")
+	// 登录模块
+	ACCOUNT_EXIST(101001, "账号已存在"),
+
+	// 认证模块
+	AUTH_ACCESS_TOKEN_NOT_FOUND(102001, "访问令牌不存在"),
+	AUTH_ACCESS_TOKEN_EXPIRED(102002, "访问令牌已过期"),
+	AUTH_REFRESH_TOKEN_NOT_FOUND(102003, "刷新令牌不存在"),
+	AUTH_REFRESH_TOKEN_EXPIRED(102004, "刷新令牌已过期"),
+
 	;
 
 	private final Integer code;

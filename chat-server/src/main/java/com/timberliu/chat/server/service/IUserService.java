@@ -22,9 +22,4 @@ public interface IUserService {
 	 */
 	Boolean existAccount(String account);
 
-	/**
-	 * 获取 access_token
-	 */
-	AuthAccessTokenEntity getAccessToken(String accessToken);
-
 }

@@ -8,6 +8,7 @@ import com.timberliu.chat.server.dao.mysql.entity.UserInfoEntity;
 import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
 import com.timberliu.chat.server.dao.redis.entity.AuthAccessTokenEntity;
 import com.timberliu.chat.server.dao.redis.mapper.AuthAccessTokenRedisMapper;
+import com.timberliu.chat.server.service.IAuthService;
 import com.timberliu.chat.server.service.IUserService;
 import com.timberliu.chat.server.util.DigestUtils;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class UserServiceImpl implements IUserService {
 	private UserInfoMapper userInfoMapper;
 
 	@Resource
-	private AuthAccessTokenRedisMapper authAccessTokenRedisMapper;
+	private IAuthService authService;
 
 	@Override
 	public UserInfoDTO login(UserLoginReqDTO userLoginReqDTO) {
@@ -62,11 +63,6 @@ public class UserServiceImpl implements IUserService {
 		queryWrapper.eq("account", account);
 		Integer count = userInfoMapper.selectCount(queryWrapper);
 		return count > 0;
-	}
-
-	@Override
-	public AuthAccessTokenEntity getAccessToken(String accessToken) {
-		return authAccessTokenRedisMapper.get(accessToken);
 	}
 
 }

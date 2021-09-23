@@ -34,8 +34,9 @@ CREATE TABLE `user_info`  (
   `province` varchar(5) DEFAULT NULL COMMENT '地区-省份',
   `city` varchar(5) DEFAULT NULL COMMENT '地区-市县',
   `signature` varchar(255) DEFAULT NULL COMMENT '个性签名',
-  `create_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户信息表';
 
@@ -48,8 +49,9 @@ CREATE TABLE `user_relation` (
   `main_user` bigint(20) NOT NULL COMMENT '自己的用户Id',
   `sub_user` bigint(20) NOT NULL COMMENT '好友的用户Id',
   `sub_nickname_remark` varchar(20) NULL COMMENT '好友昵称备注',
-  `create_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '好友关系表';
 
@@ -62,8 +64,9 @@ CREATE TABLE `group_info` (
   `group_id` bigint(20) NOT NULL COMMENT '群组Id',
   `group_name` varchar(20) NOT NULL COMMENT '群组名称',
   `create_user_id` varchar(20) NOT NULL COMMENT '创建用户Id',
-  `create_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '群组信息表';
 
@@ -77,8 +80,9 @@ CREATE TABLE `group_user_relation` (
   `user_id` bigint(20) NOT NULL COMMENT '用户Id',
   `group_name_remark` varchar(20) NULL COMMENT '群组名称备注',
   `join_time` datetime NULL COMMENT '加入时间',
-  `create_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '群组-用户关系表';
 
@@ -94,8 +98,9 @@ CREATE TABLE `history_msg_single` (
   `msg_type` tinyint(4) NOT NULL COMMENT '消息类型',
   `content` text NOT NULL COMMENT '消息内容',
   `send_time` datetime NOT NULL COMMENT '消息发送时间',
-  `create_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '历史消息(单聊)表';
 
@@ -111,10 +116,44 @@ CREATE TABLE `history_msg_group` (
   `msg_type` tinyint(4) NOT NULL COMMENT '消息类型',
   `content` text NOT NULL COMMENT '消息内容',
   `send_time` datetime NOT NULL COMMENT '消息发送时间',
-  `create_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '历史消息(群聊)表';
+
+-- ----------------------------
+-- Table structure for auth_access_token
+-- ----------------------------
+DROP TABLE IF EXISTS `auth_access_token`;
+CREATE TABLE `auth_access_token` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户Id',
+  `access_token` varchar(32) NOT NULL COMMENT '访问令牌',
+  `refresh_token` varchar(32) NOT NULL COMMENT '刷新令牌',
+  `expire_time` datetime NOT NULL COMMENT '过期时间',
+  `create_ip` varchar(32) NOT NULL COMMENT '创建IP',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='访问令牌表';
+
+-- ----------------------------
+-- Table structure for auth_refresh_token
+-- ----------------------------
+DROP TABLE IF EXISTS `auth_refresh_token`;
+CREATE TABLE `auth_refresh_token` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户Id',
+  `refresh_token` varchar(32) NOT NULL COMMENT '刷新令牌',
+  `expire_time` datetime NOT NULL COMMENT '过期时间',
+  `create_ip` varchar(32) NOT NULL COMMENT '创建IP',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='刷新令牌表';
 
 
 SET FOREIGN_KEY_CHECKS = 1;

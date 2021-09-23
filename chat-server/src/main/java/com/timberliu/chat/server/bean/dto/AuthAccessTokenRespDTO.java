@@ -1,18 +1,19 @@
-package com.timberliu.chat.server.dao.redis.entity;
+package com.timberliu.chat.server.bean.dto;
 
-import com.timberliu.chat.server.dao.BaseEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author liujie
+ * @author Timber
  * @date 2021/9/23
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class AuthAccessTokenEntity extends BaseEntity {
+@Accessors(chain = true)
+public class AuthAccessTokenRespDTO implements Serializable {
 
 	/**
 	 * 用户Id
@@ -34,8 +35,4 @@ public class AuthAccessTokenEntity extends BaseEntity {
 	 */
 	private Date expireTime;
 
-	/**
-	 * 创建 IP
-	 */
-	private String createIp;
 }

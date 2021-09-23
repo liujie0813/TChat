@@ -80,5 +80,9 @@ public class UserInfoEntity extends BaseEntity {
      */
     private String signature;
 
+    /**
+     * 是否删除
+     */
+    private Integer deleted;
 
 }

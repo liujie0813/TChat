@@ -1,10 +1,7 @@
 package com.timberliu.chat.server.dao.redis.mapper;
 
 import com.alibaba.fastjson.JSON;
-import com.timberliu.chat.server.dao.redis.RedisKeyEnum;
-import com.timberliu.chat.server.dao.redis.RedisKeyTypeEnum;
-import com.timberliu.chat.server.dao.redis.entity.AuthAccessTokenEntity;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.timberliu.chat.server.dao.mysql.entity.AuthAccessTokenEntity;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 

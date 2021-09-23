@@ -1,5 +1,6 @@
 package com.timberliu.chat.server.dao.redis;
 
+import com.timberliu.chat.server.dao.redis.entity.AuthAccessTokenEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,7 +14,9 @@ import java.time.Duration;
 @AllArgsConstructor
 public enum RedisKeyEnum {
 
-	AUTH_ACCESS_TOKEN("auth_access_token:%s", RedisKeyTypeEnum.STRING, null, Duration.ofDays(1));
+	AUTH_ACCESS_TOKEN("auth_access_token:%s", RedisKeyTypeEnum.STRING, AuthAccessTokenEntity.class, Duration.ofHours(2)),
+//	AUTH_REFRESH_TOKEN("auth_refresh_token:%s", RedisKeyTypeEnum.STRING, AuthRefreshTokenEntity.class, null),
+	;
 
 	private final String keyTemplate;
 

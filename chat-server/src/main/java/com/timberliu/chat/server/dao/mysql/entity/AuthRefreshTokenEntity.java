@@ -4,21 +4,26 @@ import com.timberliu.chat.server.dao.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 群组信息表
+ * 刷新令牌表
  * </p>
  *
  * @author liujie
- * @since 2021-09-23
+ * @since 2021-09-24
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("group_info")
-public class GroupInfoEntity extends BaseEntity {
+@TableName("auth_refresh_token")
+@Accessors(chain = true)
+public class AuthRefreshTokenEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,23 +31,29 @@ public class GroupInfoEntity extends BaseEntity {
     private Long id;
 
     /**
-     * 群组Id
+     * 用户Id
      */
-    private Long groupId;
+    private Long userId;
 
     /**
-     * 群组名称
+     * 刷新令牌
      */
-    private String groupName;
+    private String refreshToken;
 
     /**
-     * 创建用户Id
+     * 过期时间
      */
-    private String createUserId;
+    private Date expireTime;
+
+    /**
+     * 创建IP
+     */
+    private String createIp;
 
     /**
      * 是否删除
      */
-    private Integer deleted;
+    private Boolean deleted;
+
 
 }

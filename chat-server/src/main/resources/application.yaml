@@ -14,3 +14,15 @@ spring:
     url: jdbc:mysql://123.56.9.126:3306?t_chat
     username: root
     password: WfNYnraEOynLn87e
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1 # 逻辑已删除值（默认为 1）
+      logic-not-delete-value: 0 # 逻辑为删除值（默认为 0）
+
+auth:
+  expire-times: # 单位为 min
+    access-token: 2*60
+    refresh-token: 7*24*60

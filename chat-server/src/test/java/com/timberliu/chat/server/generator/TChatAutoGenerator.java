@@ -109,7 +109,8 @@ public class TChatAutoGenerator {
 //		strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
 		// 写于父类中的公共字段
 		strategy.setSuperEntityColumns("create_time", "update_time");
-		strategy.setInclude("user_info", "user_relation", "group_info", "group_user_relation", "history_msg_single", "history_msg_group");
+//		strategy.setInclude("user_info", "user_relation", "group_info", "group_user_relation", "history_msg_single", "history_msg_group");
+		strategy.setInclude("auth_access_token", "auth_refresh_token");
 //		strategy.setControllerMappingHyphenStyle(true);
 //		strategy.setTablePrefix(pc.getModuleName() + "_");
 		mpg.setStrategy(strategy);

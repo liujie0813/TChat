@@ -1,8 +1,10 @@
 package com.timberliu.chat.server.auth;
 
+import com.timberliu.chat.server.bean.dto.AuthAccessTokenRespDTO;
 import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
 import com.timberliu.chat.server.dao.redis.entity.AuthAccessTokenEntity;
 import com.timberliu.chat.server.exception.BizException;
+import com.timberliu.chat.server.service.IAuthService;
 import com.timberliu.chat.server.service.IUserService;
 import com.timberliu.chat.server.util.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthInterceptor implements HandlerInterceptor {
 
 	@Resource
-	private IUserService userService;
+	private IAuthService authService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -37,8 +39,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 		if (accessToken == null) {
 			return null;
 		}
-		AuthAccessTokenEntity authAccessTokenEntity = userService.getAccessToken(accessToken);
-		Long userId = authAccessTokenEntity.getUserId();
+		AuthAccessTokenRespDTO authAccessTokenRespDTO = authService.checkAccessToken(accessToken);
+		Long userId = authAccessTokenRespDTO.getUserId();
 		UserContext userContext = new UserContext();
 		userContext.setUserId(userId);
 		UserContextHolder.setUserContext(userContext);
