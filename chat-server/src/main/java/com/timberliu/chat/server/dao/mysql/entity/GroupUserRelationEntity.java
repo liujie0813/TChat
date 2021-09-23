@@ -1,25 +1,25 @@
-package com.timberliu.chat.server.bean.entity;
+package com.timberliu.chat.server.dao.mysql.entity;
 
+import com.timberliu.chat.server.dao.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 群组信息表
+ * 群组-用户关系表
  * </p>
  *
  * @author liujie
  * @since 2021-09-23
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@TableName("group_info")
-public class GroupInfoEntity implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@TableName("group_user_relation")
+public class GroupUserRelationEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,18 +32,19 @@ public class GroupInfoEntity implements Serializable {
     private Long groupId;
 
     /**
-     * 群组名称
+     * 用户Id
      */
-    private String groupName;
+    private Long userId;
 
     /**
-     * 创建用户Id
+     * 群组名称备注
      */
-    private String createUserId;
+    private String groupNameRemark;
 
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
+    /**
+     * 加入时间
+     */
+    private LocalDateTime joinTime;
 
 
 }

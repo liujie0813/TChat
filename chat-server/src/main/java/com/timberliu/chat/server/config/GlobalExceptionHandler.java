@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestControllerAdvice
 @Slf4j
-public class GlobalExcpetionHandler {
+public class GlobalExceptionHandler {
 
 	@ExceptionHandler(value = MissingServletRequestParameterException.class)
 	public ApiResult missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException ex) {

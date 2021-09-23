@@ -1,10 +1,10 @@
-package com.timberliu.chat.server.bean.entity;
+package com.timberliu.chat.server.dao.mysql.entity;
 
+import com.timberliu.chat.server.dao.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,9 +17,9 @@ import lombok.EqualsAndHashCode;
  * @since 2021-09-23
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @TableName("history_msg_group")
-public class HistoryMsgGroupEntity implements Serializable {
+public class HistoryMsgGroupEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,10 +55,6 @@ public class HistoryMsgGroupEntity implements Serializable {
      * 消息发送时间
      */
     private LocalDateTime sendTime;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
 
 
 }

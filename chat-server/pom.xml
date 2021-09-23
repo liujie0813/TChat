@@ -15,6 +15,7 @@
   <name>chat-server</name>
 
   <properties>
+    <spring.boot.version>${parent.version}</spring.boot.version>
     <mybatis-plus.version>3.4.0</mybatis-plus.version>
     <velocity-engine-core.version>2.2</velocity-engine-core.version>
     <netty.version>4.1.60.Final</netty.version>
@@ -25,6 +26,8 @@
     <lombok.version>1.18.20</lombok.version>
     <common-lang3.version>3.12.0</common-lang3.version>
     <fastjson.version>1.2.62</fastjson.version>
+    <org.mapstruct.version>1.3.0.Final</org.mapstruct.version>
+    <hutool.version>5.2.5</hutool.version>
   </properties>
 
   <dependencies>
@@ -44,6 +47,13 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <!-- mysql 相关 -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql.version}</version>
     </dependency>
     <dependency>
       <groupId>com.baomidou</groupId>
@@ -65,11 +75,6 @@
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
       <version>${netty.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>${mysql.version}</version>
     </dependency>
 
     <dependency>
@@ -104,10 +109,44 @@
       <version>${fastjson.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${org.mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-jdk8</artifactId>
+      <version>${org.mapstruct.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+      <version>${hutool.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <source>${java.version}</source> <!-- or higher, depending on your project -->
+          <target>${java.version}</target> <!-- or higher, depending on your project -->
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>${org.mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
@@ -121,6 +160,7 @@
           </excludes>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.xolstice.maven.plugins</groupId>
         <artifactId>protobuf-maven-plugin</artifactId>

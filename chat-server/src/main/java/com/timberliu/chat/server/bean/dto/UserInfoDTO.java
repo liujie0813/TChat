@@ -18,25 +18,53 @@ public class UserInfoDTO {
 	 */
 	private String token;
 
+	/**
+	 * 用户Id
+	 */
 	private Long userId;
 
 	/**
-	 * 用户名
+	 * 账号
 	 */
-	private String username;
-
-	private String signature;
-
 	private String account;
 
-	private Integer sex;
+	/**
+	 * 昵称
+	 */
+	private String nickname;
 
+	/**
+	 * 密码
+	 */
+	private String password;
+
+	/**
+	 * 头像url
+	 */
+	private String avatarUrl;
+
+	/**
+	 * 手机号
+	 */
+	private String phone;
+
+	/**
+	 * 性别
+	 */
+	private Integer gender;
+
+	/**
+	 * 地区-省份
+	 */
 	private String province;
 
+	/**
+	 * 地区-市县
+	 */
 	private String city;
 
 	/**
-	 * 头像地址
+	 * 个性签名
 	 */
-	private String avatarUrl;
+	private String signature;
 }

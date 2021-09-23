@@ -1,10 +1,9 @@
-package com.timberliu.chat.server.bean.entity;
+package com.timberliu.chat.server.dao.mysql.entity;
 
+import com.timberliu.chat.server.dao.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,9 +16,9 @@ import lombok.EqualsAndHashCode;
  * @since 2021-09-23
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@TableName("person_relation")
-public class PersonRelationEntity implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@TableName("user_relation")
+public class UserRelationEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,10 +39,6 @@ public class PersonRelationEntity implements Serializable {
      * 好友昵称备注
      */
     private String subNicknameRemark;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
 
 
 }

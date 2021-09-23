@@ -4,13 +4,11 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.generator.config.rules.FileType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
+import com.timberliu.chat.server.dao.BaseEntity;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +42,8 @@ public class TChatAutoGenerator {
 		// 包配置
 		PackageConfig pc = new PackageConfig();
 		pc.setParent("com.timberliu.chat.server");
-		pc.setEntity("bean.entity");
+		pc.setEntity("dao.mysql.entity");
+		pc.setMapper("dao.mysql.mapper");
 		mpg.setPackageInfo(pc);
 
 		// 自定义配置
@@ -103,14 +102,14 @@ public class TChatAutoGenerator {
 		StrategyConfig strategy = new StrategyConfig();
 		strategy.setNaming(NamingStrategy.underline_to_camel);
 		strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-//		strategy.setSuperEntityClass("你自己的父类实体,没有就不用设置!");
+		strategy.setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel);
 		strategy.setEntityLombokModel(true);
 		strategy.setRestControllerStyle(false);
 		// 公共父类
 //		strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
 		// 写于父类中的公共字段
-//		strategy.setSuperEntityColumns("id");
-		strategy.setInclude("person_info", "person_relation", "group_info", "group_person_info", "history_msg_single", "history_msg_group");
+		strategy.setSuperEntityColumns("create_time", "update_time");
+		strategy.setInclude("user_info", "user_relation", "group_info", "group_user_relation", "history_msg_single", "history_msg_group");
 //		strategy.setControllerMappingHyphenStyle(true);
 //		strategy.setTablePrefix(pc.getModuleName() + "_");
 		mpg.setStrategy(strategy);

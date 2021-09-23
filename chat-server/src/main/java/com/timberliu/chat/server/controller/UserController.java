@@ -2,12 +2,12 @@ package com.timberliu.chat.server.controller;
 
 import com.timberliu.chat.server.bean.ApiResult;
 import com.timberliu.chat.server.bean.dto.UserInfoDTO;
+import com.timberliu.chat.server.bean.dto.UserLoginReqDTO;
+import com.timberliu.chat.server.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.UUID;
 
 /**
@@ -19,21 +19,20 @@ import java.util.UUID;
 @Slf4j
 public class UserController {
 
-	@GetMapping("/login")
-	public ApiResult<UserInfoDTO> login(@RequestParam("username") String username,
-										@RequestParam("password") String password) {
-		log.info("[login] request param, username: {}, password: {}", username, password);
-		UserInfoDTO loginResponseDTO = new UserInfoDTO();
-		loginResponseDTO.setToken(UUID.randomUUID().toString());
-		loginResponseDTO.setUserId(1L);
-		loginResponseDTO.setUsername(username);
-		loginResponseDTO.setSignature("haha");
-		loginResponseDTO.setAccount("1");
-		loginResponseDTO.setSex(0);
-		loginResponseDTO.setProvince("China");
-		loginResponseDTO.setCity("China");
-		loginResponseDTO.setAvatarUrl("https://oss.timberliu.com/avatars/20210922/head_portrait.png");
-		return ApiResult.success(loginResponseDTO);
+	@Resource
+	private IUserService userService;
+
+	@PostMapping("/login")
+	public ApiResult<UserInfoDTO> login(UserLoginReqDTO userLoginReqDTO) {
+		log.info("[login] request param, userLoginReqDTO: {}", userLoginReqDTO);
+		UserInfoDTO userInfoDTO = userService.login(userLoginReqDTO);
+		return ApiResult.success(userInfoDTO);
+	}
+
+	@GetMapping("/existAccount")
+	public ApiResult<Boolean> existAccount(@RequestParam("account") String account) {
+		Boolean exist = userService.existAccount(account);
+		return ApiResult.success(exist);
 	}
 
 }

@@ -1,6 +1,6 @@
-package com.timberliu.chat.server.mapper;
+package com.timberliu.chat.server.dao.mysql.mapper;
 
-import com.timberliu.chat.server.bean.entity.HistoryMsgGroupEntity;
+import com.timberliu.chat.server.dao.mysql.entity.HistoryMsgGroupEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

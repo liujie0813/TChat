@@ -1,10 +1,9 @@
-package com.timberliu.chat.server.bean.entity;
+package com.timberliu.chat.server.dao.mysql.entity;
 
+import com.timberliu.chat.server.dao.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,9 +16,9 @@ import lombok.EqualsAndHashCode;
  * @since 2021-09-23
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@TableName("person_info")
-public class PersonInfoEntity implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@TableName("user_info")
+public class UserInfoEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,7 +28,12 @@ public class PersonInfoEntity implements Serializable {
     /**
      * 用户Id
      */
-    private Long personId;
+    private Long userId;
+
+    /**
+     * 账号
+     */
+    private String account;
 
     /**
      * 昵称
@@ -37,14 +41,14 @@ public class PersonInfoEntity implements Serializable {
     private String nickname;
 
     /**
-     * 昵称备注
-     */
-    private String nicknameRemark;
-
-    /**
-     * 密码
+     * 加密后的密码
      */
     private String password;
+
+    /**
+     * 密码的盐值
+     */
+    private String passwordSalt;
 
     /**
      * 头像url
@@ -59,7 +63,7 @@ public class PersonInfoEntity implements Serializable {
     /**
      * 性别
      */
-    private Boolean gender;
+    private Integer gender;
 
     /**
      * 地区-省份
@@ -75,10 +79,6 @@ public class PersonInfoEntity implements Serializable {
      * 个性签名
      */
     private String signature;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
 
 
 }
