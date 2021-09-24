@@ -1,27 +1,20 @@
-package com.timberliu.chat.server.bean.dto;
+package com.timberliu.chat.server.bean.dto.user;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author liujie
- * @date 2021/9/2
+ * @date 2021/9/24
  */
-@Getter
-@Setter
-@ToString
+@Data
+@Accessors(chain = true)
 public class UserInfoDTO {
-
-	/**
-	 * token
-	 */
-	private String token;
 
 	/**
 	 * 用户Id
 	 */
-	private Long userId;
+	private Long id;
 
 	/**
 	 * 账号
@@ -32,11 +25,6 @@ public class UserInfoDTO {
 	 * 昵称
 	 */
 	private String nickname;
-
-	/**
-	 * 密码
-	 */
-	private String password;
 
 	/**
 	 * 头像url
@@ -67,4 +55,5 @@ public class UserInfoDTO {
 	 * 个性签名
 	 */
 	private String signature;
+
 }

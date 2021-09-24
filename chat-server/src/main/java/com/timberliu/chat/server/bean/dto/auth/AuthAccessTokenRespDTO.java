@@ -1,10 +1,11 @@
-package com.timberliu.chat.server.bean.dto;
+package com.timberliu.chat.server.bean.dto.auth;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Timber
@@ -12,7 +13,17 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-public class AuthRefreshTokenReqDTO implements Serializable {
+public class AuthAccessTokenRespDTO implements Serializable {
+
+	/**
+	 * 用户Id
+	 */
+	private Long userId;
+
+	/**
+	 * 访问令牌
+	 */
+	private String accessToken;
 
 	/**
 	 * 刷新令牌
@@ -20,7 +31,8 @@ public class AuthRefreshTokenReqDTO implements Serializable {
 	private String refreshToken;
 
 	/**
-	 * 创建IP
+	 * 过期时间
 	 */
-	private String createIp;
+	private Date expireTime;
+
 }

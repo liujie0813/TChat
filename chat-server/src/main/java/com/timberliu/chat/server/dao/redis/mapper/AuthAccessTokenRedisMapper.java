@@ -17,22 +17,22 @@ import static com.timberliu.chat.server.dao.redis.RedisKeyEnum.AUTH_ACCESS_TOKEN
 public class AuthAccessTokenRedisMapper {
 
 	@Resource
-	private StringRedisTemplate redisTemplate;
+	private StringRedisTemplate stringRedisTemplate;
 
 	public AuthAccessTokenEntity get(String accessToken) {
 		String redisKey = formatKey(accessToken);
-		String tokenStr = redisTemplate.opsForValue().get(redisKey);
+		String tokenStr = stringRedisTemplate.opsForValue().get(redisKey);
 		return JSON.parseObject(tokenStr, AuthAccessTokenEntity.class);
 	}
 
 	public void set(AuthAccessTokenEntity tokenEntity) {
 		String redisKey = formatKey(tokenEntity.getAccessToken());
-		redisTemplate.opsForValue().set(redisKey, JSON.toJSONString(tokenEntity), AUTH_ACCESS_TOKEN.getTimeout());
+		stringRedisTemplate.opsForValue().set(redisKey, JSON.toJSONString(tokenEntity), AUTH_ACCESS_TOKEN.getTimeout());
 	}
 
 	public void delete(String accessToken) {
 		String redisKey = formatKey(accessToken);
-		redisTemplate.delete(redisKey);
+		stringRedisTemplate.delete(redisKey);
 	}
 
 	private static String formatKey(String accessToken) {

@@ -5,9 +5,9 @@ import {useDispatch, useSelector} from 'react-redux'
 import {Button, Form, Input, message} from 'antd'
 import './login.css'
 
-import {setChatList, setContactList, setUserInfo} from "../../store/features/UserSlice";
+import {setChatList, setContactList, setUserInfo} from "../../store/features/userSlice";
 import {createWebSocket} from "../../components/websocket";
-import {initChatRecord} from "../../store/features/TalkRecord";
+import {initChatRecord} from "../../store/features/talkRecord";
 
 export default function Login() {
 	const { userInfo } = useSelector(state => state.user)
@@ -77,7 +77,7 @@ export default function Login() {
 	const toLogin = async (params) => {
 		console.log("toLogin req: ", params)
 		try {
-			const res = await axios.get('http://localhost:18080/user/login', { params });
+			const res = await axios.post('http://localhost:18080/user/login', params);
 			const payload = res.data;
 			console.log("toLogin resp: ", payload)
 			if (payload.code === 0) {
@@ -108,7 +108,7 @@ export default function Login() {
 						wrapperCol={{ span: 8 }}
 						onFinish={toLogin}
 					>
-						<Form.Item label="账号" name="username"
+						<Form.Item label="账号" name="account"
 							rules={[
 								{
 									required: true,

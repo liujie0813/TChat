@@ -1,4 +1,4 @@
-package com.timberliu.chat.server.bean.dto;
+package com.timberliu.chat.server.bean.dto.auth;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

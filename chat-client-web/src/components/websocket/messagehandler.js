@@ -1,6 +1,6 @@
 import { messageType } from './messageType'
 import store from '../../store/index'
-import {updateChatRecord} from '../../store/features/TalkRecord'
+import {updateChatRecord} from '../../store/features/talkRecord'
 
 const ackMap = new Map();
 const commandMap = new Map();

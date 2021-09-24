@@ -5,9 +5,9 @@ import img1 from '../../common/images/head_portrait.png';
 import img6 from '../../common/images/quit.png';
 import SearchBox from "../../components/search";
 import {useDispatch, useSelector} from "react-redux";
-import {setChatData, setContactData, setMenuData, setShowUserInfo,} from "../../store/features/UserSlice";
+import {setChatData, setContactData, setMenuData, setShowUserInfo,} from "../../store/features/userSlice";
 import DataPage from "../../components/dataPage";
-import UserInfoModal from "../../components/person/personInfo";
+import UserInfoModal, {getAvatar} from "../../components/person/personInfo";
 
 const { TabPane } = Tabs;
 
@@ -46,13 +46,13 @@ export default function Home() {
 
 	return (
 		<div style={{ display: 'flex', height: '100vh' }}>
-			<Tabs tabPosition='left' style={{ backgroundColor: '#e5e5e4', width: '330px', minWidth: '330px' }}
+			<Tabs tabPosition='left' style={{ backgroundColor: '#e5e5e4', width: '371px', minWidth: '371px' }}
 						activeKey={activeMenu}
 						onTabClick={ tabClick }>
 				{/* 头像 */}
 				<TabPane tab={
-						<div style={{ padding: '20px 10px 10px' }}>
-							<Avatar size={40} src={userInfo.avatarUrl} />
+						<div style={{ padding: '20px 12px 12px' }}>
+							{ getAvatar(userInfo, 48, '1px solid #888') }
 						</div>
 					}
 					key="avatar">
@@ -60,12 +60,12 @@ export default function Home() {
 
 				{/* 聊天菜单 */}
 				<TabPane tab={
-					<div style={{ padding: '2px 18px 18px' }}>
-						<Avatar shape="square" size={24} src={chatMenuImg.img}/>
+					<div style={{ padding: '6px 22px 22px' }}>
+						<Avatar shape="square" size={28} src={chatMenuImg.img}/>
 					</div>
 				} key="chatMenu">
 
-					<div style={{ width: '270px', backgroundColor: '#f7f7f7', borderRight: 'solid 1px #e0e0e0' }}>
+					<div style={{ width: '300px', backgroundColor: '#f7f7f7', borderRight: 'solid 1px #e0e0e0' }}>
 						{/* 搜索框 */}
 						<SearchBox/>
 
@@ -87,7 +87,7 @@ export default function Home() {
 								}
 								return (
 									<TabPane tab={
-											<div style={{ width: '270px', height: '48px', padding: '4px 0 26px 0', borderBottom: 'solid 1px #e0e0e0' }}>
+											<div style={{ width: '300px', height: '48px', padding: '4px 0 26px 0', borderBottom: 'solid 1px #e0e0e0' }}>
 												{chat.talkName}
 											</div>
 										}
@@ -101,12 +101,12 @@ export default function Home() {
 
 				{/* 联系人菜单 */}
 				<TabPane tab={
-					<div style={{ padding: '2px 18px 18px' }}>
-						<Avatar shape="square" size={24} src={contactMenuImg.img}/>
+					<div style={{ padding: '6px 22px 22px' }}>
+						<Avatar shape="square" size={28} src={contactMenuImg.img}/>
 					</div>
 				} key="contactMenu">
 
-					<div style={{ width: '270px', backgroundColor: '#f7f7f7', borderRight: 'solid 1px #e0e0e0' }}>
+					<div style={{ width: '300px', backgroundColor: '#f7f7f7', borderRight: 'solid 1px #e0e0e0' }}>
 						<SearchBox/>
 
 						{/* 联系人列表 */}
@@ -126,7 +126,7 @@ export default function Home() {
 								}
 								return (
 									<TabPane tab={
-										<div style={{ width: '270px', height: '48px', padding: '4px 0 26px 0', borderBottom: 'solid 1px #e0e0e0' }}>
+										<div style={{ width: '300px', height: '48px', padding: '4px 0 26px 0', borderBottom: 'solid 1px #e0e0e0' }}>
 											{contact.username}
 										</div>
 									} key={contact.userId}>
@@ -139,8 +139,8 @@ export default function Home() {
 
 				{/* 退出 */}
 				<TabPane tab={
-						<div style={{ padding: '2px 18px 16px 20px' }}>
-							<Avatar shape="square" size={22} src={img6}/>
+						<div style={{ padding: '6px 22px 18px 26px' }}>
+							<Avatar shape="square" size={24} src={img6}/>
 						</div>
 					}
 					disabled

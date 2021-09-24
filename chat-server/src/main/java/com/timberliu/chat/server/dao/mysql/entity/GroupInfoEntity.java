@@ -22,13 +22,11 @@ public class GroupInfoEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
     /**
      * 群组Id
      */
-    private Long groupId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 群组名称

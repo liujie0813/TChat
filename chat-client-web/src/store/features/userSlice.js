@@ -27,6 +27,9 @@ export const userSlice = createSlice({
 		setUserInfo: (state, action) => {
 			state.userInfo = action.payload;
 		},
+		setLoginToken: (state, action) => {
+			state.userInfo['accessToken'] = action.payload.accessToken;
+		},
 		setShowUserInfo: (state, action) => {
 			state.userInfoVisible = action.payload;
 		},

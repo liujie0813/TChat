@@ -1,5 +1,6 @@
 package com.timberliu.chat.server.bean;
 
+import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,7 +26,7 @@ public class ApiResult<T> {
 		ApiResult<T> result = new ApiResult<>();
 		result.code = 0;
 		result.data = data;
-		result.msg = "";
+		result.msg = "success";
 		return result;
 	}
 
@@ -35,4 +36,16 @@ public class ApiResult<T> {
 		result.msg = message;
 		return result;
 	}
+
+	public static <T> ApiResult<T> error(ErrorCodeEnum errorCodeEnum) {
+		return error(errorCodeEnum.getCode(), errorCodeEnum.getMsg());
+	}
+
+	public static <T> ApiResult<T> error(ErrorCodeEnum errorCodeEnum, String msg) {
+		ApiResult<T> result = new ApiResult<>();
+		result.code = errorCodeEnum.getCode();
+		result.msg = msg;
+		return result;
+	}
+
 }

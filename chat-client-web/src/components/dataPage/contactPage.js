@@ -1,7 +1,7 @@
 import {Button, Image} from "antd";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setOrUpdateChatData} from '../../store/features/UserSlice'
+import {setOrUpdateChatData} from '../../store/features/userSlice'
 import img1 from '../../common/images/avator/boy_avator01.svg';
 import img2 from '../../common/images/avator/boy_avator02.svg';
 import img3 from '../../common/images/avator/boy_avator03.svg';

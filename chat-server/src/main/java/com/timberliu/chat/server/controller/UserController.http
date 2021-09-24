@@ -1,0 +1,14 @@
+POST http://localhost:18080/user/login
+Content-Type: application/json
+
+{
+  "account": "tchat1024",
+  "password": "tchat1024"
+}
+
+###
+GET http://localhost:18080/user/existAccount?account=tchat1024
+Accept: application/json
+
+###
+

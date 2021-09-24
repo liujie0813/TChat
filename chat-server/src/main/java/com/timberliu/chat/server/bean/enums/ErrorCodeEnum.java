@@ -36,8 +36,9 @@ public enum ErrorCodeEnum {
 	METHOD_NOT_ALLOWED(405, "请求方法不正确"),
 	INTERNAL_SERVER_ERROR(500, "系统异常"),
 
-	// 登录模块
-	ACCOUNT_EXIST(101001, "账号已存在"),
+	// 用户模块
+	USER_ACCOUNT_EXIST(101001, "账号已存在"),
+	USER_PASSWORD_NOT_CORRECT(101002, "密码不正确"),
 
 	// 认证模块
 	AUTH_ACCESS_TOKEN_NOT_FOUND(102001, "访问令牌不存在"),

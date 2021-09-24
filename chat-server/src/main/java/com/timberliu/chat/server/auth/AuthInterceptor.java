@@ -1,13 +1,12 @@
 package com.timberliu.chat.server.auth;
 
-import com.timberliu.chat.server.bean.dto.AuthAccessTokenRespDTO;
+import com.timberliu.chat.server.bean.dto.auth.AuthAccessTokenRespDTO;
 import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
-import com.timberliu.chat.server.dao.redis.entity.AuthAccessTokenEntity;
 import com.timberliu.chat.server.exception.BizException;
 import com.timberliu.chat.server.service.IAuthService;
-import com.timberliu.chat.server.service.IUserService;
 import com.timberliu.chat.server.util.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,7 +27,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		Long userId = obtainUserId(request);
-		if (userId == null) {
+		if (!((HandlerMethod) handler).hasMethodAnnotation(NotRequireAuth.class) && userId == null) {
+			// 需要登录认证，且没有 userId
 			throw new BizException(ErrorCodeEnum.UNAUTHORIZED);
 		}
 		return true;

@@ -1,5 +1,5 @@
 import {message} from 'antd'
-import {byteToString, stringToByte} from "../../common/js/StringByte";
+import {byteToString, stringToByte} from "../../common/util/stringUtil";
 import {addAckQueue, handleMessage} from "./messagehandler";
 
 let socket;

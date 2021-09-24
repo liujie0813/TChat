@@ -1,6 +1,6 @@
 package com.timberliu.chat.server.bean.convert;
 
-import com.timberliu.chat.server.bean.dto.AuthAccessTokenRespDTO;
+import com.timberliu.chat.server.bean.dto.auth.AuthAccessTokenRespDTO;
 import com.timberliu.chat.server.dao.mysql.entity.AuthAccessTokenEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

@@ -1,8 +1,7 @@
 package com.timberliu.chat.server.service;
 
-import com.timberliu.chat.server.bean.dto.UserInfoDTO;
-import com.timberliu.chat.server.bean.dto.UserLoginReqDTO;
-import com.timberliu.chat.server.dao.redis.entity.AuthAccessTokenEntity;
+import com.timberliu.chat.server.bean.dto.user.UserLoginReqDTO;
+import com.timberliu.chat.server.bean.dto.user.UserLoginRespDTO;
 
 /**
  * @author liujie
@@ -15,7 +14,7 @@ public interface IUserService {
 	 * 登录
 	 *   返回携带 token
 	 */
-	UserInfoDTO login(UserLoginReqDTO userLoginReqDTO);
+	UserLoginRespDTO login(UserLoginReqDTO userLoginReqDTO, String createIp);
 
 	/**
 	 * 校验账号是否存在

@@ -1,6 +1,6 @@
 package com.timberliu.chat.server.dao.redis;
 
-import com.timberliu.chat.server.dao.redis.entity.AuthAccessTokenEntity;
+import com.timberliu.chat.server.dao.mysql.entity.AuthAccessTokenEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

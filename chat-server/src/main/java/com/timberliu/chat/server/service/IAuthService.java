@@ -1,8 +1,8 @@
 package com.timberliu.chat.server.service;
 
-import com.timberliu.chat.server.bean.dto.AuthAccessTokenRespDTO;
-import com.timberliu.chat.server.bean.dto.AuthCreateTokenReqDTO;
-import com.timberliu.chat.server.bean.dto.AuthRefreshTokenReqDTO;
+import com.timberliu.chat.server.bean.dto.auth.AuthAccessTokenRespDTO;
+import com.timberliu.chat.server.bean.dto.auth.AuthCreateTokenReqDTO;
+import com.timberliu.chat.server.bean.dto.auth.AuthRefreshTokenReqDTO;
 
 /**
  * @author Timber

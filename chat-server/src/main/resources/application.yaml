@@ -11,9 +11,15 @@ netty:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://123.56.9.126:3306?t_chat
+    url: jdbc:mysql://123.56.9.126:3306/t_chat?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT
     username: root
     password: WfNYnraEOynLn87e
+
+  redis:
+    host: 123.56.9.126
+    port: 6379
+    password: gNVA3tluQAkuKVWn
+    database: 0
 
 mybatis-plus:
   global-config:
@@ -23,6 +29,6 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑为删除值（默认为 0）
 
 auth:
-  expire-times: # 单位为 min
-    access-token: 2*60
-    refresh-token: 7*24*60
+  expire-times: # 单位：min
+    access-token: 120 # 2hour
+    refresh-token: 10080 # 7day

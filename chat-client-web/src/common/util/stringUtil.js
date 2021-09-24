@@ -64,7 +64,13 @@ function byteToInt4(bytes) {
 	return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
 }
 
+function isDigitOrLetter(val) {
+	var regex = /^[A-Za-z0-9]*$/
+	return regex.test(val);
+}
+
 export {
 	stringToByte, byteToString,
-	int4ToByte, byteToInt4
+	int4ToByte, byteToInt4,
+	isDigitOrLetter
 }
