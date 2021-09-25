@@ -13,7 +13,7 @@ export default function UserInfoModal() {
 
 	const cancelShowUserInfo = () => {
 		dispatch(setShowUserInfo(false))
-	}
+	};
 
 	return (
 		<Modal visible={userInfoVisible}
@@ -31,7 +31,7 @@ export default function UserInfoModal() {
 					<div style={{ paddingTop: '8px' }}>{userInfo.signature}</div>
 				</div>
 				<div style={{ width: '80px' }}>
-					{ getAvatar(userInfo, 80, null) }
+					{ getAvatar(userInfo, 80) }
 				</div>
 			</div>
 			<div style={{ padding: '30px 0', minWidth: '304px' }}>
@@ -52,22 +52,23 @@ export default function UserInfoModal() {
 	)
 }
 
-export function getAvatar(userInfoParam, size, border) {
+export function getAvatar(userInfoParam, size) {
 	if (userInfoParam.avatarUrl) {
 		return (
 			<Avatar src={userInfoParam.avatarUrl} size={size}/>
 		)
 	} else {
 		let showName;
-		if (userInfoParam.nickname && isDigitOrLetter(userInfoParam.nickname.charAt(0))) {
-			showName = userInfoParam.nickname.charAt(0);
-		} else {
-			showName = userInfoParam.account.charAt(0);
+		if (userInfoParam.nickname && isDigitOrLetter(userInfoParam.nickname.substring(0, 6))) {
+			showName = userInfoParam.nickname.substring(0, 6);
+		} else if (userInfoParam.account) {
+			showName = userInfoParam.account.substring(0, 6);
 		}
-		let backgroundColor = getColor(userInfoParam.account.charAt(0));
+		let backgroundColor = getColor(userInfoParam.account);
+		let gap = parseInt(size / 10);
 		return (
-			<Avatar style={{ color: '#fff', backgroundColor, border }} size={size}>
-				<span style={{ fontSize: size/2.4 }}>{showName}</span>
+			<Avatar style={{ color: '#fff', backgroundColor }} size={size} gap={gap}>
+				{showName}
 			</Avatar>
 		)
 	}

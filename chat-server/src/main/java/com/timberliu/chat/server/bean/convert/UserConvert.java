@@ -1,10 +1,12 @@
 package com.timberliu.chat.server.bean.convert;
 
 import com.timberliu.chat.server.bean.dto.auth.AuthAccessTokenRespDTO;
+import com.timberliu.chat.server.bean.dto.user.UserInfoDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginReqDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginRespDTO;
 import com.timberliu.chat.server.dao.mysql.entity.UserInfoEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -18,6 +20,9 @@ public interface UserConvert {
 
 	UserInfoEntity convert(UserLoginReqDTO userLoginReqDTO);
 
-	UserLoginRespDTO convert(UserInfoEntity userInfoEntity, AuthAccessTokenRespDTO accessTokenRespDTO);
+	@Mapping(source = "id", target = "userId")
+	UserInfoDTO convert(UserInfoEntity userInfoEntity);
+
+	UserLoginRespDTO convert(AuthAccessTokenRespDTO authAccessTokenRespDTO);
 
 }

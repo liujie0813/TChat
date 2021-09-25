@@ -14,7 +14,7 @@ const createWebSocket = () => {
 		return
 	}
 	socket.onopen = () => {
-		console.log('Connection established ！')
+		console.log('[websocket] connection established ！')
 		// 心跳检测
 	};
 	socket.onmessage = (event) => recvMsg(event);

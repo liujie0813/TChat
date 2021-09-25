@@ -20,8 +20,7 @@ export const talkRecord = createSlice({
 	},
 	reducers: {
 		initChatRecord: (state, { payload }) => {
-			const { data } = payload;
-			for (const chatRecord of data) {
+			for (const chatRecord of payload) {
 				state.chatRecords[chatRecord.talkId] = chatRecord
 			}
 		},

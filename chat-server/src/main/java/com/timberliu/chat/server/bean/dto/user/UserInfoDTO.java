@@ -14,7 +14,7 @@ public class UserInfoDTO {
 	/**
 	 * 用户Id
 	 */
-	private Long id;
+	private Long userId;
 
 	/**
 	 * 账号

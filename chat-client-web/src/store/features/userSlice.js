@@ -7,6 +7,7 @@ import img5 from '../../common/images/contact_active.png';
 export const userSlice = createSlice({
 	name: 'users',
 	initialState: {
+		authToken: {},
 		userInfo: {},
 		userInfoVisible: false,
 		activeMenu: 'chatMenu',
@@ -24,11 +25,11 @@ export const userSlice = createSlice({
 		}
 	},
 	reducers: {
+		setAuthToken: (state, action) => {
+			state.authToken = action.payload;
+		},
 		setUserInfo: (state, action) => {
 			state.userInfo = action.payload;
-		},
-		setLoginToken: (state, action) => {
-			state.userInfo['accessToken'] = action.payload.accessToken;
 		},
 		setShowUserInfo: (state, action) => {
 			state.userInfoVisible = action.payload;
@@ -94,6 +95,7 @@ export const userSlice = createSlice({
 });
 
 export const {
+	setAuthToken,
 	setUserInfo, setShowUserInfo,
 	setChatList, setContactList,
 	setMenuData, setChatData, setContactData,

@@ -5,8 +5,8 @@ import com.timberliu.chat.server.bean.convert.UserConvert;
 import com.timberliu.chat.server.bean.dto.auth.AuthAccessTokenRespDTO;
 import com.timberliu.chat.server.bean.dto.auth.AuthCreateTokenReqDTO;
 import com.timberliu.chat.server.bean.dto.user.UserInfoDTO;
-import com.timberliu.chat.server.bean.dto.user.UserLoginRespDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginReqDTO;
+import com.timberliu.chat.server.bean.dto.user.UserLoginRespDTO;
 import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
 import com.timberliu.chat.server.dao.mysql.entity.UserInfoEntity;
 import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
@@ -47,7 +47,10 @@ public class UserServiceImpl implements IUserService {
 		// 创建访问令牌
 		AuthAccessTokenRespDTO accessTokenRespDTO = authService.createAccessToken(
 				new AuthCreateTokenReqDTO().setUserId(userInfoEntity.getId()).setCreateIp(createIp));
-		return UserConvert.INSTANCE.convert(userInfoEntity, accessTokenRespDTO);
+		UserLoginRespDTO userLoginRespDTO = UserConvert.INSTANCE.convert(accessTokenRespDTO);
+		UserInfoDTO userInfoDTO = UserConvert.INSTANCE.convert(userInfoEntity);
+		userLoginRespDTO.setUserInfoDTO(userInfoDTO);
+		return userLoginRespDTO;
 	}
 
 	private void verifyPassword(UserLoginReqDTO userLoginReqDTO, UserInfoEntity userInfoEntity) {

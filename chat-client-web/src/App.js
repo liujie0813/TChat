@@ -5,11 +5,11 @@ import {HashRouter, Route, Switch} from 'react-router-dom'
 import {useSelector} from "react-redux";
 
 function App() {
-  const { userInfo } = useSelector(state => state.user)
+  const { authToken } = useSelector(state => state.user);
 
   const checkLogin = () => {
-    console.log('[checkLogin]', userInfo['accessToken'])
-    let isLogin = userInfo['accessToken'] && userInfo['accessToken'].length > 0;
+    console.log('[checkLogin]', authToken.accessToken);
+    let isLogin = authToken.accessToken && authToken.accessToken.length > 0;
     return isLogin ? (
       <Home/>
     ) : (

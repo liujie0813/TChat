@@ -52,7 +52,7 @@ export default function Home() {
 				{/* 头像 */}
 				<TabPane tab={
 						<div style={{ padding: '20px 12px 12px' }}>
-							{ getAvatar(userInfo, 48, '1px solid #888') }
+							{ getAvatar(userInfo, 48) }
 						</div>
 					}
 					key="avatar">
