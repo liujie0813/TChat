@@ -27,6 +27,9 @@ mybatis-plus:
       logic-delete-field: deleted
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑为删除值（默认为 0）
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath*:/mappers/**.xml
 
 auth:
   expire-times: # 单位：min

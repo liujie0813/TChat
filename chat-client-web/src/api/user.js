@@ -2,7 +2,7 @@ import request from "../common/js/request";
 
 export function loginByAccount(account, password) {
 	return request({
-		url: '/user/login',
+		url: '/user/login-by-account',
 		method: 'POST',
 		data: {
 			account,
@@ -23,7 +23,7 @@ export function getTalkList(userId) {
 
 export function getContactList(userId) {
 	return request({
-		url: '/contact/getContactList',
+		url: '/contact/get-contacts',
 		method: 'GET',
 		params: {
 			userId
@@ -37,6 +37,27 @@ export function getChatRecords(userId) {
 		method: 'GET',
 		params: {
 			userId
+		}
+	})
+}
+
+export function searchByAccount(account) {
+	return request({
+		url: '/user/search-by-account',
+		method: 'GET',
+		params: {
+			account
+		}
+	})
+}
+
+export function addContact(mainUserId, subUserId) {
+	return request({
+		url: '/contact/add-contact',
+		method: 'GET',
+		params: {
+			mainUserId,
+			subUserId
 		}
 	})
 }

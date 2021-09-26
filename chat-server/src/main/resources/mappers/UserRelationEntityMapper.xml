@@ -2,4 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper">
 
+  <select id="getContactList" resultType="com.timberliu.chat.server.bean.dto.ContactDTO">
+    SELECT ui.*, ui.id as userId, ur.sub_nickname_remark as nickenameRemark
+    FROM user_relation ur LEFT JOIN user_info ui
+      ON ur.sub_user = ui.id
+    WHERE ur.main_user = #{userId}
+  </select>
+
 </mapper>

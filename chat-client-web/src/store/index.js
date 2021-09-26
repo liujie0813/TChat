@@ -5,17 +5,25 @@ import talkRecord from "./features/talkRecord";
 import persistReducer from "redux-persist/es/persistReducer";
 import thunk from "redux-thunk";
 
-const reducers = combineReducers({
+const appReducers = combineReducers({
 	user: userSlice,
 	talk: talkRecord
 });
+
+const rootReducers = (state, action) => {
+	if (action.type === 'users/logout') {
+		storage.removeItem('persist:root')
+		return appReducers(undefined, action);
+	}
+	return appReducers(state, action)
+}
 
 const persistConfig = {
 	key: 'root',
 	storage
 };
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+const persistedReducer = persistReducer(persistConfig, rootReducers);
 
 const store = configureStore({
 	reducer: persistedReducer,

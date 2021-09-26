@@ -1,5 +1,6 @@
 package com.timberliu.chat.server.bean.convert;
 
+import com.timberliu.chat.server.bean.dto.SearchAccountRespDTO;
 import com.timberliu.chat.server.bean.dto.auth.AuthAccessTokenRespDTO;
 import com.timberliu.chat.server.bean.dto.user.UserInfoDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginReqDTO;
@@ -24,5 +25,8 @@ public interface UserConvert {
 	UserInfoDTO convert(UserInfoEntity userInfoEntity);
 
 	UserLoginRespDTO convert(AuthAccessTokenRespDTO authAccessTokenRespDTO);
+
+	@Mapping(source = "id", target = "userId")
+	SearchAccountRespDTO convertSearch(UserInfoEntity userInfoEntity);
 
 }

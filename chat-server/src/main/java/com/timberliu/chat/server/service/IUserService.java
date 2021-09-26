@@ -1,5 +1,6 @@
 package com.timberliu.chat.server.service;
 
+import com.timberliu.chat.server.bean.dto.SearchAccountRespDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginReqDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginRespDTO;
 
@@ -20,5 +21,10 @@ public interface IUserService {
 	 * 校验账号是否存在
 	 */
 	Boolean existAccount(String account);
+
+	/**
+	 * 根据账号搜索
+	 */
+	SearchAccountRespDTO searchByAccount(String account);
 
 }

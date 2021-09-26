@@ -39,6 +39,7 @@ public enum ErrorCodeEnum {
 	// 用户模块
 	USER_ACCOUNT_EXIST(101001, "账号已存在"),
 	USER_PASSWORD_NOT_CORRECT(101002, "密码不正确"),
+	USER_USERID_NOT_EXIST(101003, "用户不存在"),
 
 	// 认证模块
 	AUTH_ACCESS_TOKEN_NOT_FOUND(102001, "访问令牌不存在"),

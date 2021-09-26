@@ -1,11 +1,11 @@
 import React from 'react'
 import {useHistory} from 'react-router-dom'
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import {Button, Form, Input} from 'antd'
 import './login.css'
 
 
-import {setAuthToken, setChatList, setContactList, setUserInfo} from "../../store/features/userSlice";
+import {setChatList, setContactList, setLoginResp} from "../../store/features/userSlice";
 import {createWebSocket} from "../../components/websocket";
 import {initChatRecord} from "../../store/features/talkRecord";
 import {getChatRecords, getContactList, getTalkList, loginByAccount} from "../../api/user";
@@ -23,7 +23,7 @@ export default function Login() {
 	const toGetTalkList = (userId) => {
 		let resp = getTalkList(userId);
 		resp.then(data => {
-			dispatch(setChatList([{talkId: -1}, ...data]));
+			dispatch(setChatList(data));
 		})
 	};
 
@@ -39,7 +39,7 @@ export default function Login() {
 	const toGetContactList = (userId) => {
 		let resp = getContactList(userId);
 		resp.then(data => {
-			dispatch(setContactList([{userId: -2}, ...data]));
+			dispatch(setContactList(data));
 		});
 	};
 
@@ -47,11 +47,7 @@ export default function Login() {
 	const toLogin = (params) => {
 		let resp = loginByAccount(params.account, params.password);
 		resp.then(data => {
-			dispatch(setAuthToken({
-				accessToken: data.accessToken,
-				refreshToken: data.refreshToken
-			}));
-			dispatch(setUserInfo(data.userInfoDTO));
+			dispatch(setLoginResp(data));
 			establishConnect();
 			let userId = data.userInfoDTO.userId;
 			toGetTalkList(userId);

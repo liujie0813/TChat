@@ -16,5 +16,6 @@ function getRefreshToken() {
 }
 
 export {
+	setLoginToken,
 	getAccessToken, getRefreshToken
 }

@@ -3,8 +3,10 @@ package com.timberliu.chat.server.controller;
 import com.timberliu.chat.server.bean.ApiResult;
 import com.timberliu.chat.server.bean.dto.ContactDTO;
 import com.timberliu.chat.server.bean.dto.GroupDTO;
+import com.timberliu.chat.server.service.IContactService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,20 +20,26 @@ import java.util.Random;
 @RequestMapping("/contact")
 public class ContactController {
 
-	@GetMapping("/getContactList")
-	public ApiResult getContactList(@RequestParam("userId") String userId) {
-		List<ContactDTO> contactDTOList = new ArrayList<>();
-		Random random = new Random();
-		for (int i = 100; i < 600; i += 100) {
-			// 100 200 300 400 500
-			contactDTOList.add(new ContactDTO((long) i, String.valueOf(i), random.nextInt(2),
-					"my signature is " + i + "。", "account_" + i,
-					"北京", "北京"));
-		}
-		return ApiResult.success(contactDTOList);
+	@Resource
+	private IContactService contactService;
+
+	/**
+	 * TODO 直接添加，无需同意
+	 */
+	@GetMapping("/add-contact")
+	public ApiResult<Boolean> addUser(@RequestParam("mainUserId") Long mainUserId,
+									  @RequestParam("subUserId") Long subUserId) {
+		Boolean success = contactService.addContact(mainUserId, subUserId);
+		return ApiResult.success(success);
 	}
 
-	@GetMapping("/getGroupList")
+	@GetMapping("/get-contacts")
+	public ApiResult<List<ContactDTO>> getContactList(@RequestParam("userId") Long userId) {
+		List<ContactDTO> contactList = contactService.getContactList(userId);
+		return ApiResult.success(contactList);
+	}
+
+	@GetMapping("/get-groups")
 	public ApiResult getGroupList(@RequestParam("userId") String userId) {
 		List<GroupDTO> groupDTOList = new ArrayList<>();
 		for (int i = 1000; i <= 4000; i += 2000) {

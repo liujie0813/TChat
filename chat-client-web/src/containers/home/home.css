@@ -1,0 +1,26 @@
+.contactList .ant-collapse {
+	border: 0;
+}
+
+.contactList .ant-collapse>.ant-collapse-item {
+	border: 0;
+	background-color: #f7f7f7;
+}
+
+.contactList .ant-collapse-content {
+	border-top: 0;
+}
+
+.contactList .ant-collapse-content>.ant-collapse-content-box {
+	padding: 0;
+	background-color: #f7f7f7;
+}
+
+.ant-tabs-left>.ant-tabs-content-holder {
+	background-color: #f7f7f7;
+	border-right: 1px solid #e0e0e0;
+}
+
+.contactList .ant-tabs-tab {
+	margin: 12px 0 0 !important;
+}

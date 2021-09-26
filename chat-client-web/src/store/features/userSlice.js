@@ -25,11 +25,16 @@ export const userSlice = createSlice({
 		}
 	},
 	reducers: {
-		setAuthToken: (state, action) => {
-			state.authToken = action.payload;
+		setAuthToken: (state, { payload }) => {
+			state.authToken = payload;
 		},
-		setUserInfo: (state, action) => {
-			state.userInfo = action.payload;
+		setUserInfo: (state, { payload }) => {
+			state.userInfo = payload;
+		},
+		setLoginResp: (state, { payload }) => {
+			state.authToken.accessToken = payload.accessToken;
+			state.authToken.refreshToken = payload.refreshToken;
+			state.userInfo = payload.userInfoDTO;
 		},
 		setShowUserInfo: (state, action) => {
 			state.userInfoVisible = action.payload;
@@ -89,17 +94,21 @@ export const userSlice = createSlice({
 				state.chatMap[action.payload.talkId] = chatListItem;
 				state.page.data = chatListItem
 			}
+		},
+		logout: (state, action) => {
+			console.log('[logout]')
 		}
 	},
 	extraReducers: {}
 });
 
 export const {
-	setAuthToken,
+	setAuthToken, setLoginResp,
 	setUserInfo, setShowUserInfo,
 	setChatList, setContactList,
 	setMenuData, setChatData, setContactData,
-	setOrUpdateChatData
+	setOrUpdateChatData,
+	logout
 } = userSlice.actions;
 
 export default userSlice.reducer

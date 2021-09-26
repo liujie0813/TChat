@@ -2,6 +2,7 @@ package com.timberliu.chat.server.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.timberliu.chat.server.bean.convert.UserConvert;
+import com.timberliu.chat.server.bean.dto.SearchAccountRespDTO;
 import com.timberliu.chat.server.bean.dto.auth.AuthAccessTokenRespDTO;
 import com.timberliu.chat.server.bean.dto.auth.AuthCreateTokenReqDTO;
 import com.timberliu.chat.server.bean.dto.user.UserInfoDTO;
@@ -9,7 +10,9 @@ import com.timberliu.chat.server.bean.dto.user.UserLoginReqDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginRespDTO;
 import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
 import com.timberliu.chat.server.dao.mysql.entity.UserInfoEntity;
+import com.timberliu.chat.server.dao.mysql.entity.UserRelationEntity;
 import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
+import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
 import com.timberliu.chat.server.exception.BizException;
 import com.timberliu.chat.server.service.IAuthService;
 import com.timberliu.chat.server.service.IUserService;
@@ -77,6 +80,14 @@ public class UserServiceImpl implements IUserService {
 		queryWrapper.eq("account", account);
 		Integer count = userInfoMapper.selectCount(queryWrapper);
 		return count > 0;
+	}
+
+	@Override
+	public SearchAccountRespDTO searchByAccount(String account) {
+		QueryWrapper<UserInfoEntity> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("account", account);
+		UserInfoEntity userInfoEntity = userInfoMapper.selectOne(queryWrapper);
+		return UserConvert.INSTANCE.convertSearch(userInfoEntity);
 	}
 
 }

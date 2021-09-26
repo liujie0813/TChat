@@ -1,0 +1,11 @@
+.addUser .ant-modal-content {
+	border-radius: 8px
+}
+
+.addUser .ant-modal-body {
+	padding: 10px
+}
+
+.addUser .ant-btn {
+	border: 0;
+}
