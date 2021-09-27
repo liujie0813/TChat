@@ -105,22 +105,6 @@ CREATE TABLE `history_msg` (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '历史消息表';
 
 -- ----------------------------
--- Table structure for talk_info
--- ----------------------------
-DROP TABLE IF EXISTS `talk_info`;
-CREATE TABLE `talk_info` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '会话Id',
-  `talk_type` tinyint(4) NOT NULL COMMENT '会话类型',
-  `group_id` bigint(20) DEFAULT NULL COMMENT '群聊Id',
-  `main_user_id` bigint(20) DEFAULT NULL COMMENT '自己用户Id',
-  `sub_user_id` bigint(20) DEFAULT NULL COMMENT '好友用户Id',
-  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
-  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT='会话信息表';
-
--- ----------------------------
 -- Table structure for auth_access_token
 -- ----------------------------
 DROP TABLE IF EXISTS `auth_access_token`;

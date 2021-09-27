@@ -8,6 +8,7 @@ import com.timberliu.chat.server.dao.mysql.entity.HistoryMsgEntity;
 import com.timberliu.chat.server.dao.mysql.mapper.GroupInfoMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
 import com.timberliu.chat.server.dao.mysql.po.TalkInfoPO;
+import com.timberliu.chat.server.dao.mysql.po.UserFromInfoPO;
 import com.timberliu.chat.server.dao.redis.mapper.OfflineMsgRedisMapper;
 import com.timberliu.chat.server.dao.redis.mapper.UnreadMsgNumRedisMapper;
 import com.timberliu.chat.server.service.IChatService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author liujie
@@ -49,10 +51,14 @@ public class ChatServiceImpl implements IChatService {
 		// 未读数
 		buildUnreadNum(talkDtos, userId, talkIdSet);
 		// 消息
+		Map<Long, String> fromIdFromMap = getUserMap(userId, historyMsgEntities);
 		for (TalkDTO talkDto : talkDtos) {
 			Long talkId = talkDto.getTalkId();
-			List<RecordDTO> recordDtos = buildRecordDto(talkId, singleMsgMap.get(talkId), groupMsgMap.get(talkId));
-			talkDto.setRecords(recordDtos);
+			if (talkDto.getTalkType().equals(TalkTypeEnum.SINGLE.getCode())) {
+				talkDto.setRecords(buildRecordDto(fromIdFromMap, singleMsgMap.get(talkId)));
+			} else if (talkDto.getTalkType().equals(TalkTypeEnum.GROUP.getCode())) {
+				talkDto.setRecords(buildRecordDto(fromIdFromMap, groupMsgMap.get(talkId)));
+			}
 		}
 		return talkDtos;
 	}
@@ -91,13 +97,23 @@ public class ChatServiceImpl implements IChatService {
 		}
 	}
 
-	private List<RecordDTO> buildRecordDto(Long talkId, List<HistoryMsgEntity> singleMsgEntities,
-										   List<HistoryMsgEntity> groupMsgEntities) {
-		List<RecordDTO> recordDtos = new ArrayList<>();
-		for (HistoryMsgEntity singleMsgEntity : singleMsgEntities) {
-			RecordDTO recordDTO = TalkConvert.INSTANCE.convert(singleMsgEntity);
+	private Map<Long, String> getUserMap(Long userId, Set<HistoryMsgEntity> historyMsgEntities) {
+		Set<Long> fromIds = historyMsgEntities.stream().map(HistoryMsgEntity::getFromId).collect(Collectors.toSet());
+
+		List<UserFromInfoPO> userFromInfos = userInfoMapper.getUserFromInfos(userId, fromIds);
+		Map<Long, String> resMap = new HashMap<>();
+		for (UserFromInfoPO userFromInfo : userFromInfos) {
+			resMap.putIfAbsent(userFromInfo.getFromId(), userFromInfo.getFrom());
 		}
-		return recordDtos;
+		return resMap;
+	}
+
+	private List<RecordDTO> buildRecordDto(Map<Long, String> fromIdFromMap, List<HistoryMsgEntity> historyMsgEntities) {
+		return historyMsgEntities.stream().map(historyMsgEntity -> {
+				RecordDTO recordDTO = TalkConvert.INSTANCE.convert(historyMsgEntity);
+				recordDTO.setFrom(fromIdFromMap.get(recordDTO.getFromId()));
+				return recordDTO;
+			}).collect(Collectors.toList());
 	}
 
 }

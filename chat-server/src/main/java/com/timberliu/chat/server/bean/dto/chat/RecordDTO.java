@@ -22,10 +22,6 @@ public class RecordDTO {
 
 	private String from;
 
-	private Long toId;
-
-	private String to;
-
 	private String content;
 
 	private Long sendTime;

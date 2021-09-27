@@ -1,6 +1,5 @@
 package com.timberliu.chat.server.bean.convert;
 
-
 import com.timberliu.chat.server.bean.dto.chat.RecordDTO;
 import com.timberliu.chat.server.bean.dto.chat.TalkDTO;
 import com.timberliu.chat.server.dao.mysql.entity.HistoryMsgEntity;
@@ -24,4 +23,5 @@ public interface TalkConvert {
 
 	@Mapping(source = "id", target = "msgId")
 	RecordDTO convert(HistoryMsgEntity historyMsgEntity);
+
 }

@@ -17,4 +17,19 @@
     ON ur.sub_user_id = ui.id
   </select>
 
+  <select id="getUserFromInfos" resultType="com.timberliu.chat.server.dao.mysql.po.UserFromInfoPO">
+    SELECT
+      ur.sub_user_id,
+      IFNULL(ur.sub_nickname_remark, ui.nickname) as from
+    FROM (
+      SELECT main_user_id, sub_user_id, sub_nickname_remark
+      FROM user_relation
+      WHERE main_user_id = #{toId} AND sub_user_id IN
+      <foreach collection="fromIds" open="(" close=")" separator="," item="item">
+        #{item}
+      </foreach>
+    ) ur LEFT JOIN user_info ui
+    ON ur.sub_user_id = ui.id
+  </select>
+
 </mapper>
