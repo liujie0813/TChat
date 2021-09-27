@@ -38,6 +38,11 @@ public class UserRelationEntity extends BaseEntity {
     private Long subUser;
 
     /**
+     * 会话Id
+     */
+    private Long talkId;
+
+    /**
      * 好友昵称备注
      */
     private String subNicknameRemark;

@@ -2,4 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper">
 
+  <select id="getUserTalkInfos" resultType="com.timberliu.chat.server.dao.mysql.po.TalkInfoPO">
+    SELECT
+      ur.talk_id, 0 as talkType, ui.avatar_url,
+      IFNULL(ur.sub_nickname_remark, ui.nickname) as talkName
+    FROM (
+      SELECT main_user_id, sub_user_id, talk_id, sub_nickname_remark
+      FROM user_relation
+      WHERE main_user_id = #{userId} AND talk_id IN
+      <foreach collection="talkIds" open="(" close=")" separator="," item="item">
+        #{item}
+      </foreach>
+    ) ur LEFT JOIN user_info ui
+    ON ur.sub_user_id = ui.id
+  </select>
+
 </mapper>

@@ -2,6 +2,11 @@ package com.timberliu.chat.server.dao.mysql.mapper;
 
 import com.timberliu.chat.server.dao.mysql.entity.GroupInfoEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.timberliu.chat.server.dao.mysql.po.TalkInfoPO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -9,8 +14,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author liujie
- * @since 2021-09-23
+ * @since 2021-09-27
  */
 public interface GroupInfoMapper extends BaseMapper<GroupInfoEntity> {
+
+	List<TalkInfoPO> getGroupTalkInfos(@Param("userId") Long userId, @Param("talkIds") Set<Long> talkIds);
 
 }

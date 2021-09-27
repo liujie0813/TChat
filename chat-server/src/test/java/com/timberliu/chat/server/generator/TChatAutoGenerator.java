@@ -110,7 +110,7 @@ public class TChatAutoGenerator {
 		// 写于父类中的公共字段
 		strategy.setSuperEntityColumns("create_time", "update_time");
 //		strategy.setInclude("user_info", "user_relation", "group_info", "group_user_relation", "history_msg_single", "history_msg_group");
-		strategy.setInclude("auth_access_token", "auth_refresh_token");
+		strategy.setInclude("history_msg", "talk_info", "group_info");
 //		strategy.setControllerMappingHyphenStyle(true);
 //		strategy.setTablePrefix(pc.getModuleName() + "_");
 		mpg.setStrategy(strategy);

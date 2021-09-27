@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @Data
 public class RecordDTO {
 
-	private Integer msgId;
+	private Long msgId;
 
 	/*
 	 * 文本: 0

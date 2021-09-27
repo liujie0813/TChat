@@ -1,6 +1,7 @@
 package com.timberliu.chat.server.dao.redis;
 
 import com.timberliu.chat.server.dao.mysql.entity.AuthAccessTokenEntity;
+import com.timberliu.chat.server.dao.mysql.entity.HistoryMsgEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,7 +16,8 @@ import java.time.Duration;
 public enum RedisKeyEnum {
 
 	AUTH_ACCESS_TOKEN("auth_access_token:%s", RedisKeyTypeEnum.STRING, AuthAccessTokenEntity.class, Duration.ofHours(2)),
-//	AUTH_REFRESH_TOKEN("auth_refresh_token:%s", RedisKeyTypeEnum.STRING, AuthRefreshTokenEntity.class, null),
+	CHAT_RECORD("chat_record:%s", RedisKeyTypeEnum.STRING, HistoryMsgEntity.class, Duration.ofDays(15)),
+	UNREAD_MSG_NUM("unread_msg_num:%s", RedisKeyTypeEnum.STRING, HistoryMsgEntity.class, Duration.ofDays(15)),
 	;
 
 	private final String keyTemplate;

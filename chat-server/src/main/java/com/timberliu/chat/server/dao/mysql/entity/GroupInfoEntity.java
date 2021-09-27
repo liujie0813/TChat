@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
  * </p>
  *
  * @author liujie
- * @since 2021-09-23
+ * @since 2021-09-27
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -32,6 +32,11 @@ public class GroupInfoEntity extends BaseEntity {
      * 群组名称
      */
     private String groupName;
+
+    /**
+     * 会话Id
+     */
+    private Long talkId;
 
     /**
      * 创建用户Id

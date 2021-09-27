@@ -4,57 +4,49 @@ import com.timberliu.chat.server.dao.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 历史消息(单聊)表
+ * 会话信息表
  * </p>
  *
  * @author liujie
- * @since 2021-09-23
+ * @since 2021-09-27
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("history_msg_single")
-public class HistoryMsgSingleEntity extends BaseEntity {
+@TableName("talk_info")
+public class TalkInfoEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 会话Id
+     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 消息Id
+     * 会话类型
      */
-    private Long msgId;
+    private Integer talkType;
 
     /**
-     * 发送者Id
+     * 群聊Id
      */
-    private Long fromId;
+    private Long groupId;
 
     /**
-     * 接受者Id
+     * 自己的用户Id
      */
-    private Long toId;
+    private Long mainUserId;
 
     /**
-     * 消息类型
+     * 好友的用户Id
      */
-    private Integer msgType;
-
-    /**
-     * 消息内容
-     */
-    private String content;
-
-    /**
-     * 消息发送时间
-     */
-    private LocalDateTime sendTime;
+    private Long subUserId;
 
     /**
      * 是否删除

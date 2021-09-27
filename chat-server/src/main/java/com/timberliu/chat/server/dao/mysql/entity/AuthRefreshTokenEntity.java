@@ -53,7 +53,7 @@ public class AuthRefreshTokenEntity extends BaseEntity {
     /**
      * 是否删除
      */
-    private Boolean deleted;
+    private Integer deleted;
 
 
 }

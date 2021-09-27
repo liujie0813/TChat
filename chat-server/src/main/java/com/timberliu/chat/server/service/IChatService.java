@@ -1,7 +1,5 @@
 package com.timberliu.chat.server.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.timberliu.chat.server.bean.dto.chat.GetTalkReqDTO;
 import com.timberliu.chat.server.bean.dto.chat.TalkDTO;
 
 import java.util.List;
@@ -14,7 +12,8 @@ import java.util.List;
 public interface IChatService {
 
 	/**
-	 * 获取所有会话及其最近 100 条消息
+	 * 获取会话列表
 	 */
-	IPage<TalkDTO> getTalks(GetTalkReqDTO talkReqDTO);
+	List<TalkDTO> getTalkList(Long userId);
+
 }

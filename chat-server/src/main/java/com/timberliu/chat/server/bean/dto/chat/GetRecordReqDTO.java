@@ -9,10 +9,13 @@ import javax.validation.constraints.NotNull;
  * @date 2021/9/26
  */
 @Data
-public class GetTalkReqDTO {
+public class GetRecordReqDTO {
 
-	@NotNull(message = "用户 Id 不能为空")
-	private Long userId;
+	private Integer talkType;
+
+	private Long talkId;
+
+	private Long lastMsgId;
 
 	private Long pageNum = 1L;
 
