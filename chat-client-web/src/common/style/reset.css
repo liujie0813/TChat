@@ -45,3 +45,7 @@
 .secondList .ant-tabs-tab.ant-tabs-tab-active {
 	background-color: #e8e8e8 !important;
 }
+
+.ant-list-item-meta-title {
+	margin-bottom: 0 !important;
+}

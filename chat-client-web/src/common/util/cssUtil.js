@@ -1,9 +1,9 @@
 const colors = [
-	'#f56a00',
-	'#7265e6',
-	'#ffbf00',
+	'#fe6673',
 	'#00a2ae',
-	'blue'
+	'#7265e6',
+	'#0099CC',
+	'#f56a00',
 ];
 
 function getColor(val) {

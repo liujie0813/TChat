@@ -7,7 +7,7 @@
 
 
 .keep-left .ant-list-item-meta-avatar {
-	margin-left: 24px;
+	margin-left: 28px;
 	margin-right: 12px;
 }
 
@@ -17,7 +17,7 @@
 
 .keep-right .ant-list-item-meta-avatar {
 	margin-left: 12px;
-	margin-right: 24px;
+	margin-right: 28px;
 	float: right;
 }
 

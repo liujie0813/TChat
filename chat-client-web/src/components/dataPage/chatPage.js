@@ -4,7 +4,7 @@ import img2 from "../../common/images/emoji.svg";
 import React, {useEffect, useRef, useState} from "react";
 import WebSocketInstance from '../websocket/socketInstance'
 import {useSelector} from "react-redux";
-import {getAvatar} from "../person/personInfo";
+import {getAvatar} from "../common/avatar";
 
 const { TextArea } = Input;
 
@@ -72,7 +72,7 @@ export default function ChatPage() {
 	return (
 		<div style={{height: '100%', width: 'calc(100% - 330px)', backgroundColor: '#f3f3f3'}}>
 			<div style={{borderBottom: 'solid 1px #e0e0e0', height: '64px'}}>
-				<div style={{ fontSize: '16px', paddingTop: '24px', paddingLeft: '20px' }}>
+				<div style={{ fontSize: '18px', paddingTop: '24px', paddingLeft: '24px' }}>
 					{chatRecord.talkName}
 				</div>
 			</div>

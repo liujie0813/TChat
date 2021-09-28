@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import './search.css'
 import {PlusOutlined, UserAddOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import {addContact, getContactList, searchByAccount} from "../../api/user";
-import {getAvatar} from "../person/personInfo";
+import {getAvatar} from "../common/avatar";
 import {isDigitOrLetter} from "../../common/util/stringUtil";
 import {useDispatch, useSelector} from "react-redux";
 import {setContactList} from "../../store/features/userSlice";

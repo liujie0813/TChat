@@ -6,8 +6,10 @@ import SearchBox from "../../components/searchOrAdd";
 import {useDispatch, useSelector} from "react-redux";
 import {logout, setChatData, setContactData, setMenuData,} from "../../store/features/userSlice";
 import DataPage from "../../components/dataPage";
-import UserInfoModal, {getAvatar} from "../../components/person/personInfo";
+import UserInfoModal from "../../components/person/personInfo";
 import {useHistory} from "react-router-dom";
+import {getAvatar} from "../../components/common/avatar";
+import {getDateTime} from "../../components/common/time";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -65,10 +67,10 @@ export default function Home() {
 
 				{/* 聊天菜单 */}
 				<TabPane tab={
-					<div style={{ padding: '6px 22px 22px' }}>
-						<Avatar shape="square" size={28} src={chatMenuImg.img}/>
-					</div>
-				} key="chatMenu">
+						<div style={{ padding: '22px' }}>
+							<Avatar shape="square" size={28} src={chatMenuImg.img}/>
+						</div>
+					} key="chatMenu">
 
 					<div style={{ width: '300px', backgroundColor: '#f7f7f7', borderRight: 'solid 1px #e0e0e0' }}>
 						{/* 搜索框 */}
@@ -86,11 +88,20 @@ export default function Home() {
 								let chatRecord = chatRecords[key];
 								return (
 									<TabPane tab={
-											<div style={{ width: '300px', height: '68px', padding: '14px', paddingLeft: '20px',
-												borderBottom: 'solid 1px #e0e0e0', textAlign: 'left' }}>
-												{ getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
-												<div style={{ display: 'inline-block', marginLeft: '12px' }}>
-													{ chatRecord.talkName }
+											<div style={{ width: '300px', height: '68px', padding: '0 16px', textAlign: 'left', display: 'flex' }}>
+												<div style={{ padding: '14px 0' }}>
+													{ getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
+												</div>
+												<div style={{ marginLeft: '10px', padding: '10px 0' }}>
+													<div style={{ width: '156px', color: '#000' }}>
+														{ chatRecord.talkName }
+													</div>
+													<div style={{ fontSize: '12px', paddingTop: '6px', color: 'rgba(153, 153, 153)' }}>
+														{ chatRecord.records[0] && chatRecord.records[0].content }
+													</div>
+												</div>
+												<div style={{ width: '60px', textAlign: 'right', fontSize: '10px', paddingTop: '12px', color: 'rgba(153, 153, 153)' }}>
+													{ chatRecord.records[0] && getDateTime(chatRecord.records[0].sendTime, false) }
 												</div>
 											</div>
 										}
@@ -104,7 +115,7 @@ export default function Home() {
 
 				{/* 联系人菜单 */}
 				<TabPane tab={
-					<div style={{ padding: '6px 22px 22px' }}>
+					<div style={{ padding: '22px' }}>
 						<Avatar shape="square" size={28} src={contactMenuImg.img}/>
 					</div>
 				} key="contactMenu">
@@ -133,8 +144,7 @@ export default function Home() {
 									{contactList.map((contact, index) => {
 										return (
 											<TabPane tab={
-												<div style={{ width: '252px', height: '68px', margin: '0 12px 0 36px', padding: '14px 0',
-																			borderBottom: 'solid 1px #e0e0e0', textAlign: 'left' }}>
+												<div style={{ width: '252px', height: '68px', margin: '0 12px 0 36px', padding: '14px 0', textAlign: 'left' }}>
 													{ contact && getAvatar(contact.avatarUrl, contact.account, contact.nickname, 40) }
 													<div style={{ display: 'inline-block', marginLeft: '12px' }}>
 														{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
@@ -152,7 +162,7 @@ export default function Home() {
 
 				{/* 退出 */}
 				<TabPane tab={
-						<div style={{ padding: '6px 22px 18px 26px' }}>
+						<div style={{ padding: '22px 22px 22px 26px' }}>
 							<Avatar shape="square" size={24} src={img6}/>
 						</div>
 					}

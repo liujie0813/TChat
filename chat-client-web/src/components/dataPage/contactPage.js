@@ -1,14 +1,8 @@
-import {Button, Image} from "antd";
+import {Button} from "antd";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {setOrUpdateChatData} from '../../store/features/userSlice'
-import img1 from '../../common/images/avator/boy_avator01.svg';
-import img2 from '../../common/images/avator/boy_avator02.svg';
-import img3 from '../../common/images/avator/boy_avator03.svg';
-import img4 from '../../common/images/avator/girl_avator01.svg';
-import img5 from '../../common/images/avator/girl_avator02.svg';
-import img6 from '../../common/images/avator/girl_avator03.svg';
-import {getAvatar} from "../person/personInfo";
+import {getAvatar} from "../common/avatar";
 
 export default function ContactPage() {
 	const { page } = useSelector(state => state.user);
