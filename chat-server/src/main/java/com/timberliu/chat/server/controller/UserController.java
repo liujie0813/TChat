@@ -40,7 +40,6 @@ public class UserController {
 	@PostMapping("/login-by-account")
 	@NotRequireAuth
 	public ApiResult<UserLoginRespDTO> loginByAccount(@RequestBody UserLoginReqDTO userLoginReqDTO, HttpServletRequest request) {
-		log.info("[login] request param, userLoginReqDTO: {}", userLoginReqDTO);
 		UserLoginRespDTO userInfoDTO = userService.login(userLoginReqDTO, HttpUtils.getIp(request));
 		return ApiResult.success(userInfoDTO);
 	}

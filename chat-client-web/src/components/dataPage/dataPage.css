@@ -8,7 +8,7 @@
 
 .keep-left .ant-list-item-meta-avatar {
 	margin-left: 24px;
-	margin-right: 8px;
+	margin-right: 12px;
 }
 
 .keep-left .ant-list-item-meta-content {
@@ -16,11 +16,23 @@
 }
 
 .keep-right .ant-list-item-meta-avatar {
-	margin-left: 8px;
+	margin-left: 12px;
 	margin-right: 24px;
 	float: right;
 }
 
 .keep-right .ant-list-item-meta-content {
 	float: right;
+}
+
+.myMsgBackgroundColor {
+	background-color: #d0e0fc;
+}
+
+.otherMsgBackgroundColor {
+	background-color: #fff;
+}
+
+.ant-list-item-meta-title .singleTitle {
+
 }

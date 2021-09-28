@@ -1,6 +1,6 @@
 import { messageType } from './messageType'
 import store from '../../store/index'
-import {updateChatRecord} from '../../store/features/talkRecord'
+import {updateChatRecord} from '../../store/features/userSlice'
 
 const ackMap = new Map();
 const commandMap = new Map();
@@ -26,16 +26,16 @@ const handleC2CSendResp = (resp) => {
 	ackMap.delete(seqId);
 	// 更新 聊天记录列表
 	store.dispatch(updateChatRecord({
-		talkId: data.to,
+		talkId: data.talkId,
 		records: [{
-			'msgId': seqId,
-			'msgType': 0,
-			'fromId': data.from,
-			'from': 'user_1',
-			'toId': data.to,
-			'to': 'user_1"',
-			'content': data.content,
-			'msgTime': data.msgTime
+			msgId: seqId,
+			msgType: 0,
+			fromId: data.from,
+			from: data.fromId,
+			toId: data.to,
+			to: data.toId,
+			content: data.content,
+			msgTime: data.msgTime
 		}]
 	}))
 };

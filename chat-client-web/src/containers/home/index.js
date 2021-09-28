@@ -1,10 +1,10 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {Avatar, Tabs, Collapse} from 'antd'
 import './home.css'
 import img6 from '../../common/images/quit.png';
 import SearchBox from "../../components/searchOrAdd";
 import {useDispatch, useSelector} from "react-redux";
-import {logout, setChatData, setContactData, setMenuData, setShowUserInfo,} from "../../store/features/userSlice";
+import {logout, setChatData, setContactData, setMenuData,} from "../../store/features/userSlice";
 import DataPage from "../../components/dataPage";
 import UserInfoModal, {getAvatar} from "../../components/person/personInfo";
 import {useHistory} from "react-router-dom";
@@ -17,13 +17,15 @@ export default function Home() {
 	const {
 		userInfo,
 		activeMenu, chatMenuImg, contactMenuImg,
-		activeChat, chatList, activeContact, contactList
+		activeChat, chatList, activeContact, contactList,
+		chatRecords
 	} = useSelector(state => state.user);
+	const [userInfoVisible, setUserInfoVisible] = useState(false);
 	const dispatch = useDispatch();
 
 	const tabClick = (key, event) => {
 		if (key === 'avatar') {
-			dispatch(setShowUserInfo(true))
+			setUserInfoVisible(true)
 			return
 		}
 		if (key === 'quitMenu') {
@@ -55,7 +57,7 @@ export default function Home() {
 				{/* 头像 */}
 				<TabPane tab={
 						<div style={{ padding: '20px 12px 12px' }}>
-							{ getAvatar(userInfo, 48) }
+							{ getAvatar(userInfo.avatarUrl, userInfo.account, userInfo.nickname, 48) }
 						</div>
 					}
 					key="avatar">
@@ -74,19 +76,25 @@ export default function Home() {
 
 						{/* 聊天列表 */}
 						<Tabs tabPosition='left'
-								defaultActiveKey={activeChat === null ? -1 : activeChat}
+								activeKey={activeChat === null ? -1 : activeChat}
 								onTabClick={ chatTabClick }
-								style={{ height: 'calc(100vh - 20px)' }}>
+								style={{ height: 'calc(100vh - 20px)' }}
+								className='secondList'>
 
 							{/* 循环遍历 */}
-							{chatList.map((chat, index) => {
+							{Object.keys(chatRecords).map((key) => {
+								let chatRecord = chatRecords[key];
 								return (
 									<TabPane tab={
-											<div style={{ width: '300px', height: '48px', padding: '4px 0 26px 0', borderBottom: 'solid 1px #e0e0e0' }}>
-												{chat.talkName}
+											<div style={{ width: '300px', height: '68px', padding: '14px', paddingLeft: '20px',
+												borderBottom: 'solid 1px #e0e0e0', textAlign: 'left' }}>
+												{ getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
+												<div style={{ display: 'inline-block', marginLeft: '12px' }}>
+													{ chatRecord.talkName }
+												</div>
 											</div>
 										}
-										key={chat.talkId}>
+										key={chatRecord.talkId}>
 									</TabPane>
 								)
 							})}
@@ -105,7 +113,7 @@ export default function Home() {
 						<SearchBox/>
 
 						{/* 联系人列表 */}
-						<Collapse>
+						<Collapse className='secondList'>
 							<Panel header='新的联系人' key='newContactList'>
 								<div style={{ padding: '0 40px 6px 40px'}}>
 									无
@@ -118,16 +126,16 @@ export default function Home() {
 							</Panel>
 							<Panel header='联系人' key='contactList'>
 								<Tabs tabPosition='left'
-											defaultActiveKey={activeContact === null ? -2 : activeContact}
+											activeKey={activeContact === null ? -2 : activeContact}
 											onTabClick={ contactTabClick }
 											style={{ height: 'calc(100vh - 20px)' }}>
 									{/* 循环遍历 */}
 									{contactList.map((contact, index) => {
 										return (
 											<TabPane tab={
-												<div style={{ width: '252px', height: '52px', margin: '0 12px 0 36px',
+												<div style={{ width: '252px', height: '68px', margin: '0 12px 0 36px', padding: '14px 0',
 																			borderBottom: 'solid 1px #e0e0e0', textAlign: 'left' }}>
-													{ contact && getAvatar(contact, 40) }
+													{ contact && getAvatar(contact.avatarUrl, contact.account, contact.nickname, 40) }
 													<div style={{ display: 'inline-block', marginLeft: '12px' }}>
 														{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
 													</div>
@@ -152,7 +160,10 @@ export default function Home() {
 				</TabPane>
 			</Tabs>
 			<DataPage/>
-			<UserInfoModal/>
+			<UserInfoModal
+				visible={userInfoVisible}
+				toSetUserInfoVisible={setUserInfoVisible}
+			/>
 		</div>
 	)
 }

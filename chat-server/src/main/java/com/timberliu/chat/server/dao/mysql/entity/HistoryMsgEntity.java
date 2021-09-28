@@ -1,12 +1,12 @@
 package com.timberliu.chat.server.dao.mysql.entity;
 
-import com.timberliu.chat.server.dao.BaseEntity;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.timberliu.chat.server.dao.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -19,6 +19,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("history_msg")
+@Accessors(chain = true)
 public class HistoryMsgEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

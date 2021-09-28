@@ -9,20 +9,18 @@ export const userSlice = createSlice({
 	initialState: {
 		authToken: {},
 		userInfo: {},
-		userInfoVisible: false,
 		activeMenu: 'chatMenu',
 		chatMenuImg: { img: img3 },
 		contactMenuImg: { img: img4 },
 		contactList: [],
 		contactMap: {},
 		activeContact: null,
-		chatList: [],
-		chatMap: {},
 		activeChat: null,
 		page: {
 			type: null, // chatPage：聊天页；groupInfoPage：群组信息页；contactInfoPage：联系人信息页
 			data: {}
-		}
+		},
+		chatRecords: {}
 	},
 	reducers: {
 		setAuthToken: (state, { payload }) => {
@@ -35,15 +33,6 @@ export const userSlice = createSlice({
 			state.authToken.accessToken = payload.accessToken;
 			state.authToken.refreshToken = payload.refreshToken;
 			state.userInfo = payload.userInfoDTO;
-		},
-		setShowUserInfo: (state, action) => {
-			state.userInfoVisible = action.payload;
-		},
-		setChatList: (state, action) => {
-			state.chatList = action.payload;
-			action.payload.forEach(chat => {
-				state.chatMap[chat.talkId] = chat
-			});
 		},
 		setContactList: (state, action) => {
 			state.contactList = action.payload;
@@ -64,7 +53,7 @@ export const userSlice = createSlice({
 		setChatData: (state, action) => {
 			state.activeChat = action.payload;
 			state.page.type = "chatPage";
-			state.page.data = state.chatMap[parseInt(action.payload)]
+			state.page.data = action.payload;
 		},
 		setContactData: (state, action) => {
 			state.activeContact = action.payload;
@@ -76,24 +65,39 @@ export const userSlice = createSlice({
 			state.chatMenuImg.img = img3;
 			state.contactMenuImg.img = img4;
 
-			state.activeChat = action.payload.talkId;
+			let talkId = action.payload.talkId;
+			let userId = action.payload.userId;
+			state.activeChat = talkId.toString();
 			state.page.type = "chatPage";
-			if (state.chatMap.hasOwnProperty(parseInt(action.payload.talkId))) {
-				state.page.data = state.chatMap[parseInt(action.payload.talkId)]
-			} else {
-				let contact = state.contactMap[parseInt(action.payload.talkId)];
-				let chatListItem = {
-					type: action.payload.type,
-					talkId: action.payload.talkId,
-					talkName: contact.username,
-					latestSender: null,
-					latestMsg: null,
-					msgTime: null,
-				};
-				state.chatList.push(chatListItem);
-				state.chatMap[action.payload.talkId] = chatListItem;
-				state.page.data = chatListItem
+			if (!state.chatRecords[talkId]) {
+				let contact = state.contactMap[parseInt(userId)];
+				state.chatRecords[talkId] = {
+					talkType: action.payload.talkType,
+					talkId: talkId,
+					userId: contact.userId,
+					account: contact.account,
+					talkName: contact.nickenameRemark ? contact.nickenameRemark : contact.nickname,
+					avatarUrl: contact.avatarUrl,
+					unreadNum: 0,
+					records: []
+				}
 			}
+		},
+		initChatRecord: (state, { payload }) => {
+			for (const chatRecord of payload) {
+				state.chatRecords[chatRecord.talkId] = chatRecord
+			}
+		},
+		updateChatRecord: (state, { payload }) => {
+			const { talkId, records } = payload;
+			console.log('before: ', state.chatRecords[talkId].records.length);
+			let originRecords = state.chatRecords[talkId].records;
+			state.chatRecords[talkId].records = originRecords.concat(records);
+			console.log('after: ', state.chatRecords[talkId].records.length);
+		},
+		historyUpdateChatRecord: (state, { payload }) => {
+			const { talkId, records } = payload;
+			state.chatRecords[talkId].unshift(records)
 		},
 		logout: (state, action) => {
 			console.log('[logout]')
@@ -104,10 +108,11 @@ export const userSlice = createSlice({
 
 export const {
 	setAuthToken, setLoginResp,
-	setUserInfo, setShowUserInfo,
+	setUserInfo,
 	setChatList, setContactList,
 	setMenuData, setChatData, setContactData,
 	setOrUpdateChatData,
+	initChatRecord, updateChatRecord, historyUpdateChatRecord,
 	logout
 } = userSlice.actions;
 

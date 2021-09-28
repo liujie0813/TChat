@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,6 +28,12 @@ public class GlobalExceptionHandler {
 	public ApiResult serviceExceptionHandler(BizException ex) {
 		log.info("[serviceExceptionHandler]", ex);
 		return ApiResult.error(ex.getCode(), ex.getMessage());
+	}
+
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public ApiResult noHandlerFoundExceptionHandler(NoHandlerFoundException ex) {
+		log.warn("[noHandlerFoundExceptionHandler]", ex);
+		return ApiResult.error(ErrorCodeEnum.NOT_FOUND.getCode(), String.format("请求地址不存在:%s", ex.getRequestURL()));
 	}
 
 	@ExceptionHandler(value = MissingServletRequestParameterException.class)

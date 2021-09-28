@@ -2,8 +2,9 @@ import {Avatar, Image, List, message, Spin, Tooltip, Input} from "antd";
 import Picker, {SKIN_TONE_NEUTRAL} from "emoji-picker-react";
 import img2 from "../../common/images/emoji.svg";
 import React, {useEffect, useRef, useState} from "react";
-import {sendMsg} from "../websocket";
+import WebSocketInstance from '../websocket/socketInstance'
 import {useSelector} from "react-redux";
+import {getAvatar} from "../person/personInfo";
 
 const { TextArea } = Input;
 
@@ -12,11 +13,8 @@ export default function ChatPage() {
 	const [loading, setLoading] = useState(false);
 	const recordEnd = useRef(null);
 
-	const { userInfo, page } = useSelector(state => state.user);
-	const data = page.data;
-	const { chatRecords } = useSelector(state => state.talk);
-
-	const EMPTY_RECORDS = [];
+	const { userInfo, activeChat, chatRecords } = useSelector(state => state.user);
+	const chatRecord = chatRecords[activeChat];
 
 	const scrollToBottom = () => {
 		if (recordEnd && recordEnd.current) {
@@ -24,10 +22,10 @@ export default function ChatPage() {
 		}
 	};
 
-	if (chatRecords[data.talkId]) {
+	if (chatRecord) {
 		useEffect(() => {
 			scrollToBottom()
-		}, [chatRecords[data.talkId].records]);
+		}, [chatRecord.records]);
 	}
 
 	const handleInfiniteOnLoad = () => {
@@ -61,20 +59,21 @@ export default function ChatPage() {
 		 * String content
 		 * Long timestamp
 		 */
-		sendMsg(4,{
+		WebSocketInstance.sendMsg(4,{
 			from: userInfo.userId,
-			to: data.talkId,
+			to: chatRecord.userId,
 			content: v,
-			timestamp: new Date().getTime()
+			timestamp: new Date().getTime(),
+			talkId: activeChat
 		});
 		setContent('')
 	};
 
 	return (
 		<div style={{height: '100%', width: 'calc(100% - 330px)', backgroundColor: '#f3f3f3'}}>
-			<div style={{borderBottom: 'solid 1px #e0e0e0', height: '60px'}}>
-				<div style={{ fontSize: '16px', paddingTop: '20px', paddingLeft: '20px' }}>
-					{data.talkName}
+			<div style={{borderBottom: 'solid 1px #e0e0e0', height: '64px'}}>
+				<div style={{ fontSize: '16px', paddingTop: '24px', paddingLeft: '20px' }}>
+					{chatRecord.talkName}
 				</div>
 			</div>
 
@@ -89,18 +88,24 @@ export default function ChatPage() {
 					{/*>*/}
 					<List
 						// itemLayout="vertical"
-						dataSource={chatRecords[data.talkId] ? chatRecords[data.talkId].records : EMPTY_RECORDS}
+						dataSource={ chatRecord.records }
 						renderItem={record => (
-							<List.Item key={record.msgId} style={{ height: '80px' }} className={record.fromId === userInfo.userId ? 'keep-right' : 'keep-left'}>
+							<List.Item key={record.msgId} style={{ height: '72px' }} className={record.fromId === userInfo.userId ? 'keep-right' : 'keep-left'}>
 								<List.Item.Meta
 									avatar={
-										<Avatar size={40} style={{ color: '#f56a00', backgroundColor: '#fde3cf' }}>{record.from}</Avatar>
+										<p>
+											{ record.fromId === userInfo.userId ? getAvatar(userInfo.avatarUrl, userInfo.account, userInfo.nickname, 40) :
+												getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
+										</p>
 									}
 									title={
-										(chatRecords[data.talkId] && chatRecords[data.talkId].type === 0) ? <div/> : <div>{record.from}</div>
+										(record.msgType === 0) ? <div className='singleTitle'/> : <div>{record.from}</div>
 									}
 									description={
-										<div>{record.content}</div>
+										<div style={{ padding: '9px 14px', color: '#000', borderRadius: '5px' }}
+												 className={record.fromId === userInfo.userId ? 'myMsgBackgroundColor' : 'otherMsgBackgroundColor'}>
+											{record.content}
+										</div>
 									}
 								/>
 							</List.Item>

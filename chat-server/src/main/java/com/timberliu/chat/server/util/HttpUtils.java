@@ -3,6 +3,7 @@ package com.timberliu.chat.server.util;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * @author liujie
@@ -17,6 +18,26 @@ public class HttpUtils {
 			return null;
 		}
 		return authorization;
+	}
+
+	public static String getUserAgent(HttpServletRequest request) {
+		String ua = request.getHeader("User-Agent");
+		return ua != null ? ua : "";
+	}
+
+	public static String buildQueryString(HttpServletRequest request) {
+		Enumeration<String> es = request.getParameterNames();
+		if (!es.hasMoreElements()) {
+			return "";
+		}
+		String paramName, paramValue;
+		StringBuilder params = new StringBuilder();
+		while (es.hasMoreElements()) {
+			paramName = es.nextElement();
+			paramValue = request.getParameter(paramName);
+			params.append(paramName).append("=").append(paramValue).append("&");
+		}
+		return params.deleteCharAt(params.length() - 1).toString();
 	}
 
 	public static String getIp(HttpServletRequest request) {

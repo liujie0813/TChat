@@ -2,6 +2,10 @@
 	padding: 0 !important;
 }
 
+.ant-tabs-left>.ant-tabs-nav .ant-tabs-tab+.ant-tabs-tab {
+	margin: 0 !important;
+}
+
 .ant-tabs-ink-bar {
 	background: none;
 	display: none;
@@ -31,4 +35,13 @@
 .ant-list-item-meta-content {
 	display: inline-block !important;
 	width: auto !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+	color: rgba(0,0,0,.85) !important;
+	text-shadow: 0 0 0 #fff !important;
+}
+
+.secondList .ant-tabs-tab.ant-tabs-tab-active {
+	background-color: #e8e8e8 !important;
 }

@@ -6,7 +6,7 @@ import com.timberliu.chat.server.bean.enums.CommandEnum;
 import com.timberliu.chat.server.bean.enums.SerializerAlgorithmEnum;
 import com.timberliu.chat.server.exception.InvalidProtocolException;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
-import com.timberliu.chat.server.util.Util;
+import com.timberliu.chat.server.util.IdentifyUtil;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -51,7 +51,7 @@ public class MessageCodec implements InitializingBean {
         byteBuf.writeByte(message.getCommand());
         // 保留位
         byteBuf.writeByte(0);
-        byteBuf.writeInt(Util.nextSeqId());
+        byteBuf.writeInt(IdentifyUtil.nextSeqId());
 
         ISerializer serializer = getSerializer(serialAlgoByte);
         byte[] body = serializer.serialize(message);

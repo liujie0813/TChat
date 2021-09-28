@@ -95,7 +95,7 @@ export default function SearchBox() {
 				<Dropdown overlay={
 						<Menu>
 							<Menu.Item key='addedUser' style={{ width: '448px' }}>
-								{ addedUser && getAvatar(addedUser, 36) }
+								{ addedUser && getAvatar(addedUser.avatarUrl, addedUser.account, addedUser.nickname, 36) }
 								<div style={{ display: 'inline-block', width: '312px', marginLeft: '8px' }}>
 									{ addedUser && (addedUser.nickname ? addedUser.nickname : addedUser.account) }
 								</div>

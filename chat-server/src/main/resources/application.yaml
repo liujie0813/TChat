@@ -9,17 +9,22 @@ netty:
     serial_algo: json # 0: protobuf；1: json
 
 spring:
+  application:
+    name: t-chat-server
+  mvc:
+    throw-exception-if-no-handler-found: true
+    static-path-pattern: /doc.html
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://123.56.9.126:3306/t_chat?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT
     username: root
     password: WfNYnraEOynLn87e
-
   redis:
     host: 123.56.9.126
     port: 6379
     password: gNVA3tluQAkuKVWn
     database: 0
+    timeout: 1000ms
 
 mybatis-plus:
   global-config:

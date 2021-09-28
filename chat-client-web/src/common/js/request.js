@@ -53,7 +53,7 @@ function refreshToken(lastResp) {
 
 service.interceptors.response.use(
 	response => {
-		console.log('[' + response.config.url + '] resp: ', response.data);
+		console.log(response.config.url, response.data);
 		const res = response.data;
 		const code = res.code;
 		if (code === 0) {

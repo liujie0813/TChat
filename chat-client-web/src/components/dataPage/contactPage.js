@@ -15,11 +15,12 @@ export default function ContactPage() {
 	const data = page.data;
 	const dispatch = useDispatch();
 
-	const jumpChatPage = (type) => {
+	const jumpChatPage = (talkType) => {
 		console.log("jumpChatPage: ", data.userId.toString());
 		dispatch(setOrUpdateChatData({
-			talkId: data.userId.toString(),
-			type
+			talkId: data.talkId,
+			userId: data.userId,
+			talkType
 		}))
 	};
 
@@ -31,7 +32,7 @@ export default function ContactPage() {
 					<div style={{ paddingTop: '8px' }}>{data.signature ? data.signature : 'ta没有说什么'}</div>
 				</div>
 				<div style={{ width: '120px' }}>
-					{ getAvatar(data, 108) }
+					{ getAvatar(data.avatar, data.account, data.nickname, 108) }
 				</div>
 			</div>
 			<div style={{ borderBottom: 'solid 1px #d0d0d0', padding: '40px 0', minWidth: '420px' }}>

@@ -39,11 +39,16 @@ public class ChatServiceImpl implements IChatService {
 
 	@Override
 	public List<TalkDTO> getTalkList(Long userId) {
+		// 从同步库（redis）获取消息
+		Set<HistoryMsgEntity> historyMsgEntities = offlineRecordRedisMapper.get(userId);
+		if (historyMsgEntities.isEmpty()) {
+			return new ArrayList<>();
+		}
+
 		Set<Long> talkIdSet = new HashSet<>();
 		Map<Long, List<HistoryMsgEntity>> singleMsgMap = new HashMap<>();
 		Map<Long, List<HistoryMsgEntity>> groupMsgMap = new HashMap<>();
-		// 从同步库（redis）获取消息
-		Set<HistoryMsgEntity> historyMsgEntities = offlineRecordRedisMapper.get(userId);
+		// 构建 map
 		buildMap(historyMsgEntities, talkIdSet, singleMsgMap, groupMsgMap);
 
 		// 基础信息
@@ -82,15 +87,20 @@ public class ChatServiceImpl implements IChatService {
 
 	private List<TalkDTO> buildTalkInfo(Long userId, Set<Long> singleTalkIds, Set<Long> groupTalkIds) {
 		// 单聊
-		List<TalkInfoPO> userTalkInfos = userInfoMapper.getUserTalkInfos(userId, singleTalkIds);
-		List<TalkDTO> talkDtoS = TalkConvert.INSTANCE.convert(userTalkInfos);
+		List<TalkDTO> talkDtos = new ArrayList<>();
+		if (!singleTalkIds.isEmpty()) {
+			List<TalkInfoPO> userTalkInfos = userInfoMapper.getUserTalkInfos(userId, singleTalkIds);
+			talkDtos.addAll(TalkConvert.INSTANCE.convert(userTalkInfos));
+		}
 		// 群聊
-		List<TalkInfoPO> groupTalkInfos = groupInfoMapper.getGroupTalkInfos(userId, groupTalkIds);
-		talkDtoS.addAll(TalkConvert.INSTANCE.convert(groupTalkInfos));
-		return talkDtoS;
+		if (!groupTalkIds.isEmpty()) {
+			List<TalkInfoPO> groupTalkInfos = groupInfoMapper.getGroupTalkInfos(userId, groupTalkIds);
+			talkDtos.addAll(TalkConvert.INSTANCE.convert(groupTalkInfos));
+		}
+		return talkDtos;
 	}
 
-	private void buildUnreadNum(List<TalkDTO> talkDtos, Long userId, Collection<Long> talkIds) {
+	private void buildUnreadNum(List<TalkDTO> talkDtos, Long userId, Set<Long> talkIds) {
 		Map<Long, Integer> talkNumMap = unreadMsgNumRedisMapper.multiGet(userId, talkIds);
 		for (TalkDTO talkDto : talkDtos) {
 			talkDto.setUnreadNum(talkNumMap.getOrDefault(talkDto.getTalkId(), 0));

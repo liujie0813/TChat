@@ -8,6 +8,7 @@ import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
 import com.timberliu.chat.server.exception.BizException;
 import com.timberliu.chat.server.service.IContactService;
+import com.timberliu.chat.server.util.IdentifyUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,8 +36,11 @@ public class ContactServiceImpl implements IContactService {
 	public Boolean addContact(Long mainUserId, Long subUserId) {
 		existUserId(mainUserId);
 		existUserId(subUserId);
-		userRelationMapper.insert(new UserRelationEntity().setMainUser(mainUserId).setSubUser(subUserId));
-		userRelationMapper.insert(new UserRelationEntity().setMainUser(subUserId).setSubUser(mainUserId));
+		Long talkId = IdentifyUtil.nextTalkId();
+		userRelationMapper.insert(new UserRelationEntity()
+				.setMainUserId(mainUserId).setSubUserId(subUserId).setTalkId(talkId));
+		userRelationMapper.insert(new UserRelationEntity()
+				.setMainUserId(subUserId).setSubUserId(mainUserId).setTalkId(talkId));
 		return true;
 	}
 

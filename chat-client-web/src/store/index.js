@@ -1,13 +1,11 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import userSlice from './features/userSlice';
-import talkRecord from "./features/talkRecord";
 import persistReducer from "redux-persist/es/persistReducer";
 import thunk from "redux-thunk";
 
 const appReducers = combineReducers({
-	user: userSlice,
-	talk: talkRecord
+	user: userSlice
 });
 
 const rootReducers = (state, action) => {

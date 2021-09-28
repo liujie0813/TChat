@@ -13,6 +13,12 @@ public class TalkInfoPO {
 
 	private Integer talkType;
 
+	private Long userId;
+
+	private String account;
+
+	private Long groupId;
+
 	private String talkName;
 
 	private String avatarUrl;

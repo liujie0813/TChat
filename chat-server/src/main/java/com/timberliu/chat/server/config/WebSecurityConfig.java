@@ -1,8 +1,7 @@
 package com.timberliu.chat.server.config;
 
-import com.timberliu.chat.server.auth.AuthInterceptor;
+import com.timberliu.chat.server.interceptor.AuthInterceptor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,4 +30,5 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 	public AuthInterceptor authInterceptor() {
 		return new AuthInterceptor();
 	}
+
 }

@@ -2,16 +2,19 @@ package com.timberliu.chat.server.dao.redis.mapper;
 
 import com.alibaba.fastjson.JSON;
 import com.timberliu.chat.server.dao.mysql.entity.HistoryMsgEntity;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.timberliu.chat.server.dao.redis.RedisKeyEnum.CHAT_RECORD;
 
@@ -24,21 +27,26 @@ import static com.timberliu.chat.server.dao.redis.RedisKeyEnum.CHAT_RECORD;
 @Repository
 public class OfflineMsgRedisMapper {
 
-	@Resource
-	private RedisTemplate<String, HistoryMsgEntity> chatRecordRedisTemplate;
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
 
 	public Set<HistoryMsgEntity> get(Long userId) {
 		String key = formatKey(userId);
-		return chatRecordRedisTemplate.opsForZSet().range(key, 0, -1);
+		Set<String> set = stringRedisTemplate.opsForZSet().rangeByScore(key, 0, Double.MAX_VALUE);
+		if (set == null) {
+			return new HashSet<>();
+		}
+		return set.stream().map(str -> JSON.parseObject(str, HistoryMsgEntity.class)).collect(Collectors.toSet());
 	}
 
 	public void set(Long userId, HistoryMsgEntity historyMsgEntity) {
 		String key = formatKey(userId);
-		chatRecordRedisTemplate.opsForZSet().add(key, historyMsgEntity, historyMsgEntity.getId());
+		String str = JSON.toJSONString(historyMsgEntity);
+		stringRedisTemplate.opsForZSet().add(key, str, historyMsgEntity.getId());
 	}
 
 	public void set(List<Long> userIds, HistoryMsgEntity historyMsgEntity) {
-		chatRecordRedisTemplate.executePipelined((RedisCallback<HistoryMsgEntity>) connection -> {
+		stringRedisTemplate.executePipelined((RedisCallback<HistoryMsgEntity>) connection -> {
 			for (Long userId : userIds) {
 				String key = formatKey(userId);
 				connection.zAdd(key.getBytes(StandardCharsets.UTF_8), historyMsgEntity.getId(),

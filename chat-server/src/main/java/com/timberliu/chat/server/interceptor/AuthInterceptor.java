@@ -1,9 +1,13 @@
-package com.timberliu.chat.server.auth;
+package com.timberliu.chat.server.interceptor;
 
+import com.timberliu.chat.server.auth.NotRequireAuth;
+import com.timberliu.chat.server.auth.UserContext;
+import com.timberliu.chat.server.auth.UserContextHolder;
 import com.timberliu.chat.server.bean.dto.auth.AuthAccessTokenRespDTO;
 import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
 import com.timberliu.chat.server.exception.BizException;
 import com.timberliu.chat.server.service.IAuthService;
+import com.timberliu.chat.server.util.CommonWebUtil;
 import com.timberliu.chat.server.util.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
@@ -41,6 +45,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 		}
 		AuthAccessTokenRespDTO authAccessTokenRespDTO = authService.checkAccessToken(accessToken);
 		Long userId = authAccessTokenRespDTO.getUserId();
+		CommonWebUtil.setUserId(request, userId);
+
 		UserContext userContext = new UserContext();
 		userContext.setUserId(userId);
 		UserContextHolder.setUserContext(userContext);

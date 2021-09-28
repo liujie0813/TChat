@@ -1,37 +1,29 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Avatar, Modal} from "antd";
-import {useDispatch, useSelector} from "react-redux";
-import {setShowUserInfo} from "../../store/features/userSlice";
+import {useSelector} from "react-redux";
 import {isDigitOrLetter} from "../../common/util/stringUtil";
 import {getColor} from "../../common/util/cssUtil";
 
-export default function UserInfoModal() {
-	const {
-		userInfo, userInfoVisible
-	} = useSelector(state => state.user);
-	const dispatch = useDispatch();
-
-	const cancelShowUserInfo = () => {
-		dispatch(setShowUserInfo(false))
-	};
+export default function UserInfoModal(props) {
+	const { userInfo } = useSelector(state => state.user);
 
 	return (
-		<Modal visible={userInfoVisible}
+		<Modal visible={props.visible}
 					 closable={false}
 					 mask={false}
 					 maskClosable={true}
 					 footer={null}
-					 onCancel={cancelShowUserInfo}
+					 onCancel={() => props.toSetUserInfoVisible(false)}
 					 width={400}
 					 bodyStyle={{ padding: '48px' }}
 					 style={{ marginTop: '-45px', marginLeft: '72px' }}>
 			<div style={{ borderBottom: 'solid 1px #d0d0d0', display: 'flex', paddingBottom: '30px', minWidth: '304px' }}>
 				<div style={{ width: 'calc(100% - 80px)' }}>
 					<div style={{ fontSize: '22px', fontWeight: '500' }}>{userInfo.nickname}</div>
-					<div style={{ paddingTop: '8px' }}>{userInfo.signature}</div>
+					<div style={{ paddingTop: '8px' }}>{userInfo.signature ? userInfo.signature : 'ta没有说什么'}</div>
 				</div>
 				<div style={{ width: '80px' }}>
-					{ getAvatar(userInfo, 80) }
+					{ getAvatar(userInfo.avatarUrl, userInfo.account, userInfo.nickname, 80) }
 				</div>
 			</div>
 			<div style={{ padding: '30px 0', minWidth: '304px' }}>
@@ -45,26 +37,26 @@ export default function UserInfoModal() {
 				</div>
 				<div>
 					<span style={{ color: '#b0b0b0' }}>地 区</span>
-					<span style={{ paddingLeft: '40px' }}>{userInfo.province} {userInfo.city}</span>
+					<span style={{ paddingLeft: '40px' }}>{(userInfo.privince || userInfo.city) ? userInfo.province + ' ' + userInfo.city : '未知'}</span>
 				</div>
 			</div>
 		</Modal>
 	)
 }
 
-export function getAvatar(userInfoParam, size) {
-	if (userInfoParam.avatarUrl) {
+export function getAvatar(avatarUrl, account, nickname, size) {
+	if (avatarUrl) {
 		return (
-			<Avatar src={userInfoParam.avatarUrl} size={size}/>
+			<Avatar src={avatarUrl} size={size}/>
 		)
 	} else {
 		let showName;
-		if (userInfoParam.nickname && isDigitOrLetter(userInfoParam.nickname.substring(0, 6))) {
-			showName = userInfoParam.nickname.substring(0, 6);
-		} else if (userInfoParam.account) {
-			showName = userInfoParam.account.substring(0, 6);
+		if (nickname && isDigitOrLetter(nickname.substring(0, 6))) {
+			showName = nickname.substring(0, 6);
+		} else if (account) {
+			showName = account.substring(0, 6);
 		}
-		let backgroundColor = getColor(userInfoParam.account);
+		let backgroundColor = getColor(account);
 		let gap = parseInt(size / 10);
 		return (
 			<Avatar style={{ color: '#fff', backgroundColor }} size={size} gap={gap}>

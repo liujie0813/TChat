@@ -30,12 +30,12 @@ public class UserRelationEntity extends BaseEntity {
     /**
      * 自己的用户Id
      */
-    private Long mainUser;
+    private Long mainUserId;
 
     /**
      * 好友的用户Id
      */
-    private Long subUser;
+    private Long subUserId;
 
     /**
      * 会话Id

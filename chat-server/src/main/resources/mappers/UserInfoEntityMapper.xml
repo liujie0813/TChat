@@ -4,7 +4,7 @@
 
   <select id="getUserTalkInfos" resultType="com.timberliu.chat.server.dao.mysql.po.TalkInfoPO">
     SELECT
-      ur.talk_id, 0 as talkType, ui.avatar_url,
+      ur.talk_id, 0 as talkType, ui.avatar_url, ui.account, ui.id as userId,
       IFNULL(ur.sub_nickname_remark, ui.nickname) as talkName
     FROM (
       SELECT main_user_id, sub_user_id, talk_id, sub_nickname_remark
@@ -19,8 +19,8 @@
 
   <select id="getUserFromInfos" resultType="com.timberliu.chat.server.dao.mysql.po.UserFromInfoPO">
     SELECT
-      ur.sub_user_id,
-      IFNULL(ur.sub_nickname_remark, ui.nickname) as from
+      ur.sub_user_id as fromId,
+      IFNULL(ur.sub_nickname_remark, ui.nickname) as `from`
     FROM (
       SELECT main_user_id, sub_user_id, sub_nickname_remark
       FROM user_relation

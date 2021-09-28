@@ -11,6 +11,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ContactDTO {
 
+	private Long talkId;
+
 	private Long userId;
 
 	private String account;

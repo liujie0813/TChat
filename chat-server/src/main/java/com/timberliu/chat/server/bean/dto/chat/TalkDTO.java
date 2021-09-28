@@ -28,6 +28,21 @@ public class TalkDTO {
 	private Long talkId;
 
 	/**
+	 * 单聊：好友 用户Id
+	 */
+	private Long userId;
+
+	/**
+	 * 单聊：账号
+	 */
+	private String account;
+
+	/**
+	 * 群聊：群组Id
+	 */
+	private Long groupId;
+
+	/**
 	 * 会话名称
 	 *  单聊：对方 昵称、备注或账号
 	 *  群聊：群组 群名或备注

@@ -13,7 +13,7 @@ export function loginByAccount(account, password) {
 
 export function getTalkList(userId) {
 	return request({
-		url: '/chat/talkList',
+		url: '/chat/talk-list',
 		method: 'GET',
 		params: {
 			userId
@@ -59,5 +59,11 @@ export function addContact(mainUserId, subUserId) {
 			mainUserId,
 			subUserId
 		}
+	})
+}
+
+export function getTalkId(mainUserId, subUserId) {
+	return request({
+		url: '/'
 	})
 }

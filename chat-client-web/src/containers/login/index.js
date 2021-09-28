@@ -4,34 +4,18 @@ import {useDispatch} from 'react-redux'
 import {Button, Form, Input} from 'antd'
 import './login.css'
 
-
-import {setChatList, setContactList, setLoginResp} from "../../store/features/userSlice";
-import {createWebSocket} from "../../components/websocket";
-import {initChatRecord} from "../../store/features/talkRecord";
-import {getChatRecords, getContactList, getTalkList, loginByAccount} from "../../api/user";
+import {setContactList, setLoginResp, initChatRecord} from "../../store/features/userSlice";
+import {getContactList, getTalkList, loginByAccount} from "../../api/user";
 
 export default function Login() {
 	const history = useHistory();
 	const dispatch = useDispatch();
 
-	// 建立 websocket
-	const establishConnect = () => {
-		createWebSocket()
-	};
-
 	// 获取会话列表
 	const toGetTalkList = (userId) => {
 		let resp = getTalkList(userId);
 		resp.then(data => {
-			dispatch(setChatList(data));
-		})
-	};
-
-	// 获取聊天记录
-	const toGetChatRecords = (userId) => {
-		let resp = getChatRecords(userId);
-		resp.then(data => {
-			dispatch(initChatRecord(data));
+			dispatch(initChatRecord(data))
 		})
 	};
 
@@ -48,10 +32,8 @@ export default function Login() {
 		let resp = loginByAccount(params.account, params.password);
 		resp.then(data => {
 			dispatch(setLoginResp(data));
-			establishConnect();
 			let userId = data.userInfoDTO.userId;
 			toGetTalkList(userId);
-			toGetChatRecords(userId);
 			toGetContactList(userId);
 			history.push('/home')
 		});
