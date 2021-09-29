@@ -6,13 +6,13 @@ import {addContact, getContactList, searchByAccount} from "../../api/user";
 import {getAvatar} from "../common/avatar";
 import {isDigitOrLetter} from "../../common/util/stringUtil";
 import {useDispatch, useSelector} from "react-redux";
-import {setContactList} from "../../store/features/userSlice";
+import {setContactList, setOrUpdateChatData} from "../../store/features/userSlice";
 
 const { Search } = Input;
 
 export default function SearchBox() {
 	const {
-		userInfo
+		userInfo, contactMap
 	} = useSelector(state => state.user);
 	const dispatch = useDispatch();
 
@@ -96,10 +96,13 @@ export default function SearchBox() {
 						<Menu>
 							<Menu.Item key='addedUser' style={{ width: '448px' }}>
 								{ addedUser && getAvatar(addedUser.avatarUrl, addedUser.account, addedUser.nickname, 36) }
-								<div style={{ display: 'inline-block', width: '312px', marginLeft: '8px' }}>
+								<div style={{ display: 'inline-block', width: '300px', marginLeft: '8px' }}>
 									{ addedUser && (addedUser.nickname ? addedUser.nickname : addedUser.account) }
 								</div>
-								<Button type='primary' onClick={toAddUser}>添加</Button>
+								{ addedUser && (addedUser.account === userInfo.account || contactMap[addedUser.account]) ?
+										<Button type='primary' disabled>已添加</Button> :
+										<Button type='primary' onClick={toAddUser} style={{ marginLeft: '12px' }}>添加</Button>
+								}
 							</Menu.Item>
 						</Menu>
 					}

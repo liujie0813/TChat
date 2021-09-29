@@ -1,28 +1,38 @@
-.ant-list-item {
-
+.chatPage .ant-list-item {
+	width: 100%;
+	display: flex !important;
+	padding: 0 !important;
+	padding-top: 20px !important;
+	align-items: start;
 }
 
-.ant-list-item-meta {
+.chatPage .chatPageContent {
+	width: calc(100% - 160px);
 }
 
+.keep-left {
+	flex-direction: row;
+	justify-content: flex-start !important;
+}
 
-.keep-left .ant-list-item-meta-avatar {
+.keep-right {
+	flex-direction: row-reverse;
+	justify-content: flex-start !important;
+}
+
+.keep-right .titleOrMsg {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+.chatPageAvatar {
+	order: 0;
 	margin-left: 28px;
 	margin-right: 12px;
 }
 
-.keep-left .ant-list-item-meta-content {
-
-}
-
-.keep-right .ant-list-item-meta-avatar {
-	margin-left: 12px;
-	margin-right: 28px;
-	float: right;
-}
-
-.keep-right .ant-list-item-meta-content {
-	float: right;
+.chatPageContent {
+	order: 1;
 }
 
 .myMsgBackgroundColor {
@@ -31,8 +41,4 @@
 
 .otherMsgBackgroundColor {
 	background-color: #fff;
-}
-
-.ant-list-item-meta-title .singleTitle {
-
 }

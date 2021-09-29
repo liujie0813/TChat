@@ -18,10 +18,12 @@ export function getDateTime(timestamp, isIncludeTime) {
 	let currentYear = currentDate.getFullYear();
 	let currentMonth = currentDate.getMonth() + 1;
 	let currentDay = currentDate.getDate();
+	let currentWeekDay = currentDate.getDay();
 
 	let srcYear = srcDate.getFullYear();
 	let srcMonth = srcDate.getMonth() + 1;
 	let srcDay = srcDate.getDate();
+	let srcWeekDay = currentDate.getDay();
 
 	let timeExtraStr = isIncludeTime ? " " + formatDate(srcDate, "hh:mm") : "";
 	let res = "";
@@ -41,17 +43,12 @@ export function getDateTime(timestamp, isIncludeTime) {
 			// 昨天
 			let yesterdayDate = new Date();
 			yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-			// 前天
-			let beforeYesterdayDate = new Date();
-			beforeYesterdayDate.setDate(beforeYesterdayDate.getDate() - 2);
 
 			if (srcMonth === (yesterdayDate.getMonth() + 1) && srcDay === yesterdayDate.getDate()) {
 				res = "昨天" + timeExtraStr;
-			} else if (srcMonth === (beforeYesterdayDate.getMonth() + 1) && srcDay === beforeYesterdayDate.getDate()) {
-				res = "前天" + timeExtraStr;
 			} else {
-				let deltaHour = (deltaTime / (3600 * 1000));
-				if (deltaHour <= 7 * 24) {
+				let deltaDay = (deltaTime / (24 * 3600 * 1000));
+				if (deltaDay <= srcWeekDay - currentWeekDay) {
 					let weekdayStr = weekday[srcDate.getDay()];
 					res = weekdayStr + timeExtraStr;
 				} else {
@@ -63,7 +60,7 @@ export function getDateTime(timestamp, isIncludeTime) {
 	return res;
 }
 
-function formatDate(date, fmt) {
+export function formatDate(date, fmt) {
 	let obj = {
 		"M+": date.getMonth() + 1,  // 月份
 		"d+": date.getDate(), // 日
@@ -78,17 +75,17 @@ function formatDate(date, fmt) {
 	}
 	for (let key in obj) {
 		if (new RegExp("(" + key + ")").test(fmt)) {
-			fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? obj[key] : (("00" + obj[key]).substr(("" + obj[key]).length)))
+			fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? obj[key] : (("00" + obj[key]).substr(("" + obj[key]).length)))
 		}
 	}
 	return fmt;
 }
 
 const weekday = new Array(7);
-weekday[0] = "星期日";
-weekday[1] = "星期一";
-weekday[2] = "星期二";
-weekday[3] = "星期三";
-weekday[4] = "星期四";
-weekday[5] = "星期五";
-weekday[6] = "星期六";
+weekday[0] = "周日";
+weekday[1] = "周一";
+weekday[2] = "周二";
+weekday[3] = "周三";
+weekday[4] = "周四";
+weekday[5] = "周五";
+weekday[6] = "周六";

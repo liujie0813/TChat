@@ -20,7 +20,7 @@ export const userSlice = createSlice({
 			type: null, // chatPage：聊天页；groupInfoPage：群组信息页；contactInfoPage：联系人信息页
 			data: {}
 		},
-		chatRecords: {}
+		chatRecords: null
 	},
 	reducers: {
 		setAuthToken: (state, { payload }) => {
@@ -37,7 +37,7 @@ export const userSlice = createSlice({
 		setContactList: (state, action) => {
 			state.contactList = action.payload;
 			action.payload.forEach(contact => {
-				state.contactMap[contact.userId] = contact
+				state.contactMap[contact.account] = contact
 			});
 		},
 		setMenuData: (state, action) => {
@@ -58,7 +58,7 @@ export const userSlice = createSlice({
 		setContactData: (state, action) => {
 			state.activeContact = action.payload;
 			state.page.type = "contactInfoPage";
-			state.page.data = state.contactMap[parseInt(action.payload)]
+			state.page.data = state.contactMap[action.payload]
 		},
 		setOrUpdateChatData: (state, action) => {
 			state.activeMenu = "chatMenu";
@@ -66,11 +66,11 @@ export const userSlice = createSlice({
 			state.contactMenuImg.img = img4;
 
 			let talkId = action.payload.talkId;
-			let userId = action.payload.userId;
+			let account = action.payload.account;
 			state.activeChat = talkId.toString();
 			state.page.type = "chatPage";
 			if (!state.chatRecords[talkId]) {
-				let contact = state.contactMap[parseInt(userId)];
+				let contact = state.contactMap[account];
 				state.chatRecords[talkId] = {
 					talkType: action.payload.talkType,
 					talkId: talkId,
@@ -84,8 +84,9 @@ export const userSlice = createSlice({
 			}
 		},
 		initChatRecord: (state, { payload }) => {
+			state.chatRecords = new Map()
 			for (const chatRecord of payload) {
-				state.chatRecords[chatRecord.talkId] = chatRecord
+				state.chatRecords.set(chatRecord.talkId, chatRecord)
 			}
 		},
 		updateChatRecord: (state, { payload }) => {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,13 +31,16 @@ public class OfflineMsgRedisMapper {
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
 
-	public Set<HistoryMsgEntity> get(Long userId) {
+	public List<HistoryMsgEntity> get(Long userId) {
 		String key = formatKey(userId);
 		Set<String> set = stringRedisTemplate.opsForZSet().rangeByScore(key, 0, Double.MAX_VALUE);
-		if (set == null) {
-			return new HashSet<>();
+		List<HistoryMsgEntity> res = new ArrayList<>();
+		if (set != null) {
+			for (String str : set) {
+				res.add(JSON.parseObject(str, HistoryMsgEntity.class));
+			}
 		}
-		return set.stream().map(str -> JSON.parseObject(str, HistoryMsgEntity.class)).collect(Collectors.toSet());
+		return res;
 	}
 
 	public void set(Long userId, HistoryMsgEntity historyMsgEntity) {

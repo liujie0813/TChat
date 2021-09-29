@@ -2,9 +2,11 @@ import {Avatar, Image, List, message, Spin, Tooltip, Input} from "antd";
 import Picker, {SKIN_TONE_NEUTRAL} from "emoji-picker-react";
 import img2 from "../../common/images/emoji.svg";
 import React, {useEffect, useRef, useState} from "react";
+import InfiniteScroll from 'react-infinite-scroller';
 import WebSocketInstance from '../websocket/socketInstance'
 import {useSelector} from "react-redux";
 import {getAvatar} from "../common/avatar";
+import {formatDate, getDateTime} from "../common/time";
 
 const { TextArea } = Input;
 
@@ -14,7 +16,12 @@ export default function ChatPage() {
 	const recordEnd = useRef(null);
 
 	const { userInfo, activeChat, chatRecords } = useSelector(state => state.user);
-	const chatRecord = chatRecords[activeChat];
+	let chatRecord;
+	for (let [key, value] of chatRecords) {
+		if (key === activeChat) {
+			chatRecord = value;
+		}
+	}
 
 	const scrollToBottom = () => {
 		if (recordEnd && recordEnd.current) {
@@ -69,6 +76,21 @@ export default function ChatPage() {
 		setContent('')
 	};
 
+	const showTime = (timestamp, index) => {
+		let curTime = new Date().getTime();
+		// 5 分钟内不显示
+		if (curTime - timestamp < 300000) {
+			return false
+		}
+		// 第一条 最后一条 显示
+		if (index === 0) {
+			return true;
+		}
+		let nextDate = chatRecord.records[index - 1].sendTime;
+		return !(formatDate(new Date(parseInt(timestamp)), "yyyy/MM/dd hh:mm")
+			== formatDate(new Date(parseInt(nextDate)), "yyyy/MM/dd hh:mm"))
+	}
+
 	return (
 		<div style={{height: '100%', width: 'calc(100% - 330px)', backgroundColor: '#f3f3f3'}}>
 			<div style={{borderBottom: 'solid 1px #e0e0e0', height: '64px'}}>
@@ -77,59 +99,54 @@ export default function ChatPage() {
 				</div>
 			</div>
 
-			<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc(100% - 260px)', minHeight: '320px', display: 'flex', flexDirection: 'column' }}>
+			<div style={{borderBottom: 'solid 1px #e0e0e0', height: 'calc(100% - 264px)', minHeight: '320px', display: 'flex', flexDirection: 'column' }}>
 				<div style={{ overflow: 'auto' }}>
-					{/*<InfiniteScroll*/}
-					{/*	initialLoad={false}*/}
-					{/*	pageStart={0}*/}
-					{/*	loadMore={handleInfiniteOnLoad}*/}
-					{/*	hasMore={true}*/}
-					{/*	useWindow={false}*/}
-					{/*>*/}
-					<List
-						// itemLayout="vertical"
-						dataSource={ chatRecord.records }
-						renderItem={record => (
-							<List.Item key={record.msgId} style={{ height: '72px' }} className={record.fromId === userInfo.userId ? 'keep-right' : 'keep-left'}>
-								<List.Item.Meta
-									avatar={
-										<p>
+					<InfiniteScroll
+						initialLoad={false}
+						pageStart={0}
+						loadMore={handleInfiniteOnLoad}
+						hasMore={true}
+						useWindow={false}
+					>
+						<List className='chatPage'
+							dataSource={ chatRecord.records }
+							renderItem={ (record, index) => {
+								let isShowTime = showTime(record.sendTime, index)
+								return (
+									<List.Item key={record.msgId}
+														 style={{ display: 'flex' }}
+														 className={record.fromId === userInfo.userId ? 'keep-right' : 'keep-left'}>
+										<div className='chatPageAvatar' style={{ paddingTop: (isShowTime ? '36px' : '0') }}>
 											{ record.fromId === userInfo.userId ? getAvatar(userInfo.avatarUrl, userInfo.account, userInfo.nickname, 40) :
 												getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
-										</p>
-									}
-									title={
-										(record.msgType === 0) ? <div className='singleTitle'/> : <div>{record.from}</div>
-									}
-									description={
-										<div style={{ padding: '9px 14px', color: '#000', borderRadius: '5px' }}
-												 className={record.fromId === userInfo.userId ? 'myMsgBackgroundColor' : 'otherMsgBackgroundColor'}>
-											{record.content}
 										</div>
-									}
-								/>
-							</List.Item>
-						)}
-					>
-						{ loading && (
-							<div className="demo-loading-container">
-								<Spin />
-							</div>
-						)}
-					</List>
+										<div className='chatPageContent' >
+											{ !isShowTime ? <div/> :
+												<div style={{ textAlign: 'center', paddingBottom: '14px' }}> {getDateTime(record.sendTime, true)} </div>
+											}
+											<div className='titleOrMsg'>
+												{ (parseInt(chatRecord.talkType) === 0) ? <div/> : <div>{record.from}</div>
+												}
+											</div>
+											<div className='titleOrMsg'>
+												<div style={{ display: 'inline-block', padding: '9px 14px', color: '#000', borderRadius: '5px', maxWidth: '60%' }}
+														 className={record.fromId === userInfo.userId ? 'myMsgBackgroundColor' : 'otherMsgBackgroundColor'}>
+													{record.content}
+												</div>
+											</div>
+										</div>
+									</List.Item>
+								)
+							}}
+						>
+							{ loading && (
+								<div className="demo-loading-container">
+									<Spin />
+								</div>
+							)}
+						</List>
 					<div ref={recordEnd}/>
-					{/*</InfiniteScroll>*/}
-					{/*{*/}
-					{/*	data.talkId && chatRecords[data.talkId].records.map((record) => {*/}
-					{/*		return (*/}
-					{/*			<div key={record.msgId} style={{ height: '80px' }}>*/}
-
-					{/*				{record.content}*/}
-
-					{/*			</div>*/}
-					{/*		)*/}
-					{/*	})*/}
-					{/*}*/}
+					</InfiniteScroll>
 				</div>
 			</div>
 

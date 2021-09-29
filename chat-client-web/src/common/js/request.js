@@ -78,6 +78,7 @@ service.interceptors.response.use(
 				title: '系统提示',
 				content: res.msg,
 			})
+			console.log(res)
 		}
 		return Promise.reject('error')
 	},
@@ -86,6 +87,7 @@ service.interceptors.response.use(
 			title: '系统提示',
 			content: error
 		})
+		throw new Error(error)
 	}
 );
 

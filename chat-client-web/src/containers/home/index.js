@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import {Avatar, Tabs, Collapse} from 'antd'
+import {Avatar, Tabs, Collapse, List, Spin, Button} from 'antd'
 import './home.css'
 import img6 from '../../common/images/quit.png';
 import SearchBox from "../../components/searchOrAdd";
 import {useDispatch, useSelector} from "react-redux";
+import InfiniteScroll from 'react-infinite-scroller';
 import {logout, setChatData, setContactData, setMenuData,} from "../../store/features/userSlice";
 import DataPage from "../../components/dataPage";
 import UserInfoModal from "../../components/person/personInfo";
@@ -24,6 +25,7 @@ export default function Home() {
 	} = useSelector(state => state.user);
 	const [userInfoVisible, setUserInfoVisible] = useState(false);
 	const dispatch = useDispatch();
+	const EMPTY_RECORDS = [];
 
 	const tabClick = (key, event) => {
 		if (key === 'avatar') {
@@ -47,7 +49,7 @@ export default function Home() {
 		dispatch(setChatData(key))
 	};
 
-	const contactTabClick = (key, event) => {
+	const contactTabClick = (key) => {
 		dispatch(setContactData(key))
 	};
 
@@ -76,40 +78,48 @@ export default function Home() {
 						{/* 搜索框 */}
 						<SearchBox/>
 
-						{/* 聊天列表 */}
-						<Tabs tabPosition='left'
-								activeKey={activeChat === null ? -1 : activeChat}
-								onTabClick={ chatTabClick }
-								style={{ height: 'calc(100vh - 20px)' }}
-								className='secondList'>
-
-							{/* 循环遍历 */}
-							{Object.keys(chatRecords).map((key) => {
-								let chatRecord = chatRecords[key];
-								return (
-									<TabPane tab={
-											<div style={{ width: '300px', height: '68px', padding: '0 16px', textAlign: 'left', display: 'flex' }}>
-												<div style={{ padding: '14px 0' }}>
-													{ getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
-												</div>
-												<div style={{ marginLeft: '10px', padding: '10px 0' }}>
-													<div style={{ width: '156px', color: '#000' }}>
-														{ chatRecord.talkName }
+						<div style={{ overflow: 'auto', height: 'calc(100vh - 64px)' }}>
+							<InfiniteScroll
+								pageStart={0}
+								loadMore={() => {}}
+								hasMore={false}
+								loader={ <div/> }
+								useWindow={false}
+								className='singleContactList'>
+								{/* 循环遍历 */}
+								<List
+									dataSource={ chatRecords ? chatRecords : EMPTY_RECORDS }
+									renderItem={ val => {
+										let chatRecord = val[1]
+										let recordLen = chatRecord.records.length
+										return (
+											<List.Item key={chatRecord.account} className={ chatRecord.talkId === activeChat ? 'contactActive' : ''}>
+												<Button type='link' style={{ height: '72px' }}
+																onClick={() => chatTabClick(chatRecord.talkId)}>
+													<div style={{ width: '300px', height: '70px', padding: '0 16px', textAlign: 'left', display: 'flex' }}>
+														<div style={{ padding: '15px 0'}}>
+															{ getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
+														</div>
+														<div style={{ marginLeft: '10px', padding: '10px 0' }}>
+															<div style={{ width: '156px', color: '#000' }}>
+																{ chatRecord.talkName }
+															</div>
+															<div style={{ fontSize: '12px', paddingTop: '6px', color: 'rgba(153, 153, 153)', maxWidth: '156px' }}
+																	className='overWidth'>
+																{ recordLen > 0 && chatRecord.records[recordLen - 1].content }
+															</div>
+														</div>
+														<div style={{ width: '60px', textAlign: 'right', fontSize: '10px', paddingTop: '12px', color: 'rgba(153, 153, 153)' }}>
+															{ recordLen > 0 && getDateTime(chatRecord.records[recordLen - 1].sendTime, false) }
+														</div>
 													</div>
-													<div style={{ fontSize: '12px', paddingTop: '6px', color: 'rgba(153, 153, 153)' }}>
-														{ chatRecord.records[0] && chatRecord.records[0].content }
-													</div>
-												</div>
-												<div style={{ width: '60px', textAlign: 'right', fontSize: '10px', paddingTop: '12px', color: 'rgba(153, 153, 153)' }}>
-													{ chatRecord.records[0] && getDateTime(chatRecord.records[0].sendTime, false) }
-												</div>
-											</div>
-										}
-										key={chatRecord.talkId}>
-									</TabPane>
-								)
-							})}
-						</Tabs>
+												</Button>
+											</List.Item>
+										)
+									}}>
+								</List>
+							</InfiniteScroll>
+						</div>
 					</div>
 				</TabPane>
 
@@ -124,7 +134,7 @@ export default function Home() {
 						<SearchBox/>
 
 						{/* 联系人列表 */}
-						<Collapse className='secondList'>
+						<Collapse accordion className='secondList'>
 							<Panel header='新的联系人' key='newContactList'>
 								<div style={{ padding: '0 40px 6px 40px'}}>
 									无
@@ -136,25 +146,34 @@ export default function Home() {
 								</div>
 							</Panel>
 							<Panel header='联系人' key='contactList'>
-								<Tabs tabPosition='left'
-											activeKey={activeContact === null ? -2 : activeContact}
-											onTabClick={ contactTabClick }
-											style={{ height: 'calc(100vh - 20px)' }}>
-									{/* 循环遍历 */}
-									{contactList.map((contact, index) => {
-										return (
-											<TabPane tab={
-												<div style={{ width: '252px', height: '68px', margin: '0 12px 0 36px', padding: '14px 0', textAlign: 'left' }}>
-													{ contact && getAvatar(contact.avatarUrl, contact.account, contact.nickname, 40) }
-													<div style={{ display: 'inline-block', marginLeft: '12px' }}>
-														{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
-													</div>
-												</div>
-											} key={contact.userId}>
-											</TabPane>
-										)
-									})}
-								</Tabs>
+								<div style={{ overflow: 'auto', height: 'calc(100vh - 202px)' }}>
+									<InfiniteScroll
+											pageStart={0}
+											loadMore={() => {}}
+											hasMore={false}
+											loader={ <div/> }
+											useWindow={false}
+											className='singleContactList'>
+										{/* 循环遍历 */}
+										<List
+											dataSource={ contactList }
+											renderItem={ contact => (
+												<List.Item key={contact.account} className={ contact.account === activeContact ? 'contactActive' : ''}>
+													<Button type='link' style={{ height: '68px' }}
+																	onClick={() => contactTabClick(contact.account)}>
+														<div style={{ width: '252px', margin: '0 12px 0 36px', textAlign: 'left'}}>
+															{ contact &&
+																getAvatar(contact.avatarUrl, contact.account, contact.nickname, 40)}
+															<div style={{ display: 'inline-block', marginLeft: '12px' }}>
+																{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
+															</div>
+														</div>
+													</Button>
+												</List.Item>
+											)}>
+										</List>
+									</InfiniteScroll>
+								</div>
 							</Panel>
 						</Collapse>
 					</div>

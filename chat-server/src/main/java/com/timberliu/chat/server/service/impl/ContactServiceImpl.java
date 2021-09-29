@@ -6,6 +6,7 @@ import com.timberliu.chat.server.dao.mysql.entity.UserInfoEntity;
 import com.timberliu.chat.server.dao.mysql.entity.UserRelationEntity;
 import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
+import com.timberliu.chat.server.dao.redis.mapper.TalkIdRedisMapper;
 import com.timberliu.chat.server.exception.BizException;
 import com.timberliu.chat.server.service.IContactService;
 import com.timberliu.chat.server.util.IdentifyUtil;
@@ -27,6 +28,9 @@ public class ContactServiceImpl implements IContactService {
 	@Resource
 	private UserRelationMapper userRelationMapper;
 
+	@Resource
+	private TalkIdRedisMapper talkIdRedisMapper;
+
 	@Override
 	public List<ContactDTO> getContactList(Long userId) {
 		return userRelationMapper.getContactList(userId);
@@ -36,7 +40,7 @@ public class ContactServiceImpl implements IContactService {
 	public Boolean addContact(Long mainUserId, Long subUserId) {
 		existUserId(mainUserId);
 		existUserId(subUserId);
-		Long talkId = IdentifyUtil.nextTalkId();
+		Long talkId = talkIdRedisMapper.incrAndGet();
 		userRelationMapper.insert(new UserRelationEntity()
 				.setMainUserId(mainUserId).setSubUserId(subUserId).setTalkId(talkId));
 		userRelationMapper.insert(new UserRelationEntity()

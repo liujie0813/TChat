@@ -9,6 +9,7 @@ import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public class RedisMapperTest extends ChatServerApplicationTests {
 						.setFromId(1L).setContent("hello").setSendTime(1632812534000L);
 		offlineMsgRedisMapper.set(1L, historyMsgEntity);
 
-		Set<HistoryMsgEntity> historyMsgEntities = offlineMsgRedisMapper.get(1L);
+		List<HistoryMsgEntity> historyMsgEntities = offlineMsgRedisMapper.get(1L);
 		System.out.println(historyMsgEntities);
 	}
 

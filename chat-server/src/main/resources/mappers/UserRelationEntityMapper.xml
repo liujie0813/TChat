@@ -7,6 +7,7 @@
     FROM user_relation ur LEFT JOIN user_info ui
       ON ur.sub_user_id = ui.id
     WHERE ur.main_user_id = #{userId}
+    ORDER BY ui.account DESC
   </select>
 
 </mapper>

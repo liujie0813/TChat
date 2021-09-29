@@ -13,7 +13,7 @@ export default function ContactPage() {
 		console.log("jumpChatPage: ", data.userId.toString());
 		dispatch(setOrUpdateChatData({
 			talkId: data.talkId,
-			userId: data.userId,
+			account: data.account,
 			talkType
 		}))
 	};

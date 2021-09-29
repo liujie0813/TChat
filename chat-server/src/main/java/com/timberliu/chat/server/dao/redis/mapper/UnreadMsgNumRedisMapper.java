@@ -19,11 +19,11 @@ import static com.timberliu.chat.server.dao.redis.RedisKeyEnum.UNREAD_MSG_NUM;
 public class UnreadMsgNumRedisMapper {
 
 	@Autowired
-	private StringRedisTemplate redisTemplate;
+	private StringRedisTemplate stringRedisTemplate;
 
 	public Integer get(Long userId, Long talkId) {
 		String key = formatKey(userId);
-		Object obj = redisTemplate.opsForHash().get(key, String.valueOf(talkId));
+		Object obj = stringRedisTemplate.opsForHash().get(key, String.valueOf(talkId));
 		if (obj == null) {
 			return 0;
 		}
@@ -34,7 +34,7 @@ public class UnreadMsgNumRedisMapper {
 		String key = formatKey(userId);
 		List<Object> talkIdStrs = talkIds.stream().map(String::valueOf).collect(Collectors.toList());
 
-		List<Object> nums = redisTemplate.opsForHash().multiGet(key, talkIdStrs);
+		List<Object> nums = stringRedisTemplate.opsForHash().multiGet(key, talkIdStrs);
 		Map<Long, Integer> res = new HashMap<>();
 		int index = 0;
 		for (Long talkId : talkIds) {
@@ -49,12 +49,12 @@ public class UnreadMsgNumRedisMapper {
 
 	public void incr(Long userId, Long talkId) {
 		String key = formatKey(userId);
-		redisTemplate.opsForHash().increment(key, String.valueOf(talkId), 1);
+		stringRedisTemplate.opsForHash().increment(key, String.valueOf(talkId), 1);
 	}
 
 	public void clear(Long userId, Long talkId) {
 		String key = formatKey(userId);
-		redisTemplate.opsForHash().put(key, talkId, 0);
+		stringRedisTemplate.opsForHash().put(key, talkId, 0);
 	}
 
 	private static String formatKey(Long userId) {

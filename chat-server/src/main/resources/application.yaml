@@ -19,12 +19,26 @@ spring:
     url: jdbc:mysql://123.56.9.126:3306/t_chat?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT
     username: root
     password: WfNYnraEOynLn87e
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 50
+      minimum-idle: 50
+
   redis:
     host: 123.56.9.126
     port: 6379
     password: gNVA3tluQAkuKVWn
     database: 0
-    timeout: 1000ms
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
+        time-between-eviction-runs: -1
 
 mybatis-plus:
   global-config:

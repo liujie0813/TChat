@@ -40,7 +40,7 @@ public class ChatServiceImpl implements IChatService {
 	@Override
 	public List<TalkDTO> getTalkList(Long userId) {
 		// 从同步库（redis）获取消息
-		Set<HistoryMsgEntity> historyMsgEntities = offlineRecordRedisMapper.get(userId);
+		List<HistoryMsgEntity> historyMsgEntities = offlineRecordRedisMapper.get(userId);
 		if (historyMsgEntities.isEmpty()) {
 			return new ArrayList<>();
 		}
@@ -65,16 +65,20 @@ public class ChatServiceImpl implements IChatService {
 				talkDto.setRecords(buildRecordDto(fromIdFromMap, groupMsgMap.get(talkId)));
 			}
 		}
+		// 各个会话按最近一条消息的 msgId 倒序排列
+		talkDtos.sort(Comparator.comparing((TalkDTO talkDTO) ->
+				talkDTO.getRecords().get(talkDTO.getRecords().size() - 1).getMsgId()).reversed());
 		return talkDtos;
 	}
 
-	private void buildMap(Set<HistoryMsgEntity> historyMsgEntities, Set<Long> talkIdSet,
+	private void buildMap(List<HistoryMsgEntity> historyMsgEntities, Set<Long> talkIdSet,
 						  Map<Long, List<HistoryMsgEntity>> singleMsgMap, Map<Long, List<HistoryMsgEntity>> groupMsgMap) {
 		for (HistoryMsgEntity historyMsgEntity : historyMsgEntities) {
 			Long talkId = historyMsgEntity.getTalkId();
 			talkIdSet.add(talkId);
 			if (historyMsgEntity.getTalkType().equals(TalkTypeEnum.SINGLE.getCode())) {
 				List<HistoryMsgEntity> entities = singleMsgMap.getOrDefault(talkId, new ArrayList<>());
+				// 一个会话内的消息，按 msgId 顺序排列
 				entities.add(historyMsgEntity);
 				singleMsgMap.put(talkId, entities);
 			} else if (historyMsgEntity.getTalkType().equals(TalkTypeEnum.GROUP.getCode())) {
@@ -107,7 +111,7 @@ public class ChatServiceImpl implements IChatService {
 		}
 	}
 
-	private Map<Long, String> getUserMap(Long userId, Set<HistoryMsgEntity> historyMsgEntities) {
+	private Map<Long, String> getUserMap(Long userId, List<HistoryMsgEntity> historyMsgEntities) {
 		Set<Long> fromIds = historyMsgEntities.stream().map(HistoryMsgEntity::getFromId).collect(Collectors.toSet());
 
 		List<UserFromInfoPO> userFromInfos = userInfoMapper.getUserFromInfos(userId, fromIds);
