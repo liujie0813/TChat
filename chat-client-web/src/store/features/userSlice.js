@@ -87,9 +87,9 @@ export const userSlice = createSlice({
 			let account = action.payload.account;
 			state.activeChat = talkId.toString();
 			state.page.type = "chatPage";
-			if (!state.chatRecords[talkId]) {
+			if (!state.chatRecordMap[talkId]) {
 				let contact = state.contactMap[account];
-				state.chatRecords[talkId] = {
+				let chatRecord = {
 					talkType: action.payload.talkType,
 					talkId: talkId,
 					userId: contact.userId,
@@ -98,38 +98,44 @@ export const userSlice = createSlice({
 					avatarUrl: contact.avatarUrl,
 					unreadNum: 0,
 					records: []
-				}
+				};
+
+				state.chatRecordMap[talkId] = chatRecord;
+				state.chatRecordList = [
+					chatRecord,
+					...state.chatRecordList
+				]
 			}
 		},
-		setUnreadNum: (state, { payload }) => {
-			const { talkId, num } = payload;
-			state.totalUnreadNum += num;
-			state.chatRecordMap[talkId].unreadNum += num;
-
-			state.chatRecordList.forEach(chatRecord => {
-				if (chatRecord.talkId === talkId) {
-					chatRecord.unreadNum += num;
-				}
-			})
-		},
 		initChatRecord: (state, { payload }) => {
-			// for (const chatRecord of payload) {
-			// 	state.chatRecords.set(chatRecord.talkId, chatRecord)
-			// }
 			state.chatRecordList = payload;
+			let totalUnreadNum = 0;
 			payload.forEach(chatRecord => {
-				state.chatRecordMap[chatRecord.talkId] = chatRecord
+				state.chatRecordMap[chatRecord.talkId] = chatRecord;
+				totalUnreadNum += chatRecord.unreadNum
 			});
+			state.totalUnreadNum = totalUnreadNum
 		},
 		updateChatRecord: (state, { payload }) => {
-			const { talkId, records } = payload;
+			const { talkId, records, updateUnreadNum } = payload;
 			let originRecords = state.chatRecordMap[talkId].records;
 			state.chatRecordMap[talkId].records = originRecords.concat(records);
 
 			state.chatRecordList = [
 				state.chatRecordMap[talkId],
 				...state.chatRecordList.filter((item, index) => item.talkId !== talkId )
-			]
+			];
+
+			if (updateUnreadNum) {
+				let num = records.length;
+				state.totalUnreadNum += num;
+				state.chatRecordMap[talkId].unreadNum += num;
+				state.chatRecordList.forEach(chatRecord => {
+					if (chatRecord.talkId === talkId) {
+						chatRecord.unreadNum += num;
+					}
+				})
+			}
 		},
 		historyUpdateChatRecord: (state, { payload }) => {
 			const { talkId, records } = payload;
@@ -148,7 +154,6 @@ export const {
 	setChatList, setContactList,
 	setMenuData, setChatData, setContactData,
 	setOrUpdateChatData,
-	setUnreadNum,
 	initChatRecord, updateChatRecord, historyUpdateChatRecord,
 	logout
 } = userSlice.actions;

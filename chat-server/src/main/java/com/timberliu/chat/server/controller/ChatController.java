@@ -28,4 +28,10 @@ public class ChatController {
 		return ApiResult.success(talks);
 	}
 
+	@GetMapping("/update-unread-num")
+	public ApiResult<Boolean> updateUnreadNum(@RequestParam("userId") Long userId, @RequestParam("talkId") Long talkId) {
+		Boolean flag = chatService.updateUnreadNum(userId, talkId);
+		return ApiResult.success(flag);
+	}
+
 }

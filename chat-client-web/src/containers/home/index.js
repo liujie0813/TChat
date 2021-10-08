@@ -11,6 +11,8 @@ import UserInfoModal from "../../components/person/personInfo";
 import {useHistory} from "react-router-dom";
 import {getAvatar} from "../../components/common/avatar";
 import {getDateTime} from "../../components/common/time";
+import WebSocketInstance from "../../components/websocket/webSocketInstance";
+import {updateUnreadNum} from "../../components/api/user";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -26,16 +28,16 @@ export default function Home() {
 	} = useSelector(state => state.user);
 	const [userInfoVisible, setUserInfoVisible] = useState(false);
 	const dispatch = useDispatch();
-	const EMPTY_RECORDS = [];
 
 	const tabClick = (key, event) => {
 		if (key === 'avatar') {
-			setUserInfoVisible(true)
+			setUserInfoVisible(true);
 			return
 		}
 		if (key === 'quitMenu') {
-			dispatch(logout())
-			history.push('/')
+			WebSocketInstance.closeWebSocket();
+			dispatch(logout());
+			history.push('/');
 			return;
 		}
 		dispatch(setMenuData(key));
@@ -47,7 +49,8 @@ export default function Home() {
 	};
 
 	const chatTabClick = (key, event) => {
-		dispatch(setChatData(key))
+		dispatch(setChatData(key));
+		updateUnreadNum(userInfo.userId, chatRecordMap[key].talkId);
 	};
 
 	const contactTabClick = (key) => {

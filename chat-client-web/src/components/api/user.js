@@ -1,4 +1,4 @@
-import request from "../common/js/request";
+import request from "../../common/js/request";
 
 export function loginByAccount(account, password) {
 	return request({
@@ -62,8 +62,13 @@ export function addContact(mainUserId, subUserId) {
 	})
 }
 
-export function getTalkId(mainUserId, subUserId) {
+export function updateUnreadNum(userId, talkId) {
 	return request({
-		url: '/'
+		url: '/chat/update-unread-num',
+		method: 'GET',
+		params: {
+			userId,
+			talkId
+		}
 	})
 }

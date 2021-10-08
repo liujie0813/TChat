@@ -83,13 +83,15 @@ const handleC2CSendResp = (resp) => {
 			from: userIdMap[data.fromId],
 			content: data.content,
 			sendTime: resp.sendTime
-		}]
+		}],
+		updateUnreadNum: false
 	}))
 };
 
 const handleC2CPushResp = (resp) => {
 	let userIdMap = getStateUser().userIdMap;
 
+	let updateUnreadNum = getStateUser().activeMenu === 'chatMenu' && getStateUser().activeChat === resp.talkId;
 	store.dispatch(updateChatRecord({
 		talkId: resp.talkId,
 		records: [{
@@ -99,18 +101,10 @@ const handleC2CPushResp = (resp) => {
 			from: userIdMap[resp.fromId],
 			content: resp.content,
 			sendTime: resp.sendTime
-		}]
+		}],
+		updateUnreadNum
 	}))
-
-	if (getStateUser().activeMenu === 'chatMenu' && getStateUser().activeChat === resp.talkId) {
-		console.log("[handleC2CPushResp] cur page, not mention")
-		return
-	}
-	store.dispatch(setUnreadNum({
-		talkId: resp.talkId,
-		num: 1
-	}))
-}
+};
 
 function getStateUser() {
 	return store.getState().user;

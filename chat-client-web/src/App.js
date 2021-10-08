@@ -15,7 +15,7 @@ function App() {
     ) : (
       <Login/>
     )
-  }
+  };
 
   return (
     <Fragment>

@@ -54,7 +54,7 @@ public class UnreadMsgNumRedisMapper {
 
 	public void clear(Long userId, Long talkId) {
 		String key = formatKey(userId);
-		stringRedisTemplate.opsForHash().put(key, talkId, 0);
+		stringRedisTemplate.opsForHash().delete(key, String.valueOf(talkId));
 	}
 
 	private static String formatKey(Long userId) {

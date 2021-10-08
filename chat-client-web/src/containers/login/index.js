@@ -1,17 +1,21 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {useHistory} from 'react-router-dom'
 import {useDispatch} from 'react-redux'
 import {Button, Form, Input} from 'antd'
 import './login.css'
 
 import {setContactList, setLoginResp, initChatRecord} from "../../store/features/userSlice";
-import {getContactList, getTalkList, loginByAccount} from "../../api/user";
+import {getContactList, getTalkList, loginByAccount} from "../../components/api/user";
 import WebSocketInstance from "../../components/websocket/webSocketInstance";
 import {messageType} from "../../components/websocket/messageType";
 
 export default function Login() {
 	const history = useHistory();
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		WebSocketInstance.createWebSocket();
+	}, []);
 
 	// 获取会话列表
 	const toGetTalkList = (userId) => {
@@ -36,7 +40,7 @@ export default function Login() {
 			dispatch(setLoginResp(data));
 			WebSocketInstance.sendMsg(messageType.AuthRequestMessage, {
 				accessToken: data.accessToken
-			})
+			});
 			let userId = data.userInfoDTO.userId;
 			toGetTalkList(userId);
 			toGetContactList(userId);

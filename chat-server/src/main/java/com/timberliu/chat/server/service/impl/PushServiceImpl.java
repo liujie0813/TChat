@@ -3,6 +3,7 @@ package com.timberliu.chat.server.service.impl;
 import com.timberliu.chat.server.dao.mysql.entity.UserRelationEntity;
 import com.timberliu.chat.server.dao.mysql.mapper.GroupUserRelationMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
+import com.timberliu.chat.server.dao.redis.mapper.UnreadMsgNumRedisMapper;
 import com.timberliu.chat.server.protocol.message.c2c.C2CPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2g.C2GPushRequestMessage;
 import com.timberliu.chat.server.server.NettyChannelManager;
@@ -31,6 +32,9 @@ public class PushServiceImpl implements IPushService {
 	@Autowired
 	private GroupUserRelationMapper groupUserRelationMapper;
 
+	@Autowired
+	private UnreadMsgNumRedisMapper unreadMsgNumRedisMapper;
+
 	@Override
 	public void pushSingleMessage(C2CPushRequestMessage c2cPushRequestMessage) {
 		UserRelationEntity userRelationEntity = userRelationMapper.getByTalkIdAndMainUserId(
@@ -40,6 +44,7 @@ public class PushServiceImpl implements IPushService {
 			nettyChannelManager.send(userRelationEntity.getSubUserId(), c2cPushRequestMessage);
 		} else {
 			log.info("[pushSingleMessage] userId({}) offline", userId);
+			unreadMsgNumRedisMapper.incr(userId, c2cPushRequestMessage.getTalkId());
 		}
 	}
 

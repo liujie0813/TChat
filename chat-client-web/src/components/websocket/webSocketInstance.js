@@ -6,16 +6,16 @@ class WebSocketInstance {
 
 	socket;
 
-	constructor() {
+	createWebSocket = () => {
 		if ('WebSocket' in window) {
 			this.socket = new WebSocket('ws://localhost:18081/tchat');
 			this.socket.binaryType = "arraybuffer"
 		} else {
-			message.error('当前浏览器不支持 WebSocket ！');
+			message.error('当前浏览器不支持 WebSocket');
 			return
 		}
 		this.socket.onopen = () => {
-			console.log('[websocket] connection established ！')
+			console.log('[websocket] connection established', this.socket)
 			// 心跳检测
 		};
 		this.socket.onmessage = (event) => this.recvMsg(event);
@@ -23,12 +23,21 @@ class WebSocketInstance {
 			console.log("Error ！")
 		};
 		this.socket.onclose = (e) => {
-			console.log('Connection closed ！', e.code, e.reason, e.wasClean)
+			console.log('Connection closed', e.code, e.reason, e.wasClean)
 		};
 	};
 
+	closeWebSocket = () => {
+		this.socket && this.socket.close();
+	};
+
 	sendMsg = (type, data) => {
-		console.log('[websocket] send msg: ', data)
+		console.log('[websocket] send msg: ', data);
+		if (!this.socket || this.socket.readyState !== 1) {
+			console.log('websocket connect closed', this.socket)
+			return
+		}
+
 		let str = JSON.stringify(data);
 		let bodyBytes = stringToByte(str);
 
@@ -77,12 +86,8 @@ class WebSocketInstance {
 		}
 		let str = byteToString(bytes);
 		let data = JSON.parse(str);
-		console.log('[websocket] recv msg: ', data)
+		console.log('[websocket] recv msg: ', data);
 		handleMessage(command, seqId, data);
-	};
-
-	closeWebSocket = () => {
-		this.socket && this.socket.close();
 	};
 
 	nextSeqId = () => {

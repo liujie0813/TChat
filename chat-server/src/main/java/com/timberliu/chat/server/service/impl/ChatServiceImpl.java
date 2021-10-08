@@ -71,6 +71,12 @@ public class ChatServiceImpl implements IChatService {
 		return talkDtos;
 	}
 
+	@Override
+	public Boolean updateUnreadNum(Long userId, Long talkId) {
+		unreadMsgNumRedisMapper.clear(userId, talkId);
+		return true;
+	}
+
 	private void buildMap(List<HistoryMsgEntity> historyMsgEntities, Set<Long> talkIdSet,
 						  Map<Long, List<HistoryMsgEntity>> singleMsgMap, Map<Long, List<HistoryMsgEntity>> groupMsgMap) {
 		for (HistoryMsgEntity historyMsgEntity : historyMsgEntities) {

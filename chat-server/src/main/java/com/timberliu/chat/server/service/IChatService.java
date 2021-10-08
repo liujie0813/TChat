@@ -16,4 +16,6 @@ public interface IChatService {
 	 */
 	List<TalkDTO> getTalkList(Long userId);
 
+	Boolean updateUnreadNum(Long userId, Long talkId);
+
 }

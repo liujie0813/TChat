@@ -2,7 +2,7 @@ import {Button, Dropdown, Input, Menu, message, Modal} from "antd";
 import React, {useState} from "react";
 import './search.css'
 import {PlusOutlined, UserAddOutlined, UsergroupAddOutlined} from "@ant-design/icons";
-import {addContact, getContactList, searchByAccount} from "../../api/user";
+import {addContact, getContactList, searchByAccount} from "../api/user";
 import {getAvatar} from "../common/avatar";
 import {isDigitOrLetter} from "../../common/util/stringUtil";
 import {useDispatch, useSelector} from "react-redux";
