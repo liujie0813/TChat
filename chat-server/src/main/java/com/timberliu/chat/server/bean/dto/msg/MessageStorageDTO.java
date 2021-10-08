@@ -17,13 +17,8 @@ public class MessageStorageDTO {
 
 	private Long fromId;
 
-	/**
-	 * 单聊：用户Id
-	 * 群聊：群组Id
-	 */
-	private Long toId;
+	private Long talkId;
 
 	private String content;
 
-	private Long sendTime;
 }

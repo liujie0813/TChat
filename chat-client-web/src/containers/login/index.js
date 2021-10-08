@@ -6,6 +6,8 @@ import './login.css'
 
 import {setContactList, setLoginResp, initChatRecord} from "../../store/features/userSlice";
 import {getContactList, getTalkList, loginByAccount} from "../../api/user";
+import WebSocketInstance from "../../components/websocket/webSocketInstance";
+import {messageType} from "../../components/websocket/messageType";
 
 export default function Login() {
 	const history = useHistory();
@@ -32,6 +34,9 @@ export default function Login() {
 		let resp = loginByAccount(params.account, params.password);
 		resp.then(data => {
 			dispatch(setLoginResp(data));
+			WebSocketInstance.sendMsg(messageType.AuthRequestMessage, {
+				accessToken: data.accessToken
+			})
 			let userId = data.userInfoDTO.userId;
 			toGetTalkList(userId);
 			toGetContactList(userId);

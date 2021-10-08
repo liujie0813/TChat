@@ -11,13 +11,15 @@ import lombok.Data;
 @Data
 public class C2CPushRequestMessage extends AbstractMessage {
 
-    private String from;
+    private Long msgId;
 
-    private String to;
+    private Long fromId;
+
+    private Long talkId;
 
     private String content;
 
-    private Long timestamp;
+    private Long sendTime;
 
     @Override
     public byte getCommand() {

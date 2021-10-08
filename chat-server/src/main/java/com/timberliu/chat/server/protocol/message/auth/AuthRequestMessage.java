@@ -1,4 +1,4 @@
-package com.timberliu.chat.server.protocol.message.logout;
+package com.timberliu.chat.server.protocol.message.auth;
 
 import com.timberliu.chat.server.bean.enums.CommandEnum;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
@@ -9,14 +9,12 @@ import lombok.Data;
  * @date 2021/8/24
  */
 @Data
-public class LogoutResponseMessage extends AbstractMessage {
+public class AuthRequestMessage extends AbstractMessage {
 
-    private Boolean success;
-
-    private String errMsg;
+    private String accessToken;
 
     @Override
     public byte getCommand() {
-        return CommandEnum.LogoutResponse.getCode();
+        return CommandEnum.AuthRequest.getCode();
     }
 }

@@ -1,12 +1,12 @@
 package com.timberliu.chat.server.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.timberliu.chat.server.bean.convert.MessageConvert;
 import com.timberliu.chat.server.bean.dto.msg.MessageStorageDTO;
 import com.timberliu.chat.server.bean.enums.TalkTypeEnum;
 import com.timberliu.chat.server.dao.mysql.entity.HistoryMsgEntity;
 import com.timberliu.chat.server.dao.mysql.entity.UserRelationEntity;
 import com.timberliu.chat.server.dao.mysql.mapper.GroupInfoMapper;
+import com.timberliu.chat.server.dao.mysql.mapper.GroupUserRelationMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.HistoryMsgMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
 import com.timberliu.chat.server.dao.redis.mapper.OfflineMsgRedisMapper;
@@ -14,7 +14,8 @@ import com.timberliu.chat.server.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author liujie
@@ -23,41 +24,50 @@ import javax.annotation.Resource;
 @Service
 public class StorageServiceImpl implements IStorageService {
 
-	@Resource
+	@Autowired
 	private HistoryMsgMapper historyMsgMapper;
 
-	@Resource
+	@Autowired
 	private OfflineMsgRedisMapper offlineMsgRedisMapper;
 
-	@Resource
+	@Autowired
 	private UserRelationMapper userRelationMapper;
 
-	@Resource
-	private GroupInfoMapper groupInfoMapper;
+	@Autowired
+	private GroupUserRelationMapper groupUserRelationMapper;
 
 	@Override
-	public Boolean insertMessage(MessageStorageDTO messageStorageDTO) {
-		insertHistory(messageStorageDTO);
-		insertOffline(messageStorageDTO);
-		return true;
+	public HistoryMsgEntity storageMessage(MessageStorageDTO messageStorageDTO) {
+		HistoryMsgEntity historyMsgEntity = MessageConvert.INSTANCE.convert(messageStorageDTO);
+		historyMsgEntity.setSendTime(System.currentTimeMillis());
+
+		insertHistory(historyMsgEntity);
+
+		insertOffline(historyMsgEntity);
+		return historyMsgEntity;
 	}
 
-	private void insertHistory(MessageStorageDTO messageStorageDTO) {
-		HistoryMsgEntity historyMsgEntity = MessageConvert.INSTANCE.convert(messageStorageDTO);
-		historyMsgEntity.setTalkId(getTalkId(messageStorageDTO));
+	private void insertHistory(HistoryMsgEntity historyMsgEntity) {
 		historyMsgMapper.insert(historyMsgEntity);
 	}
 
-	private Long getTalkId(MessageStorageDTO messageStorageDTO) {
-		if (messageStorageDTO.getTalkType().equals(TalkTypeEnum.SINGLE.getCode())) {
-			return userRelationMapper.getByUserId(messageStorageDTO.getFromId(), messageStorageDTO.getToId()).getTalkId();
-		} else {
-			return groupInfoMapper.getByGroupId(messageStorageDTO.getToId()).getTalkId();
-		}
+	/**
+	 * 离线消息 写扩散
+	 *    写到每个 toId 的收件箱中，包括自己
+	 */
+	private void insertOffline(HistoryMsgEntity historyMsgEntity) {
+		List<Long> userIds = getUserIds(historyMsgEntity);
+		offlineMsgRedisMapper.multiSet(userIds, historyMsgEntity);
 	}
 
-	private void insertOffline(MessageStorageDTO messageStorageDTO) {
-
+	private List<Long> getUserIds(HistoryMsgEntity historyMsgEntity) {
+		if (historyMsgEntity.getTalkType().equals(TalkTypeEnum.SINGLE.getCode())) {
+			UserRelationEntity userRelationEntity = userRelationMapper.getByTalkIdAndMainUserId(
+					historyMsgEntity.getTalkId(), historyMsgEntity.getFromId());
+			return Arrays.asList(historyMsgEntity.getFromId(), userRelationEntity.getSubUserId());
+		} else {
+			return groupUserRelationMapper.getByTalkId(historyMsgEntity.getTalkId());
+		}
 	}
 
 }

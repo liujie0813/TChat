@@ -15,7 +15,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class C2CSendResponseMessage extends AbstractMessage {
 
-    private Integer seqId;
+    /**
+     * 客户单传递过来的 seqId，确认机制
+     */
+    private Long seqId;
+
+    /**
+     * 服务端存储的 msgId
+     */
+    private Long msgId;
+
+    private Long sendTime;
 
     @Override
     public byte getCommand() {

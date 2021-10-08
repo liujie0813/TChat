@@ -49,7 +49,7 @@ public class OfflineMsgRedisMapper {
 		stringRedisTemplate.opsForZSet().add(key, str, historyMsgEntity.getId());
 	}
 
-	public void set(List<Long> userIds, HistoryMsgEntity historyMsgEntity) {
+	public void multiSet(List<Long> userIds, HistoryMsgEntity historyMsgEntity) {
 		stringRedisTemplate.executePipelined((RedisCallback<HistoryMsgEntity>) connection -> {
 			for (Long userId : userIds) {
 				String key = formatKey(userId);

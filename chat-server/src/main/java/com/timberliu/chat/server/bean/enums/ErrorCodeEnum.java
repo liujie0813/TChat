@@ -40,13 +40,15 @@ public enum ErrorCodeEnum {
 	USER_ACCOUNT_EXIST(101001, "账号已存在"),
 	USER_PASSWORD_NOT_CORRECT(101002, "密码不正确"),
 	USER_USERID_NOT_EXIST(101003, "用户不存在"),
+	USER_NOT_FRIENDS(101004, "不是好友关系"),
+	USER_GROUP_NOT_EXIST(101005, "群组不存在"),
 
 	// 认证模块
 	AUTH_ACCESS_TOKEN_NOT_FOUND(102001, "访问令牌不存在"),
 	AUTH_ACCESS_TOKEN_EXPIRED(102002, "访问令牌已过期"),
 	AUTH_REFRESH_TOKEN_NOT_FOUND(102003, "刷新令牌不存在"),
 	AUTH_REFRESH_TOKEN_EXPIRED(102004, "刷新令牌已过期"),
-
+	AUTH_ACCESS_TOKEN_NOT_PASS(102005, "访问令牌未传入"),
 	;
 
 	private final Integer code;

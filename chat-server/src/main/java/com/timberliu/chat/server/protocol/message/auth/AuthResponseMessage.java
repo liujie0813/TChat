@@ -1,10 +1,11 @@
-package com.timberliu.chat.server.protocol.message.login;
+package com.timberliu.chat.server.protocol.message.auth;
 
 import com.timberliu.chat.server.bean.enums.CommandEnum;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * @author liujie
@@ -13,14 +14,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseMessage extends AbstractMessage {
+@Accessors(chain = true)
+public class AuthResponseMessage extends AbstractMessage {
 
-    private Boolean success;
+    private Integer code;
 
-    private String errMsg;
+    private String msg;
 
     @Override
     public byte getCommand() {
-        return CommandEnum.LoginResponse.getCode();
+        return CommandEnum.AuthResponse.getCode();
     }
 }

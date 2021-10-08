@@ -21,11 +21,16 @@ import java.util.Map;
 /**
  *
  * Message Format：
- *   +--------------+---------+-------------+---------+------------+---------+
- *   |                              Head                           |  Body   |
- *   | MAGIC_NUMBER | Version | Serial_Algo | Command |   Length   |  Body   |
- *   |  0x19982021  |  0x01   |     0x01    |  0x01   | 0x00000008 |   ...   |
- *   +--------------+---------+-------------+---------+------------+---------+
+ *   +------------------------+---------+-------------+---------+---------+
+ *   |     MAGIC_NUMBER(4位)  | Version | Serial_Algo | Command |     x   |
+ *   |       0x19982021       |  0x01   |     0x01    |  0x01   |   保留   |
+ *   +------------------------+---------+-------------+---------+---------+
+ *   |                               SeqId(8位)                           |
+ *   |                           0x0000000000000008                       |
+ *   +------------------------+-------------------------------------------+
+ *   |       Length（4位）     |               Body（Length字段决定）        |
+ *   |       0x00000008       |                   xxxxxx                  |
+ *   +------------------------+-------------------------------------------+
  *
  * @author liujie
  * @date 2021/8/26
@@ -51,7 +56,7 @@ public class MessageCodec implements InitializingBean {
         byteBuf.writeByte(message.getCommand());
         // 保留位
         byteBuf.writeByte(0);
-        byteBuf.writeInt(IdentifyUtil.nextSeqId());
+        byteBuf.writeLong(IdentifyUtil.nextSeqId());
 
         ISerializer serializer = getSerializer(serialAlgoByte);
         byte[] body = serializer.serialize(message);
@@ -71,7 +76,7 @@ public class MessageCodec implements InitializingBean {
         byte command = byteBuf.readByte();
         // 保留位，跳过
         byteBuf.skipBytes(1);
-        int seqId = byteBuf.readInt();
+        long seqId = byteBuf.readLong();
         int dataLen = byteBuf.readInt();
 
         byte[] body = new byte[dataLen];

@@ -14,19 +14,36 @@
  * 12, HeartBeatRequestMessage
  * 13, HeartBeatResponseMessage
  */
+
 export const messageType = {
-	LoginRequestMessage:      { code: 0 , desc: 'LoginRequestMessage'      },
-	LoginResponseMessage:     { code: 1 , desc: 'LoginResponseMessage'     },
-	LogoutRequestMessage:     { code: 2 , desc: 'LogoutRequestMessage'     },
-	LogoutResponseMessage:    { code: 3 , desc: 'LogoutResponseMessage'    },
-	C2CSendRequestMessage:    { code: 4 , desc: 'C2CSendRequestMessage'    },
-	C2CSendResponseMessage:   { code: 5 , desc: 'C2CSendResponseMessage'   },
-	C2CPushRequestMessage:    { code: 6 , desc: 'C2CPushRequestMessage'    },
-	C2CPushResponseMessage:   { code: 7 , desc: 'C2CPushResponseMessage'   },
-	C2GSendRequestMessage:    { code: 8 , desc: 'C2GSendRequestMessage'    },
-	C2GSendResponseMessage:   { code: 9 , desc: 'C2GSendResponseMessage'   },
-	C2GPushRequestMessage:    { code: 10, desc: 'C2GPushRequestMessage'    },
-	C2GPushResponseMessage:   { code: 11, desc: 'C2GPushResponseMessage'   },
-	HeartBeatRequestMessage:  { code: 12, desc: 'HeartBeatRequestMessage'  },
-	HeartBeatResponseMessage: { code: 13, desc: 'HeartBeatResponseMessage' },
+
+	AuthRequestMessage:       { code: 0,  desc: 'AuthRequestMessage'      },
+	AuthResponseMessage:      { code: 1,  desc: 'AuthResponseMessage'     },
+	C2CSendRequestMessage:    { code: 2,  desc: 'C2CSendRequestMessage'    },
+	C2CSendResponseMessage:   { code: 3,  desc: 'C2CSendResponseMessage'   },
+	C2CPushRequestMessage:    { code: 4,  desc: 'C2CPushRequestMessage'    },
+	C2CPushResponseMessage:   { code: 5,  desc: 'C2CPushResponseMessage'   },
+	C2GSendRequestMessage:    { code: 6,  desc: 'C2GSendRequestMessage'    },
+	C2GSendResponseMessage:   { code: 7,  desc: 'C2GSendResponseMessage'   },
+	C2GPushRequestMessage:    { code: 8,  desc: 'C2GPushRequestMessage'    },
+	C2GPushResponseMessage:   { code: 9,  desc: 'C2GPushResponseMessage'   },
+	HeartBeatRequestMessage:  { code: 10, desc: 'HeartBeatRequestMessage'  },
+	HeartBeatResponseMessage: { code: 11, desc: 'HeartBeatResponseMessage' },
+
 };
+
+export const commandMap = new Map();
+
+commandMap.set(messageType.AuthRequestMessage      .code, messageType.AuthRequestMessage      );
+commandMap.set(messageType.AuthResponseMessage     .code, messageType.AuthResponseMessage     );
+commandMap.set(messageType.C2CSendRequestMessage   .code, messageType.C2CSendRequestMessage   );
+commandMap.set(messageType.C2CSendResponseMessage  .code, messageType.C2CSendResponseMessage  );
+commandMap.set(messageType.C2CPushRequestMessage   .code, messageType.C2CPushRequestMessage   );
+commandMap.set(messageType.C2CPushResponseMessage  .code, messageType.C2CPushResponseMessage  );
+commandMap.set(messageType.C2GSendRequestMessage   .code, messageType.C2GSendRequestMessage   );
+commandMap.set(messageType.C2GSendResponseMessage  .code, messageType.C2GSendResponseMessage  );
+commandMap.set(messageType.C2GPushRequestMessage   .code, messageType.C2GPushRequestMessage   );
+commandMap.set(messageType.C2GPushResponseMessage  .code, messageType.C2GPushResponseMessage  );
+commandMap.set(messageType.HeartBeatRequestMessage .code, messageType.HeartBeatRequestMessage );
+commandMap.set(messageType.HeartBeatResponseMessage.code, messageType.HeartBeatResponseMessage);
+

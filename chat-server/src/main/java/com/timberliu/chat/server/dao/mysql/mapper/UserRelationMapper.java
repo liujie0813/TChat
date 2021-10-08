@@ -20,9 +20,14 @@ import java.util.List;
 @Repository
 public interface UserRelationMapper extends BaseMapper<UserRelationEntity> {
 
-	default UserRelationEntity getByUserId(Long mainUserId, Long subUserId) {
+	default UserRelationEntity getByMainAndSubUserId(Long mainUserId, Long subUserId) {
 		return selectOne(new QueryWrapper<UserRelationEntity>()
 				.eq("main_user_id", mainUserId).eq("sub_user_id", subUserId));
+	}
+
+	default UserRelationEntity getByTalkIdAndMainUserId(Long talkId, Long mainUserId) {
+		return selectOne(new QueryWrapper<UserRelationEntity>()
+				.eq("talk_id", talkId).eq("main_user_id", mainUserId));
 	}
 
 	List<ContactDTO> getContactList(Long userId);

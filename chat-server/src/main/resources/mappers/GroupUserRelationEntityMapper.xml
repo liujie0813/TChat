@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.timberliu.chat.server.dao.mysql.mapper.GroupUserRelationMapper">
 
+  <select id="getByTalkId" resultType="long">
+    SELECT gur.user_id
+    FROM group_info gi LEFT JOIN group_user_relation gur
+      ON gi.talk_id = #{talkId} AND gi.id = gur.group_id
+  </select>
+
 </mapper>

@@ -3,10 +3,11 @@ import Picker, {SKIN_TONE_NEUTRAL} from "emoji-picker-react";
 import img2 from "../../common/images/emoji.svg";
 import React, {useEffect, useRef, useState} from "react";
 import InfiniteScroll from 'react-infinite-scroller';
-import WebSocketInstance from '../websocket/socketInstance'
+import WebSocketInstance from '../websocket/webSocketInstance'
 import {useSelector} from "react-redux";
 import {getAvatar} from "../common/avatar";
 import {formatDate, getDateTime} from "../common/time";
+import {messageType} from "../websocket/messageType";
 
 const { TextArea } = Input;
 
@@ -15,28 +16,19 @@ export default function ChatPage() {
 	const [loading, setLoading] = useState(false);
 	const recordEnd = useRef(null);
 
-	const { userInfo, activeChat, chatRecords } = useSelector(state => state.user);
-	let chatRecord;
-	for (let [key, value] of chatRecords) {
-		if (key === activeChat) {
-			chatRecord = value;
-		}
-	}
-
-	const scrollToBottom = () => {
-		if (recordEnd && recordEnd.current) {
-			recordEnd.current.scrollIntoView({behavior: "smooth"});
-		}
-	};
+	const { userInfo, activeChat, chatRecordList, chatRecordMap } = useSelector(state => state.user);
+	const chatRecord = chatRecordMap[activeChat];
 
 	if (chatRecord) {
 		useEffect(() => {
-			scrollToBottom()
+			if (recordEnd && recordEnd.current) {
+				recordEnd.current.scrollIntoView();
+			}
 		}, [chatRecord.records]);
 	}
 
 	const handleInfiniteOnLoad = () => {
-		console.log("handleInfiniteOnLoad: ")
+
 	};
 
 	const onChange = (e) => {
@@ -60,41 +52,33 @@ export default function ChatPage() {
 			message.warn("不能发送空格");
 			return
 		}
-		/**
-		 * String from
-		 * String to
-		 * String content
-		 * Long timestamp
-		 */
-		WebSocketInstance.sendMsg(4,{
-			from: userInfo.userId,
-			to: chatRecord.userId,
-			content: v,
-			timestamp: new Date().getTime(),
-			talkId: activeChat
+
+		WebSocketInstance.sendMsg(messageType.C2CSendRequestMessage,{
+			fromId: userInfo.userId,
+			talkId: activeChat,
+			content: v
 		});
 		setContent('')
 	};
 
 	const showTime = (timestamp, index) => {
+		// 第一条 显示
+		if (index === 0) {
+			return true;
+		}
 		let curTime = new Date().getTime();
 		// 5 分钟内不显示
 		if (curTime - timestamp < 300000) {
 			return false
 		}
-		// 第一条 最后一条 显示
-		if (index === 0) {
-			return true;
-		}
 		let nextDate = chatRecord.records[index - 1].sendTime;
-		return !(formatDate(new Date(parseInt(timestamp)), "yyyy/MM/dd hh:mm")
-			== formatDate(new Date(parseInt(nextDate)), "yyyy/MM/dd hh:mm"))
+		return timestamp - nextDate > 3 * 60 * 1000;
 	}
 
 	return (
 		<div style={{height: '100%', width: 'calc(100% - 330px)', backgroundColor: '#f3f3f3'}}>
 			<div style={{borderBottom: 'solid 1px #e0e0e0', height: '64px'}}>
-				<div style={{ fontSize: '18px', paddingTop: '24px', paddingLeft: '24px' }}>
+				<div style={{ fontSize: '18px', paddingTop: '18px', paddingLeft: '24px' }}>
 					{chatRecord.talkName}
 				</div>
 			</div>

@@ -1,51 +1,123 @@
+/**
+ * js 字符串 使用 unicode 编码
+ */
+// unicode string to utf-8
 function stringToByte(str) {
-	var bytes = [];
-	var len, c;
-	len = str.length;
-	for(var i = 0; i < len; i++) {
-		c = str.charCodeAt(i);
-		if(c >= 0x010000 && c <= 0x10FFFF) {
-			bytes.push(((c >> 18) & 0x07) | 0xF0);
-			bytes.push(((c >> 12) & 0x3F) | 0x80);
-			bytes.push(((c >> 6) & 0x3F) | 0x80);
-			bytes.push((c & 0x3F) | 0x80);
-		} else if(c >= 0x000800 && c <= 0x00FFFF) {
-			bytes.push(((c >> 12) & 0x0F) | 0xE0);
-			bytes.push(((c >> 6) & 0x3F) | 0x80);
-			bytes.push((c & 0x3F) | 0x80);
-		} else if(c >= 0x000080 && c <= 0x0007FF) {
-			bytes.push(((c >> 6) & 0x1F) | 0xC0);
-			bytes.push((c & 0x3F) | 0x80);
+	var result = [], i = 0;
+	str = encodeURI(str);
+	while (i < str.length) {
+		var c = str.charCodeAt(i++);
+		// if it is a % sign, encode the following 2 bytes as a hex value
+		if (c === 37) {
+			result.push(parseInt(str.substr(i, 2), 16))
+			i += 2;
+			// otherwise, just the actual byte
 		} else {
-			bytes.push(c & 0xFF);
+			result.push(c)
 		}
 	}
-	return bytes;
+	return coerceArray(result);
 }
 
-function byteToString(arr) {
-	if(typeof arr === 'string') {
-		return arr;
-	}
-	var str = '',
-		_arr = arr;
-	for(var i = 0; i < _arr.length; i++) {
-		var one = _arr[i].toString(2),
-			v = one.match(/^1+?(?=0)/);
-		if(v && one.length === 8) {
-			var bytesLength = v[0].length;
-			var store = _arr[i].toString(2).slice(7 - bytesLength);
-			for(var st = 1; st < bytesLength; st++) {
-				store += _arr[st + i].toString(2).slice(2);
-			}
-			str += String.fromCharCode(parseInt(store, 2));
-			i += bytesLength - 1;
-		} else {
-			str += String.fromCharCode(_arr[i]);
+function checkInt(value) {
+	return (parseInt(value) === value);
+}
+
+function checkInts(arrayish) {
+	if (!checkInt(arrayish.length)) { return false; }
+	for (var i = 0; i < arrayish.length; i++) {
+		if (!checkInt(arrayish[i]) || arrayish[i] < 0 || arrayish[i] > 255) {
+			return false;
 		}
 	}
-	return str;
+	return true;
 }
+
+function coerceArray(arg, copy) {
+	// ArrayBuffer view
+	if (arg.buffer && arg.name === 'Uint8Array') {
+		if (copy) {
+			if (arg.slice) {
+				arg = arg.slice();
+			} else {
+				arg = Array.prototype.slice.call(arg);
+			}
+		}
+		return arg;
+	}
+	// It's an array; check it is a valid representation of a byte
+	if (Array.isArray(arg)) {
+		if (!checkInts(arg)) {
+			throw new Error('Array contains invalid value: ' + arg);
+		}
+		return new Uint8Array(arg);
+	}
+	// Something else, but behaves like an array (maybe a Buffer? Arguments?)
+	if (checkInt(arg.length) && checkInts(arg)) {
+		return new Uint8Array(arg);
+	}
+	throw new Error('unsupported array-like object');
+}
+
+// utf8 byte to unicode string
+function byteToString(arr) {
+	var unicodeStr ="";
+	for (var pos = 0; pos < arr.length;){
+		var flag= arr[pos];
+		var unicode = 0 ;
+		if ((flag >>>7) === 0 ) {
+			unicodeStr+= String.fromCharCode(arr[pos]);
+			pos += 1;
+
+		} else if ((flag &0xFC) === 0xFC ){
+			unicode = (arr[pos] & 0x3) << 30;
+			unicode |= (arr[pos+1] & 0x3F) << 24;
+			unicode |= (arr[pos+2] & 0x3F) << 18;
+			unicode |= (arr[pos+3] & 0x3F) << 12;
+			unicode |= (arr[pos+4] & 0x3F) << 6;
+			unicode |= (arr[pos+5] & 0x3F);
+			unicodeStr+= String.fromCharCode(unicode) ;
+			pos += 6;
+
+		}else if ((flag &0xF8) === 0xF8 ){
+			unicode = (arr[pos] & 0x7) << 24;
+			unicode |= (arr[pos+1] & 0x3F) << 18;
+			unicode |= (arr[pos+2] & 0x3F) << 12;
+			unicode |= (arr[pos+3] & 0x3F) << 6;
+			unicode |= (arr[pos+4] & 0x3F);
+			unicodeStr+= String.fromCharCode(unicode) ;
+			pos += 5;
+
+		} else if ((flag &0xF0) === 0xF0 ){
+			unicode = (arr[pos] & 0xF) << 18;
+			unicode |= (arr[pos+1] & 0x3F) << 12;
+			unicode |= (arr[pos+2] & 0x3F) << 6;
+			unicode |= (arr[pos+3] & 0x3F);
+			unicodeStr+= String.fromCharCode(unicode) ;
+			pos += 4;
+
+		} else if ((flag &0xE0) === 0xE0 ){
+			unicode = (arr[pos] & 0x1F) << 12;
+			unicode |= (arr[pos+1] & 0x3F) << 6;
+			unicode |= (arr[pos+2] & 0x3F);
+			unicodeStr+= String.fromCharCode(unicode);
+			pos += 3;
+
+		} else if ((flag &0xC0) === 0xC0 ){ //110
+			unicode = (arr[pos] & 0x3F) << 6;
+			unicode |= (arr[pos+1] & 0x3F);
+			unicodeStr+= String.fromCharCode(unicode) ;
+			pos += 2;
+
+		} else{
+			unicodeStr+= String.fromCharCode(arr[pos]);
+			pos += 1;
+		}
+	}
+	return unicodeStr;
+}
+
+
 
 function int4ToByte(i) {
 	var bytes =[];

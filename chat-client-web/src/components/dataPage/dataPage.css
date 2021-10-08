@@ -1,8 +1,11 @@
+.chatPage .ant-list-items {
+	padding: 20px 0 !important;
+}
+
 .chatPage .ant-list-item {
 	width: 100%;
 	display: flex !important;
-	padding: 0 !important;
-	padding-top: 20px !important;
+	padding: 10px 0 !important;
 	align-items: start;
 }
 

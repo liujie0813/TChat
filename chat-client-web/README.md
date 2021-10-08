@@ -18,19 +18,19 @@
 |  |  |  └─ global.css   <-- 全局公用样式
 |  ├─ /components        <-- 公共模块组件目录
 |  |  ├─ /header         <-- 头部导航模块
-|  |  |  ├─ socketInstance.js     <-- header主文件
+|  |  |  ├─ webSocketInstance.js     <-- header主文件
 |  |  |  └─ header.css   <-- header样式文件
 |  |  └─ ...             <-- 其他模块
 |  ├─ /containers        <-- 页面组件目录
 |  |  ├─ /home           <-- home页目录
-|  |  |  ├─ socketInstance.js     <-- home主文件
+|  |  |  ├─ webSocketInstance.js     <-- home主文件
 |  |  |  └─ home.css     <-- home样式文件
 |  |  ├─ /login          <-- login页目录
-|  |  |  ├─ socketInstance.js     <-- login主文件
+|  |  |  ├─ webSocketInstance.js     <-- login主文件
 |  |  |  └─ login.css    <-- login样式文件
 |  |  └─ ...             <-- 其他页面
 |  ├─ App.js             <-- 项目主模块
-|  └─ socketInstance.js           <-- 项目入口文件
+|  └─ webSocketInstance.js           <-- 项目入口文件
 └─ yarn.lock
 ```
 

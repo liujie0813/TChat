@@ -22,8 +22,8 @@ class WebSocketInstance {
 		this.socket.onerror = () => {
 			console.log("Error ！")
 		};
-		this.socket.onclose = () => {
-			console.log('Connection closed ！')
+		this.socket.onclose = (e) => {
+			console.log('Connection closed ！', e.code, e.reason, e.wasClean)
 		};
 	};
 
@@ -32,7 +32,7 @@ class WebSocketInstance {
 		let str = JSON.stringify(data);
 		let bodyBytes = stringToByte(str);
 
-		let buffer = new ArrayBuffer(16 + bodyBytes.length);
+		let buffer = new ArrayBuffer(20 + bodyBytes.length);
 		let dataView = new DataView(buffer);
 		// 魔数
 		dataView.setInt32(0, parseInt('19982021', 16));
@@ -41,20 +41,20 @@ class WebSocketInstance {
 		// 序列化算法（0：protobuf；1：json）
 		dataView.setInt8(5, 1);
 		// 命令（消息类型）
-		dataView.setInt8(6, type);
+		dataView.setInt8(6, type.code);
 		// 第 7 位保留
 
 		// seqId
 		let seqId = this.nextSeqId();
-		dataView.setInt32(8, seqId);
+		dataView.setBigInt64(8, BigInt(seqId));
 		// body 长度
-		dataView.setInt32(12, bodyBytes.length);
+		dataView.setInt32(16, bodyBytes.length);
 		// body
 		for (let i = 0; i < bodyBytes.length; i++) {
-			dataView.setInt8(16 + i, bodyBytes[i])
+			dataView.setInt8(20 + i, bodyBytes[i])
 		}
 		this.socket.send(buffer);
-		// msgId 入确认队列
+		// seqId 入确认队列
 		addAckQueue(seqId, data)
 	};
 
@@ -68,16 +68,16 @@ class WebSocketInstance {
 		let version = dataView.getInt8(4);
 		let serialAlgo = dataView.getInt8(5);
 		let command = dataView.getInt8(6);
-		let seqId = dataView.getInt32(8);
+		let seqId = dataView.getBigInt64(8);
 
-		let bodyLen = dataView.getInt32(12);
+		let bodyLen = dataView.getInt32(16);
 		var bytes = [];
 		for (let i = 0; i < bodyLen; i++) {
-			bytes[i] = dataView.getInt8(16 + i)
+			bytes[i] = dataView.getInt8(20 + i)
 		}
 		let str = byteToString(bytes);
-		console.log('[websocket] recv msg: ', str)
 		let data = JSON.parse(str);
+		console.log('[websocket] recv msg: ', data)
 		handleMessage(command, seqId, data);
 	};
 

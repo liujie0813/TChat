@@ -1,6 +1,7 @@
 package com.timberliu.chat.server.server;
 
 import com.timberliu.chat.server.message.protobuf.ProtobufMessage;
+import com.timberliu.chat.server.protocol.message.AbstractMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
 import io.netty.util.AttributeKey;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class NettyChannelManager {
 
-    private static final AttributeKey<String> CHANNEL_ATTR_KEY_USER = AttributeKey.newInstance("user");
+    private static final AttributeKey<Long> CHANNEL_ATTR_KEY_USER = AttributeKey.newInstance("user");
 
     /**
      * Channel 映射
@@ -28,22 +29,22 @@ public class NettyChannelManager {
     /**
      * 用户与 Channel 的映射
      */
-    private ConcurrentMap<String, Channel> userChannelMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<Long, Channel> userChannelMap = new ConcurrentHashMap<>();
 
     public void add(Channel channel) {
         idChannelMap.put(channel.id(), channel);
         log.info("[add] Connect({}) added", channel.id());
     }
 
-    public void addUser(Channel channel, String user) {
+    public void addUser(Channel channel, Long userId) {
         Channel exist = idChannelMap.get(channel.id());
         if (exist == null) {
             log.error("[addUser] Connect({}) not exist", channel.id());
             return;
         }
-        channel.attr(CHANNEL_ATTR_KEY_USER).set(user);
-        userChannelMap.put(user, channel);
-        log.info("[addUser] Connect({}) added", channel.id());
+        channel.attr(CHANNEL_ATTR_KEY_USER).set(userId);
+        userChannelMap.put(userId, channel);
+        log.info("[addUser] Connect({}) and UserId({}) bound", channel.id(), userId);
     }
 
     public void remove(Channel channel) {
@@ -54,8 +55,12 @@ public class NettyChannelManager {
         log.info("[remove] Connect({}) removed", channel.id());
     }
 
-    public void send(String user, ProtobufMessage.GenericMessage message) {
-        Channel channel = userChannelMap.get(user);
+    public Boolean online(Long userId) {
+        return userChannelMap.containsKey(userId);
+    }
+
+    public void send(Long userId, AbstractMessage message) {
+        Channel channel = userChannelMap.get(userId);
         if (channel == null) {
             log.error("[send] connect not exist");
             return;
@@ -65,6 +70,7 @@ public class NettyChannelManager {
             return;
         }
         channel.writeAndFlush(message);
+        log.info("[send] send msg({}) to userId({})", message, userId);
     }
 
 }

@@ -5,6 +5,7 @@ import com.timberliu.chat.server.dao.mysql.entity.UserInfoEntity;
 import com.timberliu.chat.server.dao.mysql.po.TalkInfoPO;
 import com.timberliu.chat.server.dao.mysql.po.UserFromInfoPO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.Pattern;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Set;
  * @author liujie
  * @since 2021-09-23
  */
+@Repository
 public interface UserInfoMapper extends BaseMapper<UserInfoEntity> {
 
 	List<TalkInfoPO> getUserTalkInfos(@Param("userId") Long userId, @Param("talkIds") Set<Long> talkIds);

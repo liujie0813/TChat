@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Avatar, Tabs, Collapse, List, Spin, Button} from 'antd'
+import {Avatar, Tabs, Collapse, List, Spin, Button, Badge} from 'antd'
 import './home.css'
 import img6 from '../../common/images/quit.png';
 import SearchBox from "../../components/searchOrAdd";
@@ -21,7 +21,8 @@ export default function Home() {
 		userInfo,
 		activeMenu, chatMenuImg, contactMenuImg,
 		activeChat, chatList, activeContact, contactList,
-		chatRecords
+		chatRecordList, chatRecordMap,
+		totalUnreadNum
 	} = useSelector(state => state.user);
 	const [userInfoVisible, setUserInfoVisible] = useState(false);
 	const dispatch = useDispatch();
@@ -70,7 +71,9 @@ export default function Home() {
 				{/* 聊天菜单 */}
 				<TabPane tab={
 						<div style={{ padding: '22px' }}>
-							<Avatar shape="square" size={28} src={chatMenuImg.img}/>
+							<Badge count={totalUnreadNum} size='small'>
+								<Avatar shape="square" size={28} src={chatMenuImg.img}/>
+							</Badge>
 						</div>
 					} key="chatMenu">
 
@@ -88,9 +91,8 @@ export default function Home() {
 								className='singleContactList'>
 								{/* 循环遍历 */}
 								<List
-									dataSource={ chatRecords ? chatRecords : EMPTY_RECORDS }
-									renderItem={ val => {
-										let chatRecord = val[1]
+									dataSource={ chatRecordList }
+									renderItem={ chatRecord => {
 										let recordLen = chatRecord.records.length
 										return (
 											<List.Item key={chatRecord.account} className={ chatRecord.talkId === activeChat ? 'contactActive' : ''}>
@@ -98,7 +100,9 @@ export default function Home() {
 																onClick={() => chatTabClick(chatRecord.talkId)}>
 													<div style={{ width: '300px', height: '70px', padding: '0 16px', textAlign: 'left', display: 'flex' }}>
 														<div style={{ padding: '15px 0'}}>
-															{ getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
+															<Badge count={chatRecord.unreadNum} size='small' offset={[-3, 3]}>
+																{ getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
+															</Badge>
 														</div>
 														<div style={{ marginLeft: '10px', padding: '10px 0' }}>
 															<div style={{ width: '156px', color: '#000' }}>

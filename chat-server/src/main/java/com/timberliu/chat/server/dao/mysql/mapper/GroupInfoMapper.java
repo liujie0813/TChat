@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.timberliu.chat.server.dao.mysql.entity.GroupInfoEntity;
 import com.timberliu.chat.server.dao.mysql.po.TalkInfoPO;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ import java.util.Set;
  * @author liujie
  * @since 2021-09-27
  */
+@Repository
 public interface GroupInfoMapper extends BaseMapper<GroupInfoEntity> {
 
 	default GroupInfoEntity getByGroupId(Long groupId) {

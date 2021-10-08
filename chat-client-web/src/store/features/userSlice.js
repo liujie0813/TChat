@@ -16,11 +16,14 @@ export const userSlice = createSlice({
 		contactMap: {},
 		activeContact: null,
 		activeChat: null,
+		userIdMap: {},
 		page: {
 			type: null, // chatPage：聊天页；groupInfoPage：群组信息页；contactInfoPage：联系人信息页
 			data: {}
 		},
-		chatRecords: null
+		totalUnreadNum: 0,
+		chatRecordList: [],
+		chatRecordMap: {}
 	},
 	reducers: {
 		setAuthToken: (state, { payload }) => {
@@ -38,6 +41,11 @@ export const userSlice = createSlice({
 			state.contactList = action.payload;
 			action.payload.forEach(contact => {
 				state.contactMap[contact.account] = contact
+
+				state.userIdMap[contact.userId] = (contact.nickenameRemark ?
+					contact.nickenameRemark :
+					(contact.nickname ? contact.nickname : contact.account)
+				);
 			});
 		},
 		setMenuData: (state, action) => {
@@ -54,6 +62,16 @@ export const userSlice = createSlice({
 			state.activeChat = action.payload;
 			state.page.type = "chatPage";
 			state.page.data = action.payload;
+
+			let chatRecord = state.chatRecordMap[action.payload];
+			state.totalUnreadNum -= chatRecord.unreadNum;
+			state.chatRecordMap[action.payload].unreadNum = 0;
+
+			state.chatRecordList.forEach(chatRecord => {
+				if (chatRecord.talkId === action.payload) {
+					chatRecord.unreadNum = 0;
+				}
+			})
 		},
 		setContactData: (state, action) => {
 			state.activeContact = action.payload;
@@ -83,22 +101,39 @@ export const userSlice = createSlice({
 				}
 			}
 		},
+		setUnreadNum: (state, { payload }) => {
+			const { talkId, num } = payload;
+			state.totalUnreadNum += num;
+			state.chatRecordMap[talkId].unreadNum += num;
+
+			state.chatRecordList.forEach(chatRecord => {
+				if (chatRecord.talkId === talkId) {
+					chatRecord.unreadNum += num;
+				}
+			})
+		},
 		initChatRecord: (state, { payload }) => {
-			state.chatRecords = new Map()
-			for (const chatRecord of payload) {
-				state.chatRecords.set(chatRecord.talkId, chatRecord)
-			}
+			// for (const chatRecord of payload) {
+			// 	state.chatRecords.set(chatRecord.talkId, chatRecord)
+			// }
+			state.chatRecordList = payload;
+			payload.forEach(chatRecord => {
+				state.chatRecordMap[chatRecord.talkId] = chatRecord
+			});
 		},
 		updateChatRecord: (state, { payload }) => {
 			const { talkId, records } = payload;
-			console.log('before: ', state.chatRecords[talkId].records.length);
-			let originRecords = state.chatRecords[talkId].records;
-			state.chatRecords[talkId].records = originRecords.concat(records);
-			console.log('after: ', state.chatRecords[talkId].records.length);
+			let originRecords = state.chatRecordMap[talkId].records;
+			state.chatRecordMap[talkId].records = originRecords.concat(records);
+
+			state.chatRecordList = [
+				state.chatRecordMap[talkId],
+				...state.chatRecordList.filter((item, index) => item.talkId !== talkId )
+			]
 		},
 		historyUpdateChatRecord: (state, { payload }) => {
 			const { talkId, records } = payload;
-			state.chatRecords[talkId].unshift(records)
+			state.chatRecordMap[talkId].unshift(records)
 		},
 		logout: (state, action) => {
 			console.log('[logout]')
@@ -113,6 +148,7 @@ export const {
 	setChatList, setContactList,
 	setMenuData, setChatData, setContactData,
 	setOrUpdateChatData,
+	setUnreadNum,
 	initChatRecord, updateChatRecord, historyUpdateChatRecord,
 	logout
 } = userSlice.actions;

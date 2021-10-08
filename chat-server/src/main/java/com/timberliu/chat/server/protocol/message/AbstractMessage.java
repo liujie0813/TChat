@@ -17,7 +17,7 @@ public abstract class AbstractMessage {
     protected byte version = 1;
 
     @JSONField(deserialize = false, serialize = false)
-    protected Integer seqId;
+    protected Long seqId;
 
     @JSONField(serialize = false)
     public abstract byte getCommand();
