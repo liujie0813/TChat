@@ -22,7 +22,7 @@ export default function Home() {
 	const {
 		userInfo,
 		activeMenu, chatMenuImg, contactMenuImg,
-		activeChat, chatList, activeContact, contactList,
+		activeChat, chatList, activeContact, contactList, groupList,
 		chatRecordList, chatRecordMap,
 		totalUnreadNum
 	} = useSelector(state => state.user);
@@ -143,13 +143,38 @@ export default function Home() {
 						{/* 联系人列表 */}
 						<Collapse accordion className='secondList'>
 							<Panel header='新的联系人' key='newContactList'>
-								<div style={{ padding: '0 40px 6px 40px'}}>
+								<div style={{ overflow: 'auto', height: 'calc(100vh - 202px)' }}>
 									无
 								</div>
 							</Panel>
 							<Panel header='群组' key='groupList'>
-								<div style={{ padding: '0 40px 6px 40px'}}>
-									无
+								<div style={{ overflow: 'auto', height: 'calc(100vh - 202px)' }}>
+									<InfiniteScroll
+										pageStart={0}
+										loadMore={() => {}}
+										hasMore={false}
+										loader={ <div/> }
+										useWindow={false}
+										className='singleContactList'>
+										{/* 循环遍历 */}
+										<List
+											dataSource={ contactList }
+											renderItem={ contact => (
+												<List.Item key={contact.account} className={ contact.account === activeContact ? 'contactActive' : ''}>
+													<Button type='link' style={{ height: '68px' }}
+																	onClick={() => contactTabClick(contact.account)}>
+														<div style={{ width: '252px', margin: '0 12px 0 36px', textAlign: 'left'}}>
+															{ contact &&
+															getAvatar(contact.avatarUrl, contact.account, contact.nickname, 40)}
+															<div style={{ display: 'inline-block', marginLeft: '12px' }}>
+																{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
+															</div>
+														</div>
+													</Button>
+												</List.Item>
+											)}>
+										</List>
+									</InfiniteScroll>
 								</div>
 							</Panel>
 							<Panel header='联系人' key='contactList'>

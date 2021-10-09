@@ -11,14 +11,20 @@ const ackMap = new Map();
 const handleMessage = (command, seqId, data) => {
 	let type = commandMap.get(command);
 	switch (type) {
-		case messageType.AuthRequestMessage:
+		case messageType.AuthResponseMessage:
 			handleAuthResp(data);
 			break;
 		case messageType.C2CSendResponseMessage:
 			handleC2CSendResp(data);
 			break;
 		case messageType.C2CPushRequestMessage:
-			handleC2CPushResp(data);
+			handleC2CPushReq(data);
+			break;
+		case messageType.C2GPushRequestMessage:
+			handleC2GPushReq(data);
+			break;
+		case messageType.HeartBeatResponseMessage:
+			console.log("[handleMessage] recv heart beat resp")
 			break;
 	}
 };
@@ -88,10 +94,10 @@ const handleC2CSendResp = (resp) => {
 	}))
 };
 
-const handleC2CPushResp = (resp) => {
+const handleC2CPushReq = (resp) => {
 	let userIdMap = getStateUser().userIdMap;
 
-	let updateUnreadNum = getStateUser().activeMenu === 'chatMenu' && getStateUser().activeChat === resp.talkId;
+	let updateUnreadNum = !(getStateUser().activeMenu === 'chatMenu' && getStateUser().activeChat === resp.talkId);
 	store.dispatch(updateChatRecord({
 		talkId: resp.talkId,
 		records: [{
@@ -105,6 +111,10 @@ const handleC2CPushResp = (resp) => {
 		updateUnreadNum
 	}))
 };
+
+const handleC2GPushReq = (resp) => {
+
+}
 
 function getStateUser() {
 	return store.getState().user;

@@ -13,4 +13,5 @@ public interface IPushService {
 	void pushSingleMessage(C2CPushRequestMessage c2cPushRequestMessage);
 
 	void pushGroupMessage(C2GPushRequestMessage c2gPushRequestMessage);
+
 }

@@ -72,3 +72,25 @@ export function updateUnreadNum(userId, talkId) {
 		}
 	})
 }
+
+export function createGroup(groupName, createUserId, memberIds) {
+	return request({
+		url: '/contact/create-group',
+		method: 'POST',
+		data: {
+			groupName,
+			createUserId,
+			memberIds
+		}
+	})
+}
+
+export function getGroupList(userId) {
+	return request({
+		url: '/contact/get-groups',
+		method: 'GET',
+		params: {
+			userId
+		}
+	})
+}

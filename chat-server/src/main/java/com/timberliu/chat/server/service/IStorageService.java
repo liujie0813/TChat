@@ -14,4 +14,5 @@ public interface IStorageService {
 	 * 存储历史消息和离线消息
 	 */
 	HistoryMsgEntity storageMessage(MessageStorageDTO messageStorageDTO);
+
 }

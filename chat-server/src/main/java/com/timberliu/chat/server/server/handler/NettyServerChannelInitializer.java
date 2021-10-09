@@ -42,7 +42,8 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 @Component
 public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
 
-    private static final int READ_TIMEOUT_SECONDS = 60;
+    @Value("${netty.read.timeout}")
+    private Long readTimeout;
 
     @Value("${netty.debug}")
     private boolean nettyDebug;
@@ -64,8 +65,7 @@ public class NettyServerChannelInitializer extends ChannelInitializer<Channel> {
 //        }
 
         // 空闲检测
-//        pipeline.addLast(new IdleStateHandler(READ_TIMEOUT_SECONDS, 0, 0));
-//        pipeline.addLast(new ReadTimeoutHandler(3 * READ_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        pipeline.addLast(new ReadTimeoutHandler(readTimeout, TimeUnit.SECONDS));
 
         // websocket
         pipeline.addLast(new HttpServerCodec())

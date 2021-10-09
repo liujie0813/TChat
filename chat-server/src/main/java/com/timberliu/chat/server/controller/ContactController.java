@@ -1,16 +1,14 @@
 package com.timberliu.chat.server.controller;
 
 import com.timberliu.chat.server.bean.ApiResult;
-import com.timberliu.chat.server.bean.dto.ContactDTO;
-import com.timberliu.chat.server.bean.dto.GroupDTO;
+import com.timberliu.chat.server.bean.dto.contact.ContactDTO;
+import com.timberliu.chat.server.bean.dto.contact.CreateGroupDTO;
+import com.timberliu.chat.server.bean.dto.contact.GroupDTO;
 import com.timberliu.chat.server.service.IContactService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author liujie
@@ -39,21 +37,16 @@ public class ContactController {
 		return ApiResult.success(contactList);
 	}
 
-	@GetMapping("/get-groups")
-	public ApiResult getGroupList(@RequestParam("userId") String userId) {
-		List<GroupDTO> groupDTOList = new ArrayList<>();
-		for (int i = 1000; i <= 4000; i += 2000) {
-			// 1000 3000 5000
-			GroupDTO groupDTO = new GroupDTO();
-			groupDTO.setGroupId((long) i);
-			groupDTO.setGroupName(String.valueOf(i));
-			groupDTO.setMemberDTOs(Arrays.asList(
-					new GroupDTO.MemberDTO((long) i / 10, String.valueOf(i / 10 + 100)),
-					new GroupDTO.MemberDTO((long) i / 10 + 100, String.valueOf(i / 10 + 100))
-			));
-
-			groupDTOList.add(groupDTO);
-		}
-		return ApiResult.success(groupDTOList);
+	@PostMapping("/create-group")
+	public ApiResult<Boolean> createGroup(@RequestBody CreateGroupDTO createGroupDTO) {
+		Boolean success = contactService.createGroup(createGroupDTO);
+		return ApiResult.success(success);
 	}
+
+	@GetMapping("/get-groups")
+	public ApiResult<List<GroupDTO>> getGroups(@RequestParam("userId") Long userId) {
+		List<GroupDTO> groupList = contactService.getGroupList(userId);
+		return ApiResult.success(groupList);
+	}
+
 }

@@ -14,7 +14,9 @@ import lombok.Getter;
 public enum MsgTypeEnum {
 
 	TEXT(0, "文本"),
-	IMAGE(1, "图片");
+	IMAGE(1, "图片"),
+	JOIN_GROUP_NOTICE(2, "通知")
+	;
 
 	private final Integer code;
 

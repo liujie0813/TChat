@@ -8,4 +8,21 @@
       ON gi.talk_id = #{talkId} AND gi.id = gur.group_id
   </select>
 
+  <insert id="batchInsert" parameterType="com.timberliu.chat.server.dao.mysql.entity.GroupUserRelationEntity">
+    INSERT INTO group_user_relation(group_id, user_id, join_time)
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+        #{item.groupId}, #{item.userId}, #{item.joinTime}
+      )
+    </foreach>
+  </insert>
+
+  <select id="getGroupList" resultType="com.timberliu.chat.server.bean.dto.contact.GroupDTO">
+    SELECT gur.group_id, gi.talk_id, gi.group_name, gur.group_name_remark, gi.create_user_id
+    FROM group_user_relation gur LEFT JOIN group_info gi
+      ON gur.group_id = gi.id
+    WHERE user_id = #{userId}
+  </select>
+
 </mapper>

@@ -1,18 +1,18 @@
-import {Button, Dropdown, Input, Menu, message, Modal} from "antd";
+import {Avatar, Button, Dropdown, Form, Input, Menu, message, Modal, Transfer} from "antd";
 import React, {useState} from "react";
 import './search.css'
-import {PlusOutlined, UserAddOutlined, UsergroupAddOutlined} from "@ant-design/icons";
-import {addContact, getContactList, searchByAccount} from "../api/user";
+import {PlusOutlined, TeamOutlined, UserAddOutlined, UsergroupAddOutlined} from "@ant-design/icons";
+import {addContact, createGroup, getContactList, searchByAccount} from "../api/user";
 import {getAvatar} from "../common/avatar";
 import {isDigitOrLetter} from "../../common/util/stringUtil";
 import {useDispatch, useSelector} from "react-redux";
-import {setContactList, setOrUpdateChatData} from "../../store/features/userSlice";
+import {setContactList, setOrUpdateGroupChatData} from "../../store/features/userSlice";
 
 const { Search } = Input;
 
 export default function SearchBox() {
 	const {
-		userInfo, contactMap
+		userInfo, contactList, contactMap
 	} = useSelector(state => state.user);
 	const dispatch = useDispatch();
 
@@ -20,6 +20,17 @@ export default function SearchBox() {
 	const [addUserPageVisible, setAddUserPageVisible] = useState(false);
 	const [addedUserItemVisible, setAddedUserItemVisible] = useState(false);
 	const [addedUser, setAddedUser] = useState(null);
+	const [createGroupPageVisible, setCreateGroupPageVisible] = useState(false);
+
+	const [transferTargetKeys, setTransferTargetKeys] = useState([]);
+
+	const contactData = [];
+	contactList.forEach(contact => {
+		contactData.push({
+			key: contact.userId,
+			...contact
+		})
+	})
 
 	const onSearch = value => {
 		message.warn('这是个假的搜索，哈哈哈');
@@ -63,6 +74,29 @@ export default function SearchBox() {
 		});
 	};
 
+	const showCreateGroup = () => {
+		setAddVisible(false)
+		setCreateGroupPageVisible(true)
+	}
+
+	const transferChange = (nextTargetKeys, direction, moveKeys) => {
+		setTransferTargetKeys(nextTargetKeys)
+	}
+
+	const onFinish = (values) => {
+		console.log('[]', values)
+		let resp = createGroup(values.groupName, userInfo.userId, values.memberIds)
+		resp.then(success => {
+			if (success) {
+				setCreateGroupPageVisible(false)
+
+				// dispatch(setOrUpdateGroupChatData({
+				//
+				// }))
+			}
+		})
+	}
+
 	return (
 		<div style={{ borderBottom: 'solid 1px #e0e0e0', width: '300px', height: '64px' }}>
 			<div style={{ padding: '18px 0 12px 18px' }}>
@@ -84,7 +118,10 @@ export default function SearchBox() {
 								onClick={showAddUser}>
 					添加好友
 				</Button>
-				<Button ghost icon={<UsergroupAddOutlined />}> 创建群组</Button>
+				<Button ghost icon={<UsergroupAddOutlined />}
+								onClick={showCreateGroup}>
+					创建群组
+				</Button>
 			</Modal>
 
 			<Modal title='添加好友'
@@ -116,6 +153,64 @@ export default function SearchBox() {
 				</Dropdown>
 			</Modal>
 
+			<Modal title='创建群组'
+						 width={800}
+						 visible={createGroupPageVisible}
+						 footer={null}
+						 bodyStyle={{ padding: '24px 36px 12px 36px' }}>
+				<Form className='createGroupForm'
+							labelCol={{ span: 3 }}
+							wrapperCol={{ span: 20 }}
+							onFinish={onFinish}>
+					<Form.Item label='群名称' name='groupName'>
+						<Input placeholder='输入群名称（选填）'/>
+					</Form.Item>
+					<Form.Item label='群头像' name='groupAvatar'>
+						<Avatar icon={<TeamOutlined />} size={32} style={{ backgroundColor: '#fe6673' }}/>
+					</Form.Item>
+					<Form.Item label='邀请' name='memberIds'
+					  rules={[
+						  {
+						  	validator: async (rule, value) => {
+						  		if (transferTargetKeys.length <= 1) {
+										throw new Error('必须选择 2 人及以上');
+									}
+								}
+						  }
+						]}
+					>
+						<Transfer
+							dataSource={contactData}
+							showSearch
+							listStyle={{
+								width: '320px',
+								height: '330px'
+							}}
+							targetKeys={transferTargetKeys}
+							onChange={transferChange}
+							render={contact => {
+								return (
+									<div>
+										{ contact &&
+										getAvatar(contact.avatarUrl, contact.account, contact.nickname, 32)}
+										<div style={{ display: 'inline-block', marginLeft: '12px' }}>
+											{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
+										</div>
+									</div>
+								)
+							}}
+						/>
+					</Form.Item>
+					<Form.Item wrapperCol={{ offset: 18, span: 6 }}>
+						<Button onClick={ () => {console.log('取消')}} style={{ margin: '0 12px 0 12px' }}>
+							取消
+						</Button>
+						<Button type="primary" htmlType="submit">
+							创建
+						</Button>
+					</Form.Item>
+				</Form>
+			</Modal>
 		</div>
 	)
 

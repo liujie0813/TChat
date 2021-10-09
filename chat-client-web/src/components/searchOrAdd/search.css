@@ -9,3 +9,7 @@
 .addUser .ant-btn {
 	border: 0;
 }
+
+.createGroupForm .ant-form-item-label {
+	text-align: left;
+}

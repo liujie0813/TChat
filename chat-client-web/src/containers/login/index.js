@@ -4,8 +4,8 @@ import {useDispatch} from 'react-redux'
 import {Button, Form, Input} from 'antd'
 import './login.css'
 
-import {setContactList, setLoginResp, initChatRecord} from "../../store/features/userSlice";
-import {getContactList, getTalkList, loginByAccount} from "../../components/api/user";
+import {setContactList, setLoginResp, initChatRecord, setGroupList} from "../../store/features/userSlice";
+import {getContactList, getGroupList, getTalkList, loginByAccount} from "../../components/api/user";
 import WebSocketInstance from "../../components/websocket/webSocketInstance";
 import {messageType} from "../../components/websocket/messageType";
 
@@ -33,6 +33,13 @@ export default function Login() {
 		});
 	};
 
+	const toGetGroupList = (userId) => {
+		let resp = getGroupList(userId);
+		resp.then(data => {
+			dispatch(setGroupList(data));
+		});
+	}
+
 	// 登录
 	const toLogin = (params) => {
 		let resp = loginByAccount(params.account, params.password);
@@ -44,6 +51,7 @@ export default function Login() {
 			let userId = data.userInfoDTO.userId;
 			toGetTalkList(userId);
 			toGetContactList(userId);
+			toGetGroupList(userId);
 			history.push('/home')
 		});
 	};

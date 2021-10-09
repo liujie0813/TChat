@@ -1,4 +1,4 @@
-package com.timberliu.chat.server.bean.dto;
+package com.timberliu.chat.server.bean.dto.contact;
 
 import lombok.*;
 import lombok.experimental.Accessors;

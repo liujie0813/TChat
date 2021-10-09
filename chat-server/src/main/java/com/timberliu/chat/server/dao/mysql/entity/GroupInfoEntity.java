@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -18,6 +19,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("group_info")
+@Accessors(chain = true)
 public class GroupInfoEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -41,7 +43,7 @@ public class GroupInfoEntity extends BaseEntity {
     /**
      * 创建用户Id
      */
-    private String createUserId;
+    private Long createUserId;
 
     /**
      * 是否删除

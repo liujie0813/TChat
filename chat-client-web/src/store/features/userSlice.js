@@ -14,6 +14,8 @@ export const userSlice = createSlice({
 		contactMenuImg: { img: img4 },
 		contactList: [],
 		contactMap: {},
+		groupList: [],
+		groupMap: {},
 		activeContact: null,
 		activeChat: null,
 		userIdMap: {},
@@ -78,7 +80,10 @@ export const userSlice = createSlice({
 			state.page.type = "contactInfoPage";
 			state.page.data = state.contactMap[action.payload]
 		},
-		setOrUpdateChatData: (state, action) => {
+		setGroupList: (state, {payload}) => {
+
+		},
+		setOrUpdateSingleChatData: (state, action) => {
 			state.activeMenu = "chatMenu";
 			state.chatMenuImg.img = img3;
 			state.contactMenuImg.img = img4;
@@ -107,6 +112,19 @@ export const userSlice = createSlice({
 				]
 			}
 		},
+		setOrUpdateGroupChatData: (state, { payload }) => {
+			state.activeMenu = "chatMenu";
+			state.chatMenuImg.img = img3;
+			state.contactMenuImg.img = img4;
+
+			let talkId = payload.talkId;
+			let account = payload.account;
+			state.activeChat = talkId.toString();
+			state.page.type = "chatPage";
+			if (!state.chatRecordMap[talkId]) {
+
+			}
+		},
 		initChatRecord: (state, { payload }) => {
 			state.chatRecordList = payload;
 			let totalUnreadNum = 0;
@@ -127,19 +145,13 @@ export const userSlice = createSlice({
 			];
 
 			if (updateUnreadNum) {
-				let num = records.length;
-				state.totalUnreadNum += num;
-				state.chatRecordMap[talkId].unreadNum += num;
-				state.chatRecordList.forEach(chatRecord => {
-					if (chatRecord.talkId === talkId) {
-						chatRecord.unreadNum += num;
-					}
-				})
+				state.totalUnreadNum += records.length;
+				state.chatRecordMap[talkId].unreadNum += records.length;
 			}
 		},
 		historyUpdateChatRecord: (state, { payload }) => {
 			const { talkId, records } = payload;
-			state.chatRecordMap[talkId].unshift(records)
+			state.chatRecordMap[talkId].record.unshift(records)
 		},
 		logout: (state, action) => {
 			console.log('[logout]')
@@ -152,8 +164,9 @@ export const {
 	setAuthToken, setLoginResp,
 	setUserInfo,
 	setChatList, setContactList,
+	setGroupList,
 	setMenuData, setChatData, setContactData,
-	setOrUpdateChatData,
+	setOrUpdateSingleChatData, setOrUpdateGroupChatData,
 	initChatRecord, updateChatRecord, historyUpdateChatRecord,
 	logout
 } = userSlice.actions;

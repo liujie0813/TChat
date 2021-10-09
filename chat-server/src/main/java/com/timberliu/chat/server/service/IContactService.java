@@ -1,6 +1,8 @@
 package com.timberliu.chat.server.service;
 
-import com.timberliu.chat.server.bean.dto.ContactDTO;
+import com.timberliu.chat.server.bean.dto.contact.ContactDTO;
+import com.timberliu.chat.server.bean.dto.contact.CreateGroupDTO;
+import com.timberliu.chat.server.bean.dto.contact.GroupDTO;
 
 import java.util.List;
 
@@ -20,5 +22,15 @@ public interface IContactService {
 	 * 获取好友列表
 	 */
 	List<ContactDTO> getContactList(Long userId);
+
+	/**
+	 * 创建群组
+	 */
+	Boolean createGroup(CreateGroupDTO createGroupDTO);
+
+	/**
+	 * 获取群组列表
+	 */
+	List<GroupDTO> getGroupList(Long userId);
 
 }

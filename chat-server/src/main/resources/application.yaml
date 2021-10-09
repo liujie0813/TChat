@@ -4,6 +4,8 @@ server:
 netty:
   port: 18081
   debug: true
+  read:
+    timeout: 180
   handler:
     protocol: websocket # tcp/websocket
     serial_algo: json # 0: protobuf；1: json

@@ -1,10 +1,9 @@
 package com.timberliu.chat.server.dao.mysql.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.timberliu.chat.server.bean.dto.ContactDTO;
+import com.timberliu.chat.server.bean.dto.contact.ContactDTO;
 import com.timberliu.chat.server.dao.mysql.entity.UserRelationEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

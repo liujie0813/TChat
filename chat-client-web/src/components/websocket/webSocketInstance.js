@@ -1,10 +1,31 @@
 import {message} from 'antd'
 import {byteToString, stringToByte} from "../../common/util/stringUtil";
 import {addAckQueue, handleMessage} from "./messagehandler";
+import {messageType} from "./messageType";
 
 class WebSocketInstance {
 
 	socket;
+
+	/**
+	 * 配置信息
+	 */
+	config = {
+		heartbeat: {
+			enabled: true, // 是否发送心跳包
+			heartBeatTime: 60000, // 心跳包 发送间隔时长
+			readTimeout: 180000, // 空闲检测
+			setInterval: null, // 心跳包计时器
+			idleSetTimeout: null, // 空闲 计时器
+		},
+		reconnect: {
+			lockReconnect: false,
+			setTimeout: null, // 计时器对象
+			initTime: 500, // 初始重连间隔时间
+			curNumber: 0, // 重连次数
+			maxNumber: 10 // 最大重连次数
+		}
+	}
 
 	createWebSocket = () => {
 		if ('WebSocket' in window) {
@@ -15,26 +36,85 @@ class WebSocketInstance {
 			return
 		}
 		this.socket.onopen = () => {
-			console.log('[websocket] connection established', this.socket)
+			console.log('[websocket] connect established', this.socket)
 			// 心跳检测
+			if (this.config.heartbeat.enabled) {
+				this.idleDetect()
+				this.heartbeat()
+			}
 		};
 		this.socket.onmessage = (event) => this.recvMsg(event);
 		this.socket.onerror = () => {
-			console.log("Error ！")
+			console.log("[websocket] connect error")
 		};
 		this.socket.onclose = (e) => {
-			console.log('Connection closed', e.code, e.reason, e.wasClean)
+			console.log('[websocket] connect closed', e.code, e.reason, e.wasClean)
+			if (e.code === 1006 || e.code === 1005) {
+				this.reconnect()
+			}
 		};
 	};
 
+	heartbeat = () => {
+		console.log('start heartbeat', new Date().getTime())
+		let f = () => {
+			this.sendMsg(messageType.HeartBeatRequestMessage, {})
+			return f
+		}
+		this.config.heartbeat.setInterval = setInterval(
+			f(), this.config.heartbeat.heartBeatTime
+		)
+	}
+
+	idleDetect = () => {
+		console.log('idle detect', new Date().getTime())
+		this.config.heartbeat.idleSetTimeout = setTimeout(() => {
+			// 超时关闭
+			this.closeWebSocket()
+		}, this.config.heartbeat.readTimeout)
+	}
+
+	reconnect = () => {
+		let reconnect = this.config.reconnect
+		if (reconnect.lockReconnect || reconnect.curNumber === reconnect.maxNumber) {
+			return
+		}
+		reconnect.lockReconnect = true
+		if (reconnect.setTimeout) {
+			clearTimeout(reconnect.setTimeout)
+		}
+
+		reconnect.setTimeout = setTimeout(() => {
+			console.log('try reconnect（number: ${reconnect.curNumber}, next timeout: ${reconnect.initTime} ms）')
+			this.createWebSocket()
+			reconnect.lockReconnect = false
+			reconnect.curNumber++
+			reconnect.initTime *= 2
+			message.warn({
+				content: `websocket closed，trying reconnect（number: ${reconnect.curNumber}, next timeout: ${reconnect.initTime} ms）`,
+				key: 'websocket reconnect',
+				duration: 0
+			})
+		}, reconnect.initTime)
+	}
+
+	reset = () => {
+		clearTimeout(this.config.heartbeat.idleSetTimeout);
+		this.idleDetect()
+	}
+
 	closeWebSocket = () => {
+		console.log('close web socket')
+		if (this.config.heartbeat.enabled) {
+			clearInterval(this.config.heartbeat.setInterval)
+		}
 		this.socket && this.socket.close();
 	};
 
 	sendMsg = (type, data) => {
-		console.log('[websocket] send msg: ', data);
+		console.log('[websocket] send msg: ', type, data, new Date().getTime());
 		if (!this.socket || this.socket.readyState !== 1) {
-			console.log('websocket connect closed', this.socket)
+			console.log('[websocket] websocket connect closed', this.socket)
 			return
 		}
 
@@ -88,6 +168,7 @@ class WebSocketInstance {
 		let data = JSON.parse(str);
 		console.log('[websocket] recv msg: ', data);
 		handleMessage(command, seqId, data);
+		this.reset()
 	};
 
 	nextSeqId = () => {

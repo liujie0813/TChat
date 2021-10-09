@@ -1,7 +1,7 @@
 import {Button} from "antd";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setOrUpdateChatData} from '../../store/features/userSlice'
+import {setOrUpdateSingleChatData} from '../../store/features/userSlice'
 import {getAvatar} from "../common/avatar";
 
 export default function ContactPage() {
@@ -11,7 +11,7 @@ export default function ContactPage() {
 
 	const jumpChatPage = (talkType) => {
 		console.log("jumpChatPage: ", data.userId.toString());
-		dispatch(setOrUpdateChatData({
+		dispatch(setOrUpdateSingleChatData({
 			talkId: data.talkId,
 			account: data.account,
 			talkType

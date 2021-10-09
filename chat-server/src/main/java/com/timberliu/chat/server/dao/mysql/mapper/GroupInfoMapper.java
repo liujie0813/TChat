@@ -21,6 +21,8 @@ import java.util.Set;
 @Repository
 public interface GroupInfoMapper extends BaseMapper<GroupInfoEntity> {
 
+	Long insertAndGetGroupId(@Param("entity") GroupInfoEntity entity);
+
 	default GroupInfoEntity getByGroupId(Long groupId) {
 		return selectOne(new QueryWrapper<GroupInfoEntity>().eq("group_id", groupId));
 	}

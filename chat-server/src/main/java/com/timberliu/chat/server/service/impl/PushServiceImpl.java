@@ -40,11 +40,13 @@ public class PushServiceImpl implements IPushService {
 		UserRelationEntity userRelationEntity = userRelationMapper.getByTalkIdAndMainUserId(
 				c2cPushRequestMessage.getTalkId(), c2cPushRequestMessage.getFromId());
 		Long userId = userRelationEntity.getSubUserId();
+		// 记录未读数
+		unreadMsgNumRedisMapper.incr(userId, c2cPushRequestMessage.getTalkId());
+		// 如果在线，直接推送
 		if (nettyChannelManager.online(userId)) {
 			nettyChannelManager.send(userRelationEntity.getSubUserId(), c2cPushRequestMessage);
 		} else {
 			log.info("[pushSingleMessage] userId({}) offline", userId);
-			unreadMsgNumRedisMapper.incr(userId, c2cPushRequestMessage.getTalkId());
 		}
 	}
 
@@ -53,6 +55,9 @@ public class PushServiceImpl implements IPushService {
 		List<Long> userIds = groupUserRelationMapper.getByTalkId(c2gPushRequestMessage.getTalkId())
 				.stream().filter(userId -> !userId.equals(c2gPushRequestMessage.getFromId())).collect(Collectors.toList());
 		for (Long userId : userIds) {
+			// 记录未读数
+			unreadMsgNumRedisMapper.incr(userId, c2gPushRequestMessage.getTalkId());
+			// 离线跳过
 			if (!nettyChannelManager.online(userId)) {
 				continue;
 			}

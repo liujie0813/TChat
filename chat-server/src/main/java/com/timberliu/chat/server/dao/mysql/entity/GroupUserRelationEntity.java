@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -19,6 +22,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("group_user_relation")
+@Accessors(chain = true)
 public class GroupUserRelationEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -44,7 +48,7 @@ public class GroupUserRelationEntity extends BaseEntity {
     /**
      * 加入时间
      */
-    private LocalDateTime joinTime;
+    private Date joinTime;
 
     /**
      * 是否删除

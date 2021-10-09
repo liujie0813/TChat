@@ -1,6 +1,8 @@
 import axios from 'axios'
 import {getAccessToken, getRefreshToken, setLoginToken} from "./accessToken";
 import {Modal} from "antd";
+import store from "../../store";
+import {logout} from "../../store/features/userSlice";
 
 const service = axios.create({
 	baseURL: 'http://localhost:18080',
@@ -68,6 +70,7 @@ service.interceptors.response.use(
 				content: res.msg,
 				okText: '重新登录',
 				onOk: function (e) {
+					store.dispatch(logout())
 					history.push('/login')
 				}
 			})
