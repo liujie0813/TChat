@@ -28,10 +28,16 @@
 	flex-direction: row-reverse;
 }
 
-.chatPageAvatar {
+.keep-left .chatPageAvatar {
 	order: 0;
 	margin-left: 28px;
 	margin-right: 12px;
+}
+
+.keep-right .chatPageAvatar {
+	order: 0;
+	margin-left: 12px;
+	margin-right: 28px;
 }
 
 .chatPageContent {

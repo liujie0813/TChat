@@ -36,11 +36,11 @@ class WebSocketInstance {
 			return
 		}
 		this.socket.onopen = () => {
-			console.log('[websocket] connect established', this.socket)
-			message.destroy('websocket reconnect')
+			console.log('[websocket] connect established', this.socket);
+			message.destroy('websocket reconnect');
 			// 心跳检测
 			if (this.config.heartbeat.enabled) {
-				this.idleDetect()
+				this.idleDetect();
 				this.heartbeat()
 			}
 		};
@@ -49,7 +49,7 @@ class WebSocketInstance {
 			console.log("[websocket] connect error")
 		};
 		this.socket.onclose = (e) => {
-			console.log('[websocket] connect closed', e.code, e.reason, e.wasClean)
+			console.log('[websocket] connect closed',  e, e.code, e.reason, e.wasClean);
 			if (e.code === 1006 || e.code === 1005) {
 				this.reconnect()
 			}
@@ -57,55 +57,56 @@ class WebSocketInstance {
 	};
 
 	heartbeat = () => {
-		console.log('start heartbeat', new Date().getTime())
+		console.log('start heartbeat', new Date().getTime());
 		let f = () => {
-			this.sendMsg(messageType.HeartBeatRequestMessage, {})
+			this.sendMsg(messageType.HeartBeatRequestMessage, {});
 			return f
-		}
+		};
 		this.config.heartbeat.setInterval = setInterval(
 			f(), this.config.heartbeat.heartBeatTime
 		)
-	}
+	};
 
 	idleDetect = () => {
-		console.log('idle detect', new Date().getTime())
+		console.log('idle detect', new Date().getTime());
 		this.config.heartbeat.idleSetTimeout = setTimeout(() => {
 			// 超时关闭
 			this.closeWebSocket()
 		}, this.config.heartbeat.readTimeout)
-	}
+	};
 
 	reconnect = () => {
-		let reconnect = this.config.reconnect
+		console.log('try reconnect');
+		let reconnect = this.config.reconnect;
 		if (reconnect.lockReconnect || reconnect.curNumber === reconnect.maxNumber) {
 			return
 		}
-		reconnect.lockReconnect = true
+		reconnect.lockReconnect = true;
 		if (reconnect.setTimeout) {
 			clearTimeout(reconnect.setTimeout)
 		}
 
 		reconnect.setTimeout = setTimeout(() => {
-			console.log('try reconnect（number: ${reconnect.curNumber}, next timeout: ${reconnect.initTime} ms）')
-			this.createWebSocket()
-			reconnect.lockReconnect = false
-			reconnect.curNumber++
-			reconnect.initTime *= 2
+			console.log(`try reconnect（number: ${reconnect.curNumber}, next timeout: ${reconnect.initTime} ms）`);
+			this.createWebSocket();
+			reconnect.lockReconnect = false;
+			reconnect.curNumber++;
+			reconnect.initTime *= 2;
 			message.warn({
 				content: `websocket closed，trying reconnect（number: ${reconnect.curNumber}, next timeout: ${reconnect.initTime} ms）`,
 				key: 'websocket reconnect',
 				duration: 0
 			})
 		}, reconnect.initTime)
-	}
+	};
 
 	reset = () => {
 		clearTimeout(this.config.heartbeat.idleSetTimeout);
 		this.idleDetect()
-	}
+	};
 
 	closeWebSocket = () => {
-		console.log('close web socket')
+		console.log('close web socket');
 		if (this.config.heartbeat.enabled) {
 			clearInterval(this.config.heartbeat.setInterval)
 		}
@@ -115,7 +116,7 @@ class WebSocketInstance {
 	sendMsg = (type, data) => {
 		console.log('[websocket] send msg: ', type, data, new Date().getTime());
 		if (!this.socket || this.socket.readyState !== 1) {
-			console.log('[websocket] websocket connect closed', this.socket)
+			console.log('[websocket] websocket connect closed', this.socket);
 			return
 		}
 

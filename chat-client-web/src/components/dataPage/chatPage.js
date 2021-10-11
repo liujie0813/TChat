@@ -122,15 +122,16 @@ export default function ChatPage() {
 						<List className='chatPage'
 							dataSource={ chatRecord.records }
 							renderItem={ (record, index) => {
-								let isShowTime = showTime(record.sendTime, index)
+								let isShowTime = showTime(record.sendTime, index);
 								if (record.msgType === 2) {
 									return (
 										<div style={{ textAlign: 'center', color: 'rgba(153, 153, 153)'}}>
-											{ <div style={{ textAlign: 'center', paddingTop: '12px', paddingBottom: '24px' }}>
-													{getDateTime(record.sendTime, true)}
-												</div>
-											}
-											{ getJoinGroupNotice(groupMap[chatRecord.groupId].memberMap, userInfo.userId, record.fromId, record.content, userIdMap) }
+											<div style={{ textAlign: 'center', paddingTop: '8px', paddingBottom: '20px' }}>
+												{getDateTime(record.sendTime, true)}
+											</div>
+											<div style={{ paddingBottom: '12px' }}>
+												{ getJoinGroupNotice(groupMap[chatRecord.groupId].memberMap, userInfo.userId, record.fromId, record.content, userIdMap) }
+											</div>
 										</div>
 									)
 								}
@@ -141,7 +142,10 @@ export default function ChatPage() {
 										<div className='chatPageAvatar' style={{ paddingTop: (isShowTime ? '36px' : '0') }}>
 											{ record.fromId === userInfo.userId ?
 												getAvatar(userInfo.avatarUrl, 0, userInfo, 40) :
-												getAvatar(chatRecord.avatarUrl, 0, chatRecord, 40) }
+												<div style={{ paddingTop: '8px' }}>
+													{ groupMap[chatRecord.groupId] && getAvatar(record.avatarUrl, 0, { account: groupMap[chatRecord.groupId].memberMap[record.fromId].account, ...record}, 40)  }
+												</div>
+											}
 										</div>
 										<div className='chatPageContent' >
 											{ !isShowTime ? <div/> :
@@ -150,7 +154,9 @@ export default function ChatPage() {
 												</div>
 											}
 											<div className='titleOrMsg'>
-												{ (parseInt(chatRecord.talkType) === 0) ? <div/> : <div>{record.from}</div>
+												{ (parseInt(chatRecord.talkType) === 1 && record.fromId !== userInfo.userId )
+													? <div style={{ paddingBottom: '4px' }}>{record.from}</div>
+													: <div/>
 												}
 											</div>
 											<div className='titleOrMsg'>

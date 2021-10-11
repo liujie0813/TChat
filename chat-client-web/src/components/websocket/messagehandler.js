@@ -17,6 +17,9 @@ const handleMessage = (command, seqId, data) => {
 		case messageType.C2CSendResponseMessage:
 			handleC2CSendResp(data);
 			break;
+		case messageType.C2GSendResponseMessage:
+			handleC2GSendResp(data);
+			break;
 		case messageType.C2CPushRequestMessage:
 			handleC2CPushReq(data);
 			break;
@@ -79,9 +82,9 @@ function refreshTokenAndAuth() {
 
 const handleC2CSendResp = (resp) => {
 	let data = ackMap.get(resp.seqId);
-	let userIdMap = getStateUser().userIdMap;
-
 	ackMap.delete(resp.seqId);
+
+	let userInfo = getStateUser().userInfo;
 	// 更新 聊天记录列表
 	store.dispatch(updateChatRecord({
 		talkId: data.talkId,
@@ -89,7 +92,28 @@ const handleC2CSendResp = (resp) => {
 			msgId: resp.msgId,
 			msgType: 0,
 			fromId: data.fromId,
-			from: userIdMap[data.fromId],
+			from: userInfo.nickname,
+			content: data.content,
+			sendTime: resp.sendTime
+		}],
+		updateUnreadNum: false
+	}))
+};
+
+const handleC2GSendResp = (resp) => {
+	let data = ackMap.get(resp.seqId);
+	ackMap.delete(resp.seqId);
+
+	let userInfo = getStateUser().userInfo;
+
+	// 更新 聊天记录列表
+	store.dispatch(updateChatRecord({
+		talkId: data.talkId,
+		records: [{
+			msgId: resp.msgId,
+			msgType: 0,
+			fromId: data.fromId,
+			from: userInfo.nickname,
 			content: data.content,
 			sendTime: resp.sendTime
 		}],
@@ -116,8 +140,29 @@ const handleC2CPushReq = (resp) => {
 };
 
 const handleC2GPushReq = (resp) => {
+	let stateUser = getStateUser();
+	let from;
+	if (stateUser.userIdMap[resp.fromId]) {
+		from = stateUser.userIdMap[resp.fromId];
+	} else {
+		let groupId = stateUser.chatRecordMap[resp.talkId].groupId;
+		from = stateUser.groupMap[groupId].memberMap[resp.talkId].nickname;
+	}
 
-}
+	let updateUnreadNum = !(getStateUser().activeMenu === 'chatMenu' && getStateUser().activeChat && getStateUser().activeChat.key === resp.talkId);
+	store.dispatch(updateChatRecord({
+		talkId: resp.talkId,
+		records: [{
+			msgId: resp.msgId,
+			msgType: 0,
+			fromId: resp.fromId,
+			from: from,
+			content: resp.content,
+			sendTime: resp.sendTime
+		}],
+		updateUnreadNum
+	}))
+};
 
 function getStateUser() {
 	return store.getState().user;

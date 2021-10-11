@@ -103,7 +103,7 @@ export default function Home() {
 								<List
 									dataSource={ chatRecordList }
 									renderItem={ chatRecord => {
-										let recordLen = chatRecord.records.length
+										let recordLen = chatRecord.records.length;
 										let lastRecord;
 										if (recordLen > 0) {
 											lastRecord = chatRecord.records[recordLen - 1]
@@ -112,7 +112,7 @@ export default function Home() {
 											<List.Item key={chatRecord.talkId} className={ (activeChat && chatRecord.talkId === activeChat.key) ? 'contactActive' : ''}>
 												<Button type='link' style={{ height: '72px' }}
 																onClick={() => chatTabClick(chatRecord.talkType, chatRecord.talkId)}>
-													<div style={{ width: '300px', height: '70px', padding: '0 16px', textAlign: 'left', display: 'flex' }}>
+													<div style={{ width: '299px', height: '70px', padding: '0 16px', textAlign: 'left', display: 'flex' }}>
 														<div style={{ padding: '15px 0'}}>
 															<Badge count={chatRecord.unreadNum} size='small' offset={[-3, 3]}>
 																{ getAvatar(chatRecord.avatarUrl, chatRecord.talkType, chatRecord, 40) }
@@ -129,7 +129,7 @@ export default function Home() {
 																	className='overWidth'>
 																{ recordLen > 0 &&
 																	(lastRecord.msgType === 2
-																		? getJoinGroupNotice(groupMap[chatRecord.groupId].memberMap, userInfo.userId, lastRecord.fromId, lastRecord.content, userIdMap)
+																		? ( groupMap[chatRecord.groupId] && getJoinGroupNotice(groupMap[chatRecord.groupId].memberMap, userInfo.userId, lastRecord.fromId, lastRecord.content, userIdMap) )
 																		: chatRecord.records[recordLen - 1].content )
 																}
 															</div>

@@ -21,6 +21,8 @@ public class C2GPushRequestMessage extends AbstractMessage {
 
     private String content;
 
+    private Long sendTime;
+
     @Override
     public byte getCommand() {
         return CommandEnum.C2GPushRequest.getCode();

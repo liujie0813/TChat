@@ -167,7 +167,10 @@ export const userSlice = createSlice({
 		},
 		updateChatRecord: (state, { payload }) => {
 			const { talkId, records, updateUnreadNum } = payload;
-			let originRecords = state.chatRecordMap[talkId].records;
+			let originRecords = [];
+			if (state.chatRecordMap[talkId]) {
+				originRecords = state.chatRecordMap[talkId].records;
+			}
 			state.chatRecordMap[talkId].records = originRecords.concat(records);
 
 			state.chatRecordList = [

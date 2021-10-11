@@ -18,7 +18,9 @@ export function getAvatar(avatarUrl, avatarType, data, size) {
 	} else {
 		if (avatarType === 0) {
 			let showName;
-			if (data.talkName && isDigitOrLetter(data.talkName.substring(0, 6))) {
+			if (data.from && isDigitOrLetter(data.from.substring(0, 6))) {
+				showName = data.from.substring(0, 6);
+			} else if (data.talkName && isDigitOrLetter(data.talkName.substring(0, 6))) {
 				showName = data.talkName.substring(0, 6);
 			} else if (data.nickname && isDigitOrLetter(data.nickname.substring(0, 6))) {
 				showName = data.nickname.substring(0, 6);
