@@ -53,7 +53,7 @@ public class PushServiceImpl implements IPushService {
 	@Override
 	public void pushGroupMessage(C2GPushRequestMessage c2gPushRequestMessage) {
 		List<Long> userIds = groupUserRelationMapper.getByTalkId(c2gPushRequestMessage.getTalkId())
-				.stream().filter(userId -> !userId.equals(c2gPushRequestMessage.getFromId())).collect(Collectors.toList());
+				.stream().filter(userId -> !c2gPushRequestMessage.getFromId().equals(userId)).collect(Collectors.toList());
 		for (Long userId : userIds) {
 			// 记录未读数
 			unreadMsgNumRedisMapper.incr(userId, c2gPushRequestMessage.getTalkId());

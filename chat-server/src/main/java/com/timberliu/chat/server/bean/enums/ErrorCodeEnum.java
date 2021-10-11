@@ -49,6 +49,9 @@ public enum ErrorCodeEnum {
 	AUTH_REFRESH_TOKEN_NOT_FOUND(102003, "刷新令牌不存在"),
 	AUTH_REFRESH_TOKEN_EXPIRED(102004, "刷新令牌已过期"),
 	AUTH_ACCESS_TOKEN_NOT_PASS(102005, "访问令牌未传入"),
+
+	// netty
+	NETTY_MESSAGE_TYPE_NOT_EXIST(103001, "消息类型不存在"),
 	;
 
 	private final Integer code;

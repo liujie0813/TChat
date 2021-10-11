@@ -1,7 +1,9 @@
 package com.timberliu.chat.server.dispatcher;
 
+import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
 import com.timberliu.chat.server.protocol.handler.MessageHandler;
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
+import com.timberliu.chat.server.protocol.message.GenericeMessage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -34,18 +36,14 @@ public class MessageDispatcher extends SimpleChannelInboundHandler<AbstractMessa
         log.info("[MessageDispatcher] recv msg: {}", message);
         byte command = message.getCommand();
         // 根据 message_type 获取 messageHandler 并调用
-        MessageHandler<AbstractMessage> messageHandler = getMessageHandler(command);
+        MessageHandler<AbstractMessage> messageHandler = handlers.get(command);
+        if (messageHandler == null) {
+            channelHandlerContext.channel().writeAndFlush(
+                    new GenericeMessage(ErrorCodeEnum.NETTY_MESSAGE_TYPE_NOT_EXIST));
+        }
         handlerExecutor.execute(() -> {
             messageHandler.execute(channelHandlerContext.channel(), message);
         });
-    }
-
-    private MessageHandler<AbstractMessage> getMessageHandler(byte messageType) {
-        MessageHandler<AbstractMessage> handler = handlers.get(messageType);
-        if (handler == null) {
-            throw new IllegalArgumentException(String.format("can not find MessageHandler(%s)", messageType));
-        }
-        return handler;
     }
 
     @Resource

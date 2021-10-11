@@ -1,6 +1,7 @@
 package com.timberliu.chat.server.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.timberliu.chat.server.bean.convert.GroupConvert;
 import com.timberliu.chat.server.bean.dto.contact.ContactDTO;
 import com.timberliu.chat.server.bean.dto.contact.CreateGroupDTO;
 import com.timberliu.chat.server.bean.dto.contact.GroupDTO;
@@ -13,19 +14,17 @@ import com.timberliu.chat.server.dao.mysql.mapper.GroupInfoMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.GroupUserRelationMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
+import com.timberliu.chat.server.bean.dto.contact.GroupMemberDTO;
 import com.timberliu.chat.server.dao.redis.mapper.TalkIdRedisMapper;
 import com.timberliu.chat.server.exception.BizException;
 import com.timberliu.chat.server.protocol.message.c2g.C2GPushRequestMessage;
-import com.timberliu.chat.server.protocol.message.c2g.C2GSendRequestMessage;
 import com.timberliu.chat.server.service.IContactService;
 import com.timberliu.chat.server.service.IPushService;
 import com.timberliu.chat.server.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -81,26 +80,26 @@ public class ContactServiceImpl implements IContactService {
 	}
 
 	@Override
-	public Boolean createGroup(CreateGroupDTO createGroupDTO) {
+	public GroupDTO createGroup(CreateGroupDTO createGroupDTO) {
 		existUserId(createGroupDTO.getCreateUserId());
 		// 入库
-		Long talkId = insertGroup(createGroupDTO);
+		GroupDTO groupDTO = insertGroup(createGroupDTO);
 
 		String content = JSONArray.toJSONString(createGroupDTO.getMemberIds());
 		MessageStorageDTO messageStorageDTO = new MessageStorageDTO()
-				.setTalkId(talkId).setTalkType(TalkTypeEnum.GROUP.getCode()).setMsgType(MsgTypeEnum.JOIN_GROUP_NOTICE.getCode())
+				.setTalkId(groupDTO.getTalkId()).setTalkType(TalkTypeEnum.GROUP.getCode()).setMsgType(MsgTypeEnum.JOIN_GROUP_NOTICE.getCode())
 				.setFromId(createGroupDTO.getCreateUserId()).setContent(content);
 		HistoryMsgEntity historyMsgEntity = storageService.storageMessage(messageStorageDTO);
 
 		C2GPushRequestMessage c2gPushRequestMessage = new C2GPushRequestMessage()
 				.setMsgId(historyMsgEntity.getId()).setFromId(createGroupDTO.getCreateUserId())
-				.setTalkId(talkId).setContent(content);
+				.setTalkId(groupDTO.getTalkId()).setContent(content);
 		pushService.pushGroupMessage(c2gPushRequestMessage);
 
-		return true;
+		return groupDTO;
 	}
 
-	private Long insertGroup(CreateGroupDTO createGroupDTO) {
+	private GroupDTO insertGroup(CreateGroupDTO createGroupDTO) {
 		Long talkId = talkIdRedisMapper.incrAndGet();
 		GroupInfoEntity groupInfoEntity = new GroupInfoEntity()
 				.setTalkId(talkId).setGroupName(createGroupDTO.getGroupName()).setCreateUserId(createGroupDTO.getCreateUserId());
@@ -113,12 +112,37 @@ public class ContactServiceImpl implements IContactService {
 		groupUserRelationEntities.add(new GroupUserRelationEntity()
 				.setGroupId(groupInfoEntity.getId()).setUserId(createGroupDTO.getCreateUserId()).setJoinTime(joinTime));
 		groupUserRelationMapper.batchInsert(groupUserRelationEntities);
-		return talkId;
+
+		GroupDTO groupDTO = GroupConvert.INSTANCE.convert(groupInfoEntity);
+		Map<Long, List<GroupMemberDTO>> groupIdMembersMap = getGroupMembersMap(Collections.singletonList(groupDTO.getGroupId()));
+		groupDTO.setMembers(groupIdMembersMap.get(groupDTO.getGroupId()));
+		return groupDTO;
 	}
 
 	@Override
 	public List<GroupDTO> getGroupList(Long userId) {
-		return groupUserRelationMapper.getGroupList(userId);
+		List<GroupDTO> groupInfoList = groupUserRelationMapper.getGroupInfoList(userId);
+		if (groupInfoList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		List<Long> groupIds = groupInfoList.stream().map(GroupDTO::getGroupId).collect(Collectors.toList());
+
+		Map<Long, List<GroupMemberDTO>> groupIdMembersMap = getGroupMembersMap(groupIds);
+		for (GroupDTO groupDTO : groupInfoList) {
+			groupDTO.setMembers(groupIdMembersMap.getOrDefault(groupDTO.getGroupId(), new ArrayList<>()));
+		}
+		return groupInfoList;
+	}
+
+	private Map<Long, List<GroupMemberDTO>> getGroupMembersMap(List<Long> groupIds) {
+		List<GroupMemberDTO> groupMemberList = groupUserRelationMapper.getGroupMemberList(groupIds);
+		Map<Long, List<GroupMemberDTO>> groupIdMembersMap = new HashMap<>();
+		for (GroupMemberDTO groupMemberPo : groupMemberList) {
+			List<GroupMemberDTO> groupMemberPos = groupIdMembersMap.getOrDefault(groupMemberPo.getGroupId(), new ArrayList<>());
+			groupMemberPos.add(groupMemberPo);
+			groupIdMembersMap.put(groupMemberPo.getGroupId(), groupMemberPos);
+		}
+		return groupIdMembersMap;
 	}
 
 }

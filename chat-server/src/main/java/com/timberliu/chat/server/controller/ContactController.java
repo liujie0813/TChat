@@ -38,9 +38,9 @@ public class ContactController {
 	}
 
 	@PostMapping("/create-group")
-	public ApiResult<Boolean> createGroup(@RequestBody CreateGroupDTO createGroupDTO) {
-		Boolean success = contactService.createGroup(createGroupDTO);
-		return ApiResult.success(success);
+	public ApiResult<GroupDTO> createGroup(@RequestBody CreateGroupDTO createGroupDTO) {
+		GroupDTO groupDTO = contactService.createGroup(createGroupDTO);
+		return ApiResult.success(groupDTO);
 	}
 
 	@GetMapping("/get-groups")

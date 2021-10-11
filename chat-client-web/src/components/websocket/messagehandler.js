@@ -1,7 +1,7 @@
 import {commandMap, messageType} from './messageType'
 import store from '../../store/index'
 import {setUnreadNum, updateChatRecord} from '../../store/features/userSlice'
-import {Modal} from "antd";
+import {Modal, message} from "antd";
 import {getRefreshToken, setLoginToken} from "../../common/js/accessToken";
 import servicef from "../../common/js/request";
 import WebSocketInstance from "./webSocketInstance";
@@ -25,6 +25,9 @@ const handleMessage = (command, seqId, data) => {
 			break;
 		case messageType.HeartBeatResponseMessage:
 			console.log("[handleMessage] recv heart beat resp")
+			break;
+		case messageType.GenericMessage:
+			message.error(data.msg)
 			break;
 	}
 };
@@ -97,7 +100,7 @@ const handleC2CSendResp = (resp) => {
 const handleC2CPushReq = (resp) => {
 	let userIdMap = getStateUser().userIdMap;
 
-	let updateUnreadNum = !(getStateUser().activeMenu === 'chatMenu' && getStateUser().activeChat === resp.talkId);
+	let updateUnreadNum = !(getStateUser().activeMenu === 'chatMenu' && getStateUser().activeChat.key === resp.talkId);
 	store.dispatch(updateChatRecord({
 		talkId: resp.talkId,
 		records: [{

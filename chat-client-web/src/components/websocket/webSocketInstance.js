@@ -37,6 +37,7 @@ class WebSocketInstance {
 		}
 		this.socket.onopen = () => {
 			console.log('[websocket] connect established', this.socket)
+			message.destroy('websocket reconnect')
 			// 心跳检测
 			if (this.config.heartbeat.enabled) {
 				this.idleDetect()

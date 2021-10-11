@@ -1,10 +1,35 @@
 import React from "react";
-import {Modal} from "antd";
-import {useSelector} from "react-redux";
+import {Button, message, Modal} from "antd";
+import {useDispatch, useSelector} from "react-redux";
 import {getAvatar} from "../common/avatar";
+import {addContact, getContactList} from "../api/user";
+import {setContactList} from "../../store/features/userSlice";
 
 export default function UserInfoModal(props) {
-	const { userInfo } = useSelector(state => state.user);
+	const { userInfo, contactMap } = useSelector(state => state.user);
+	const dispatch = useDispatch();
+
+	let personInfo = props.userInfo;
+
+	const toAddUser = () => {
+		let resp = addContact(userInfo.userId, personInfo.userId);
+		resp.then(data => {
+			if (data) {
+				message.success("添加成功")
+			} else {
+				message.success("添加失败")
+			}
+			toGetContactList(userInfo.userId)
+		})
+	}
+
+	// 获取联系人列表
+	const toGetContactList = (userId) => {
+		let resp = getContactList(userId);
+		resp.then(data => {
+			dispatch(setContactList(data));
+		});
+	};
 
 	return (
 		<Modal visible={props.visible}
@@ -15,29 +40,37 @@ export default function UserInfoModal(props) {
 					 onCancel={() => props.toSetUserInfoVisible(false)}
 					 width={400}
 					 bodyStyle={{ padding: '48px' }}
-					 style={{ marginTop: '-45px', marginLeft: '72px' }}>
+					 style={ props.style }>
 			<div style={{ borderBottom: 'solid 1px #d0d0d0', display: 'flex', paddingBottom: '30px', minWidth: '304px' }}>
 				<div style={{ width: 'calc(100% - 80px)' }}>
-					<div style={{ fontSize: '22px', fontWeight: '500' }}>{userInfo.nickname}</div>
-					<div style={{ paddingTop: '8px' }}>{userInfo.signature ? userInfo.signature : 'ta没有说什么'}</div>
+					<div style={{ fontSize: '22px', fontWeight: '500' }}>{personInfo.nickname}</div>
+					<div style={{ paddingTop: '8px' }}>{personInfo.signature ? personInfo.signature : 'ta没有说什么'}</div>
 				</div>
 				<div style={{ width: '80px' }}>
-					{ getAvatar(userInfo.avatarUrl, userInfo.account, userInfo.nickname, 80) }
+					{ getAvatar(personInfo.avatarUrl, 0, personInfo, 80) }
 				</div>
 			</div>
 			<div style={{ padding: '30px 0', minWidth: '304px' }}>
 				<div style={{ paddingBottom: '12px' }}>
 					<span style={{ color: '#b0b0b0' }}>账 号</span>
-					<span style={{ paddingLeft: '40px' }}>{userInfo.account}</span>
+					<span style={{ paddingLeft: '40px' }}>{personInfo.account}</span>
 				</div>
 				<div style={{ paddingBottom: '12px' }}>
 					<span style={{ color: '#b0b0b0' }}>性 别</span>
-					<span style={{ paddingLeft: '40px' }}>{userInfo.sex == null ? '未知' : userInfo.sex}</span>
+					<span style={{ paddingLeft: '40px' }}>{personInfo.sex == null ? '未知' : personInfo.sex}</span>
 				</div>
 				<div>
 					<span style={{ color: '#b0b0b0' }}>地 区</span>
-					<span style={{ paddingLeft: '40px' }}>{(userInfo.privince || userInfo.city) ? userInfo.province + ' ' + userInfo.city : '未知'}</span>
+					<span style={{ paddingLeft: '40px' }}>{(personInfo.privince || personInfo.city) ? personInfo.province + ' ' + personInfo.city : '未知'}</span>
 				</div>
+			</div>
+			<div style={{ textAlign: 'center' }}>
+				{
+					userInfo.account === personInfo.account ? <div/> :
+						contactMap[personInfo.account] ?
+							<Button type='primary' disabled>已添加</Button> :
+							<Button type='primary' onClick={toAddUser}>添加</Button>
+				}
 			</div>
 		</Modal>
 	)

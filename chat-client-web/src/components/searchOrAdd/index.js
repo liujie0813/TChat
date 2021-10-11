@@ -2,11 +2,11 @@ import {Avatar, Button, Dropdown, Form, Input, Menu, message, Modal, Transfer} f
 import React, {useState} from "react";
 import './search.css'
 import {PlusOutlined, TeamOutlined, UserAddOutlined, UsergroupAddOutlined} from "@ant-design/icons";
-import {addContact, createGroup, getContactList, searchByAccount} from "../api/user";
+import {addContact, createGroup, getContactList, getGroupList, getTalkList, searchByAccount} from "../api/user";
 import {getAvatar} from "../common/avatar";
 import {isDigitOrLetter} from "../../common/util/stringUtil";
 import {useDispatch, useSelector} from "react-redux";
-import {setContactList, setOrUpdateGroupChatData} from "../../store/features/userSlice";
+import {initChatRecord, setContactList, setGroupList, setOrUpdateGroupChatData} from "../../store/features/userSlice";
 
 const { Search } = Input;
 
@@ -57,22 +57,9 @@ export default function SearchBox() {
 	const toAddUser = () => {
 		let resp = addContact(userInfo.userId, addedUser.userId);
 		resp.then(data => {
-			if (data) {
-				message.success("添加成功")
-			} else {
-				message.success("添加失败")
-			}
-			toGetContactList(userInfo.userId)
+
 		})
 	}
-
-	// 获取联系人列表
-	const toGetContactList = (userId) => {
-		let resp = getContactList(userId);
-		resp.then(data => {
-			dispatch(setContactList(data));
-		});
-	};
 
 	const showCreateGroup = () => {
 		setAddVisible(false)
@@ -84,18 +71,27 @@ export default function SearchBox() {
 	}
 
 	const onFinish = (values) => {
-		console.log('[]', values)
 		let resp = createGroup(values.groupName, userInfo.userId, values.memberIds)
-		resp.then(success => {
-			if (success) {
-				setCreateGroupPageVisible(false)
-
-				// dispatch(setOrUpdateGroupChatData({
-				//
-				// }))
-			}
+		resp.then(data => {
+			setCreateGroupPageVisible(false)
+			toGetGroupList(userInfo.userId)
+			toGetTalkList(userInfo.userId)
 		})
 	}
+
+	const toGetGroupList = (userId) => {
+		let resp = getGroupList(userId);
+		resp.then(data => {
+			dispatch(setGroupList(data));
+		});
+	}
+
+	const toGetTalkList = (userId) => {
+		let resp = getTalkList(userId);
+		resp.then(data => {
+			dispatch(initChatRecord(data))
+		})
+	};
 
 	return (
 		<div style={{ borderBottom: 'solid 1px #e0e0e0', width: '300px', height: '64px' }}>
@@ -132,7 +128,7 @@ export default function SearchBox() {
 				<Dropdown overlay={
 						<Menu>
 							<Menu.Item key='addedUser' style={{ width: '448px' }}>
-								{ addedUser && getAvatar(addedUser.avatarUrl, addedUser.account, addedUser.nickname, 36) }
+								{ addedUser && getAvatar(addedUser.avatarUrl, 0, addedUser, 36) }
 								<div style={{ display: 'inline-block', width: '300px', marginLeft: '8px' }}>
 									{ addedUser && (addedUser.nickname ? addedUser.nickname : addedUser.account) }
 								</div>
@@ -157,13 +153,21 @@ export default function SearchBox() {
 						 width={800}
 						 visible={createGroupPageVisible}
 						 footer={null}
+						 onCancel={() => setCreateGroupPageVisible(false)}
 						 bodyStyle={{ padding: '24px 36px 12px 36px' }}>
 				<Form className='createGroupForm'
 							labelCol={{ span: 3 }}
 							wrapperCol={{ span: 20 }}
 							onFinish={onFinish}>
-					<Form.Item label='群名称' name='groupName'>
-						<Input placeholder='输入群名称（选填）'/>
+					<Form.Item label='群名称' name='groupName'
+					 rules={[
+						 {
+						 	 required: true,
+							 message: '群名称不能为空'
+						 }
+					 ]}
+					>
+						<Input placeholder='输入群名称（必填）'/>
 					</Form.Item>
 					<Form.Item label='群头像' name='groupAvatar'>
 						<Avatar icon={<TeamOutlined />} size={32} style={{ backgroundColor: '#fe6673' }}/>
@@ -192,7 +196,7 @@ export default function SearchBox() {
 								return (
 									<div>
 										{ contact &&
-										getAvatar(contact.avatarUrl, contact.account, contact.nickname, 32)}
+										getAvatar(contact.avatarUrl, 0, contact, 32)}
 										<div style={{ display: 'inline-block', marginLeft: '12px' }}>
 											{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
 										</div>
@@ -202,7 +206,7 @@ export default function SearchBox() {
 						/>
 					</Form.Item>
 					<Form.Item wrapperCol={{ offset: 18, span: 6 }}>
-						<Button onClick={ () => {console.log('取消')}} style={{ margin: '0 12px 0 12px' }}>
+						<Button onClick={ () => setCreateGroupPageVisible(false) } style={{ margin: '0 12px 0 12px' }}>
 							取消
 						</Button>
 						<Button type="primary" htmlType="submit">

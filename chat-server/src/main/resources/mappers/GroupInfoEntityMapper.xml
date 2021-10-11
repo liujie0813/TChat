@@ -12,7 +12,7 @@
 
   <select id="getGroupTalkInfos" resultType="com.timberliu.chat.server.dao.mysql.po.TalkInfoPO">
     SELECT
-      gi.talk_id, 1 as talkType, null as avatarUrl, gur.group_id
+      gi.talk_id, 1 as talkType, null as avatarUrl, gur.group_id,
       IFNULL(gur.group_name_remark, gi.group_name) as talkName
     FROM (
       SELECT id, group_name, talk_id

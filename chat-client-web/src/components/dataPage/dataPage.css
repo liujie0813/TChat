@@ -45,3 +45,7 @@
 .otherMsgBackgroundColor {
 	background-color: #fff;
 }
+
+.chatPageDrawer .ant-drawer-content-wrapper {
+	box-shadow: none !important;
+}

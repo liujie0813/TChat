@@ -13,6 +13,7 @@ import {getAvatar} from "../../components/common/avatar";
 import {getDateTime} from "../../components/common/time";
 import WebSocketInstance from "../../components/websocket/webSocketInstance";
 import {updateUnreadNum} from "../../components/api/user";
+import {getJoinGroupNotice} from "../../components/common/getJoinGroup";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -22,7 +23,7 @@ export default function Home() {
 	const {
 		userInfo,
 		activeMenu, chatMenuImg, contactMenuImg,
-		activeChat, chatList, activeContact, contactList, groupList,
+		activeChat, chatList, activeContact, contactList, groupList, groupMap, userIdMap,
 		chatRecordList, chatRecordMap,
 		totalUnreadNum
 	} = useSelector(state => state.user);
@@ -48,13 +49,19 @@ export default function Home() {
 		}
 	};
 
-	const chatTabClick = (key, event) => {
-		dispatch(setChatData(key));
+	const chatTabClick = (type, key) => {
+		dispatch(setChatData({
+			type,
+			key
+		}));
 		updateUnreadNum(userInfo.userId, chatRecordMap[key].talkId);
 	};
 
-	const contactTabClick = (key) => {
-		dispatch(setContactData(key))
+	const contactTabClick = (type, key) => {
+		dispatch(setContactData({
+			type,
+			key
+		}))
 	};
 
 	return (
@@ -65,7 +72,7 @@ export default function Home() {
 				{/* 头像 */}
 				<TabPane tab={
 						<div style={{ padding: '20px 12px 12px' }}>
-							{ getAvatar(userInfo.avatarUrl, userInfo.account, userInfo.nickname, 48) }
+							{ getAvatar(userInfo.avatarUrl, 0, userInfo, 48) }
 						</div>
 					}
 					key="avatar">
@@ -97,27 +104,35 @@ export default function Home() {
 									dataSource={ chatRecordList }
 									renderItem={ chatRecord => {
 										let recordLen = chatRecord.records.length
+										let lastRecord;
+										if (recordLen > 0) {
+											lastRecord = chatRecord.records[recordLen - 1]
+										}
 										return (
-											<List.Item key={chatRecord.account} className={ chatRecord.talkId === activeChat ? 'contactActive' : ''}>
+											<List.Item key={chatRecord.talkId} className={ (activeChat && chatRecord.talkId === activeChat.key) ? 'contactActive' : ''}>
 												<Button type='link' style={{ height: '72px' }}
-																onClick={() => chatTabClick(chatRecord.talkId)}>
+																onClick={() => chatTabClick(chatRecord.talkType, chatRecord.talkId)}>
 													<div style={{ width: '300px', height: '70px', padding: '0 16px', textAlign: 'left', display: 'flex' }}>
 														<div style={{ padding: '15px 0'}}>
 															<Badge count={chatRecord.unreadNum} size='small' offset={[-3, 3]}>
-																{ getAvatar(chatRecord.avatarUrl, chatRecord.account, chatRecord.talkName, 40) }
+																{ getAvatar(chatRecord.avatarUrl, chatRecord.talkType, chatRecord, 40) }
 															</Badge>
 														</div>
-														<div style={{ marginLeft: '10px', padding: '10px 0' }}>
-															<div style={{ width: '156px', color: '#000' }}>
-																{ chatRecord.talkName }
+														<div style={{ marginLeft: '10px', padding: '12px 0', display: 'flex', flexDirection: 'column' }}>
+															<div style={{ display: 'flex' }}>
+																<div style={{ width: '156px', color: '#000' }}>{ chatRecord.talkName }</div>
+																<div style={{ width: '60px', textAlign: 'right', fontSize: '10px', color: 'rgba(153, 153, 153)' }}>
+																	{ recordLen > 0 && getDateTime(chatRecord.records[recordLen - 1].sendTime, false) }
+																</div>
 															</div>
-															<div style={{ fontSize: '12px', paddingTop: '6px', color: 'rgba(153, 153, 153)', maxWidth: '156px' }}
+															<div style={{ fontSize: '12px', paddingTop: '6px', color: 'rgba(153, 153, 153)', maxWidth: '216px' }}
 																	className='overWidth'>
-																{ recordLen > 0 && chatRecord.records[recordLen - 1].content }
+																{ recordLen > 0 &&
+																	(lastRecord.msgType === 2
+																		? getJoinGroupNotice(groupMap[chatRecord.groupId].memberMap, userInfo.userId, lastRecord.fromId, lastRecord.content, userIdMap)
+																		: chatRecord.records[recordLen - 1].content )
+																}
 															</div>
-														</div>
-														<div style={{ width: '60px', textAlign: 'right', fontSize: '10px', paddingTop: '12px', color: 'rgba(153, 153, 153)' }}>
-															{ recordLen > 0 && getDateTime(chatRecord.records[recordLen - 1].sendTime, false) }
 														</div>
 													</div>
 												</Button>
@@ -148,7 +163,7 @@ export default function Home() {
 								</div>
 							</Panel>
 							<Panel header='群组' key='groupList'>
-								<div style={{ overflow: 'auto', height: 'calc(100vh - 202px)' }}>
+								<div style={{ overflow: 'auto', maxHeight: 'calc(100vh - 202px)' }}>
 									<InfiniteScroll
 										pageStart={0}
 										loadMore={() => {}}
@@ -158,16 +173,16 @@ export default function Home() {
 										className='singleContactList'>
 										{/* 循环遍历 */}
 										<List
-											dataSource={ contactList }
-											renderItem={ contact => (
-												<List.Item key={contact.account} className={ contact.account === activeContact ? 'contactActive' : ''}>
+											dataSource={ groupList }
+											renderItem={ group => (
+												<List.Item key={group.groupId} className={ (activeContact && group.groupId === activeContact.key) ? 'contactActive' : ''}>
 													<Button type='link' style={{ height: '68px' }}
-																	onClick={() => contactTabClick(contact.account)}>
+																	onClick={() => contactTabClick(1, group.groupId)}>
 														<div style={{ width: '252px', margin: '0 12px 0 36px', textAlign: 'left'}}>
-															{ contact &&
-															getAvatar(contact.avatarUrl, contact.account, contact.nickname, 40)}
+															{ group &&
+															getAvatar(group.avatarUrl, 1, group, 36)}
 															<div style={{ display: 'inline-block', marginLeft: '12px' }}>
-																{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
+																{ group.groupNameRemark ? group.groupNameRemark : group.groupName }
 															</div>
 														</div>
 													</Button>
@@ -178,7 +193,7 @@ export default function Home() {
 								</div>
 							</Panel>
 							<Panel header='联系人' key='contactList'>
-								<div style={{ overflow: 'auto', height: 'calc(100vh - 202px)' }}>
+								<div style={{ overflow: 'auto', maxHeight: 'calc(100vh - 202px)' }}>
 									<InfiniteScroll
 											pageStart={0}
 											loadMore={() => {}}
@@ -190,12 +205,12 @@ export default function Home() {
 										<List
 											dataSource={ contactList }
 											renderItem={ contact => (
-												<List.Item key={contact.account} className={ contact.account === activeContact ? 'contactActive' : ''}>
+												<List.Item key={contact.account} className={ (activeContact && contact.account === activeContact.key) ? 'contactActive' : ''}>
 													<Button type='link' style={{ height: '68px' }}
-																	onClick={() => contactTabClick(contact.account)}>
+																	onClick={() => contactTabClick(2, contact.account)}>
 														<div style={{ width: '252px', margin: '0 12px 0 36px', textAlign: 'left'}}>
 															{ contact &&
-																getAvatar(contact.avatarUrl, contact.account, contact.nickname, 40)}
+																getAvatar(contact.avatarUrl, 0, contact, 36)}
 															<div style={{ display: 'inline-block', marginLeft: '12px' }}>
 																{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
 															</div>
@@ -222,6 +237,8 @@ export default function Home() {
 			</Tabs>
 			<DataPage/>
 			<UserInfoModal
+				userInfo={userInfo}
+				style={{ marginTop: '-45px', marginLeft: '72px' }}
 				visible={userInfoVisible}
 				toSetUserInfoVisible={setUserInfoVisible}
 			/>

@@ -13,10 +13,10 @@ public class TalkInfoPO {
 
 	private Integer talkType;
 
+	// 单聊
 	private Long userId;
-
 	private String account;
-
+	// 群聊
 	private Long groupId;
 
 	private String talkName;

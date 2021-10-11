@@ -26,7 +26,7 @@ public interface IContactService {
 	/**
 	 * 创建群组
 	 */
-	Boolean createGroup(CreateGroupDTO createGroupDTO);
+	GroupDTO createGroup(CreateGroupDTO createGroupDTO);
 
 	/**
 	 * 获取群组列表

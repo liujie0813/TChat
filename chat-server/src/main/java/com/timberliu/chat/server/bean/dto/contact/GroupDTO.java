@@ -1,6 +1,6 @@
 package com.timberliu.chat.server.bean.dto.contact;
 
-import lombok.*;
+import lombok.Data;
 
 import java.util.List;
 
@@ -20,5 +20,7 @@ public class GroupDTO {
 	private String groupNameRemark;
 
 	private Long createUserId;
+
+	private List<GroupMemberDTO> members;
 
 }

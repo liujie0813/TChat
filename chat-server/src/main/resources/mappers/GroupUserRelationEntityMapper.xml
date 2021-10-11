@@ -4,7 +4,7 @@
 
   <select id="getByTalkId" resultType="long">
     SELECT gur.user_id
-    FROM group_info gi LEFT JOIN group_user_relation gur
+    FROM group_info gi JOIN group_user_relation gur
       ON gi.talk_id = #{talkId} AND gi.id = gur.group_id
   </select>
 
@@ -18,11 +18,21 @@
     </foreach>
   </insert>
 
-  <select id="getGroupList" resultType="com.timberliu.chat.server.bean.dto.contact.GroupDTO">
+  <select id="getGroupInfoList" resultType="com.timberliu.chat.server.bean.dto.contact.GroupDTO">
     SELECT gur.group_id, gi.talk_id, gi.group_name, gur.group_name_remark, gi.create_user_id
     FROM group_user_relation gur LEFT JOIN group_info gi
       ON gur.group_id = gi.id
     WHERE user_id = #{userId}
+  </select>
+
+  <select id="getGroupMemberList" resultType="com.timberliu.chat.server.bean.dto.contact.GroupMemberDTO">
+    SELECT gur.group_id, gur.user_id, ui.account, ui.nickname, ui.avatar_url
+    FROM group_user_relation gur LEFT JOIN user_info ui
+      ON gur.user_id = ui.id
+    WHERE gur.group_id in
+    <foreach collection="list" item="item" separator="," open="(" close=")">
+     #{item}
+    </foreach>
   </select>
 
 </mapper>

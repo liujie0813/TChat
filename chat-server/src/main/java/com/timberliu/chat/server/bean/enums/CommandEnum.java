@@ -1,6 +1,7 @@
 package com.timberliu.chat.server.bean.enums;
 
 import com.timberliu.chat.server.protocol.message.AbstractMessage;
+import com.timberliu.chat.server.protocol.message.GenericeMessage;
 import com.timberliu.chat.server.protocol.message.auth.AuthRequestMessage;
 import com.timberliu.chat.server.protocol.message.auth.AuthResponseMessage;
 import com.timberliu.chat.server.protocol.message.c2c.C2CPushRequestMessage;
@@ -35,7 +36,9 @@ public enum CommandEnum {
     C2GPushRequest    ((byte) 8, C2GPushRequestMessage.class ),
     C2GPushResponse   ((byte) 9, C2GPushResponseMessage.class ),
     HeartBeatRequest  ((byte) 10, HeartBeatRequestMessage.class ),
-    HeartBeatResponse ((byte) 11, HeartBeatResponseMessage.class );
+    HeartBeatResponse ((byte) 11, HeartBeatResponseMessage.class ),
+    GenericMessage    ((byte) 99, GenericeMessage.class),
+    ;
 
     final byte code;
 

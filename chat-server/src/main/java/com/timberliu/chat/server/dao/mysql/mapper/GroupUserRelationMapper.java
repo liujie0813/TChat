@@ -1,13 +1,12 @@
 package com.timberliu.chat.server.dao.mysql.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.timberliu.chat.server.bean.dto.contact.GroupDTO;
 import com.timberliu.chat.server.dao.mysql.entity.GroupUserRelationEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.timberliu.chat.server.bean.dto.contact.GroupMemberDTO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -24,6 +23,8 @@ public interface GroupUserRelationMapper extends BaseMapper<GroupUserRelationEnt
 
 	Integer batchInsert(List<GroupUserRelationEntity> groupUserRelationEntities);
 
-	List<GroupDTO> getGroupList(Long userId);
+	List<GroupDTO> getGroupInfoList(Long userId);
+
+	List<GroupMemberDTO> getGroupMemberList(List<Long> groupIds);
 
 }

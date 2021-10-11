@@ -29,7 +29,7 @@ export const messageType = {
 	C2GPushResponseMessage:   { code: 9,  desc: 'C2GPushResponseMessage'   },
 	HeartBeatRequestMessage:  { code: 10, desc: 'HeartBeatRequestMessage'  },
 	HeartBeatResponseMessage: { code: 11, desc: 'HeartBeatResponseMessage' },
-
+	GenericMessage:           { code: 99, desc: 'GenericMessage'           },
 };
 
 export const commandMap = new Map();
@@ -46,4 +46,5 @@ commandMap.set(messageType.C2GPushRequestMessage   .code, messageType.C2GPushReq
 commandMap.set(messageType.C2GPushResponseMessage  .code, messageType.C2GPushResponseMessage  );
 commandMap.set(messageType.HeartBeatRequestMessage .code, messageType.HeartBeatRequestMessage );
 commandMap.set(messageType.HeartBeatResponseMessage.code, messageType.HeartBeatResponseMessage);
+commandMap.set(messageType.GenericMessage          .code, messageType.GenericMessage          );
 

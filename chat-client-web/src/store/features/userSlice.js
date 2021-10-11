@@ -65,23 +65,40 @@ export const userSlice = createSlice({
 			state.page.type = "chatPage";
 			state.page.data = action.payload;
 
-			let chatRecord = state.chatRecordMap[action.payload];
+			let chatRecord = state.chatRecordMap[action.payload.key];
 			state.totalUnreadNum -= chatRecord.unreadNum;
-			state.chatRecordMap[action.payload].unreadNum = 0;
+			state.chatRecordMap[action.payload.key].unreadNum = 0;
 
 			state.chatRecordList.forEach(chatRecord => {
-				if (chatRecord.talkId === action.payload) {
+				if (chatRecord.talkId === action.payload.key) {
 					chatRecord.unreadNum = 0;
 				}
 			})
 		},
-		setContactData: (state, action) => {
-			state.activeContact = action.payload;
+		setContactData: (state, { payload }) => {
+			state.activeContact = payload;
 			state.page.type = "contactInfoPage";
-			state.page.data = state.contactMap[action.payload]
+
+			if (!payload) {
+				return
+			}
+			if (payload.type === 0) {
+
+			} else if (payload.type === 1) {
+				state.page.data = state.groupMap[payload.key]
+			} else if (payload.type === 2) {
+				state.page.data = state.contactMap[payload.key]
+			}
 		},
 		setGroupList: (state, {payload}) => {
-
+			state.groupList = payload;
+			payload.forEach(group => {
+				group.memberMap = {}
+				group.members.forEach(member => {
+					group.memberMap[member.userId] = member
+				})
+				state.groupMap[group.groupId] = group
+			})
 		},
 		setOrUpdateSingleChatData: (state, action) => {
 			state.activeMenu = "chatMenu";
@@ -90,12 +107,12 @@ export const userSlice = createSlice({
 
 			let talkId = action.payload.talkId;
 			let account = action.payload.account;
-			state.activeChat = talkId.toString();
+			state.activeChat.key = talkId.toString();
 			state.page.type = "chatPage";
 			if (!state.chatRecordMap[talkId]) {
 				let contact = state.contactMap[account];
 				let chatRecord = {
-					talkType: action.payload.talkType,
+					talkType: 0,
 					talkId: talkId,
 					userId: contact.userId,
 					account: contact.account,
@@ -118,11 +135,25 @@ export const userSlice = createSlice({
 			state.contactMenuImg.img = img4;
 
 			let talkId = payload.talkId;
-			let account = payload.account;
-			state.activeChat = talkId.toString();
+			state.activeChat.key = talkId.toString();
 			state.page.type = "chatPage";
-			if (!state.chatRecordMap[talkId]) {
 
+			if (!state.chatRecordMap[talkId]) {
+				let chatRecord = {
+					talkType: 1,
+					talkId: talkId,
+					groupId: payload.groupId,
+					talkName: payload.groupNameRemark ? payload.groupNameRemark : payload.groupName,
+					avatarUrl: payload.avatarUrl,
+					unreadNum: 0,
+					records: []
+				};
+
+				state.chatRecordMap[talkId] = chatRecord;
+				state.chatRecordList = [
+					chatRecord,
+					...state.chatRecordList
+				]
 			}
 		},
 		initChatRecord: (state, { payload }) => {
