@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {Avatar, Tabs, Collapse, List, Spin, Button, Badge} from 'antd'
+import React, {useState} from 'react'
+import {Avatar, Badge, Button, Collapse, List, Tabs} from 'antd'
 import './home.css'
 import img6 from '../../common/images/quit.png';
 import SearchBox from "../../components/searchOrAdd";
@@ -11,9 +11,9 @@ import UserInfoModal from "../../components/person/personInfo";
 import {useHistory} from "react-router-dom";
 import {getAvatar} from "../../components/common/avatar";
 import {getDateTime} from "../../components/common/time";
-import WebSocketInstance from "../../components/websocket/webSocketInstance";
 import {updateUnreadNum} from "../../components/api/user";
 import {getJoinGroupNotice} from "../../components/common/getJoinGroup";
+import SocketInstance from "../../components/websocket/socketInstance";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -36,7 +36,8 @@ export default function Home() {
 			return
 		}
 		if (key === 'quitMenu') {
-			WebSocketInstance.closeWebSocket();
+			console.log('[ quit ] logout')
+			SocketInstance.close()
 			dispatch(logout());
 			history.push('/');
 			return;
@@ -54,7 +55,9 @@ export default function Home() {
 			type,
 			key
 		}));
-		updateUnreadNum(userInfo.userId, chatRecordMap[key].talkId);
+		if (chatRecordMap[key].unreadNum) {
+			updateUnreadNum(userInfo.userId, chatRecordMap[key].talkId);
+		}
 	};
 
 	const contactTabClick = (type, key) => {

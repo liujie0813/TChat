@@ -6,6 +6,7 @@ import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
 import com.timberliu.chat.server.dao.redis.mapper.UnreadMsgNumRedisMapper;
 import com.timberliu.chat.server.protocol.message.c2c.C2CPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2g.C2GPushRequestMessage;
+import com.timberliu.chat.server.protocol.message.c2g.JoinGroupRequestMessage;
 import com.timberliu.chat.server.server.NettyChannelManager;
 import com.timberliu.chat.server.service.IPushService;
 import lombok.extern.slf4j.Slf4j;
@@ -65,4 +66,16 @@ public class PushServiceImpl implements IPushService {
 		}
 	}
 
+	@Override
+	public void pushJoinGroupMessage(JoinGroupRequestMessage joinGroupRequestMessage) {
+		for (Long userId : joinGroupRequestMessage.getMemberIds()) {
+			// 记录未读数
+			unreadMsgNumRedisMapper.incr(userId, joinGroupRequestMessage.getTalkId());
+			// 离线跳过
+			if (!nettyChannelManager.online(userId)) {
+				continue;
+			}
+			nettyChannelManager.send(userId, joinGroupRequestMessage);
+		}
+	}
 }

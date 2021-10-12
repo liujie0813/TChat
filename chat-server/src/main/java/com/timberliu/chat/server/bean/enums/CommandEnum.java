@@ -8,10 +8,7 @@ import com.timberliu.chat.server.protocol.message.c2c.C2CPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2c.C2CPushResponseMessage;
 import com.timberliu.chat.server.protocol.message.c2c.C2CSendRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2c.C2CSendResponseMessage;
-import com.timberliu.chat.server.protocol.message.c2g.C2GPushRequestMessage;
-import com.timberliu.chat.server.protocol.message.c2g.C2GPushResponseMessage;
-import com.timberliu.chat.server.protocol.message.c2g.C2GSendRequestMessage;
-import com.timberliu.chat.server.protocol.message.c2g.C2GSendResponseMessage;
+import com.timberliu.chat.server.protocol.message.c2g.*;
 import com.timberliu.chat.server.protocol.message.heart.beat.HeartBeatRequestMessage;
 import com.timberliu.chat.server.protocol.message.heart.beat.HeartBeatResponseMessage;
 import lombok.AllArgsConstructor;
@@ -33,10 +30,13 @@ public enum CommandEnum {
     C2CPushResponse   ((byte) 5,  C2CPushResponseMessage.class),
     C2GSendRequest    ((byte) 6,  C2GSendRequestMessage.class),
     C2GSendResponse   ((byte) 7,  C2GSendResponseMessage.class),
-    C2GPushRequest    ((byte) 8, C2GPushRequestMessage.class ),
-    C2GPushResponse   ((byte) 9, C2GPushResponseMessage.class ),
+    C2GPushRequest    ((byte) 8,  C2GPushRequestMessage.class ),
+    C2GPushResponse   ((byte) 9,  C2GPushResponseMessage.class ),
     HeartBeatRequest  ((byte) 10, HeartBeatRequestMessage.class ),
     HeartBeatResponse ((byte) 11, HeartBeatResponseMessage.class ),
+    JoinGroupRequest  ((byte) 12, JoinGroupRequestMessage.class),
+    JoinGroupResponse ((byte) 12, JoinGroupResponseMessage.class),
+
     GenericMessage    ((byte) 99, GenericeMessage.class),
     ;
 

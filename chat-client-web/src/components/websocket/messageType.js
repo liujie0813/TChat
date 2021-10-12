@@ -29,6 +29,8 @@ export const messageType = {
 	C2GPushResponseMessage:   { code: 9,  desc: 'C2GPushResponseMessage'   },
 	HeartBeatRequestMessage:  { code: 10, desc: 'HeartBeatRequestMessage'  },
 	HeartBeatResponseMessage: { code: 11, desc: 'HeartBeatResponseMessage' },
+	JoinGroupRequestMessage:  { code: 12, desc: 'JoinGroupRequestMessage'  },
+	JoinGroupResponseMessage: { code: 13, desc: 'JoinGroupResponseMessage' },
 	GenericMessage:           { code: 99, desc: 'GenericMessage'           },
 };
 
@@ -46,5 +48,7 @@ commandMap.set(messageType.C2GPushRequestMessage   .code, messageType.C2GPushReq
 commandMap.set(messageType.C2GPushResponseMessage  .code, messageType.C2GPushResponseMessage  );
 commandMap.set(messageType.HeartBeatRequestMessage .code, messageType.HeartBeatRequestMessage );
 commandMap.set(messageType.HeartBeatResponseMessage.code, messageType.HeartBeatResponseMessage);
+commandMap.set(messageType.JoinGroupRequestMessage .code, messageType.JoinGroupRequestMessage );
+commandMap.set(messageType.JoinGroupResponseMessage.code, messageType.JoinGroupResponseMessage);
 commandMap.set(messageType.GenericMessage          .code, messageType.GenericMessage          );
 

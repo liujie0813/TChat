@@ -1,11 +1,14 @@
 import {message} from 'antd'
 import {byteToString, stringToByte} from "../../common/util/stringUtil";
-import {addAckQueue, handleMessage} from "./messagehandler";
-import {messageType} from "./messageType";
+import {commandMap, messageType} from "./messageType";
+import AckQueue from './ackQueue'
+import {getAccessToken} from "../../common/js/accessToken";
 
-class WebSocketInstance {
+class TchatWebSocket {
 
 	socket;
+
+	url;
 
 	/**
 	 * 配置信息
@@ -27,39 +30,65 @@ class WebSocketInstance {
 		}
 	}
 
+	onCallBacks = {}
+
+	constructor(url) {
+		this.url = url
+	}
+
 	createWebSocket = () => {
+		console.log('[ WS ] create web socket')
+		if (this.socket != null) {
+			this.socket.close();
+			this.socket = null;
+		}
+
 		if ('WebSocket' in window) {
-			this.socket = new WebSocket('ws://localhost:18081/tchat');
+			this.socket = new WebSocket(this.url);
 			this.socket.binaryType = "arraybuffer"
 		} else {
-			message.error('当前浏览器不支持 WebSocket');
+			message.error('当前浏览器不支持 TchatWebSocket');
 			return
 		}
-		this.socket.onopen = () => {
-			console.log('[websocket] connect established', this.socket);
-			message.destroy('websocket reconnect');
-			// 心跳检测
-			if (this.config.heartbeat.enabled) {
-				this.idleDetect();
-				this.heartbeat()
-			}
-		};
-		this.socket.onmessage = (event) => this.recvMsg(event);
-		this.socket.onerror = () => {
-			console.log("[websocket] connect error")
-		};
-		this.socket.onclose = (e) => {
-			console.log('[websocket] connect closed',  e, e.code, e.reason, e.wasClean);
-			if (e.code === 1006 || e.code === 1005) {
-				this.reconnect()
-			}
-		};
+		this.socket.onerror = this.onError.bind(this);
+		this.socket.onopen = this.onOpen.bind(this);
+		this.socket.onmessage = this.onMessage.bind(this);
+		this.socket.onclose = this.onClose.bind(this);
+	};
+
+	onOpen = (event) => {
+		console.log("[ WS ] connect open")
+		message.destroy('websocket reconnect');
+		// 心跳检测
+		if (this.config.heartbeat.enabled) {
+			this.idleDetect();
+			this.heartbeat()
+		}
+	}
+
+	onError = (event) => {
+		console.log("[ WS ] connect error")
+	}
+
+	onClose = (event) => {
+		if (this.config.heartbeat.enabled) {
+			clearInterval(this.config.heartbeat.setInterval)
+		}
+		console.log('[ WS ] close event: ', event)
+		if (event.code === 1006) {
+			this.reconnect()
+		}
+		console.log("[ WS ] connect close")
+	}
+
+	closeWebSocket = () => {
+		this.socket && this.socket.close();
 	};
 
 	heartbeat = () => {
-		console.log('start heartbeat', new Date().getTime());
+		console.log('[ WS ] [ heartbeat ] start heartbeat', new Date().getTime());
 		let f = () => {
-			this.sendMsg(messageType.HeartBeatRequestMessage, {});
+			this.send(messageType.HeartBeatRequestMessage, {});
 			return f
 		};
 		this.config.heartbeat.setInterval = setInterval(
@@ -68,7 +97,7 @@ class WebSocketInstance {
 	};
 
 	idleDetect = () => {
-		console.log('idle detect', new Date().getTime());
+		console.log('[ WS ] [ idleState ] idle detect', new Date().getTime());
 		this.config.heartbeat.idleSetTimeout = setTimeout(() => {
 			// 超时关闭
 			this.closeWebSocket()
@@ -76,7 +105,7 @@ class WebSocketInstance {
 	};
 
 	reconnect = () => {
-		console.log('try reconnect');
+		console.log('[ try reconnect ]');
 		let reconnect = this.config.reconnect;
 		if (reconnect.lockReconnect || reconnect.curNumber === reconnect.maxNumber) {
 			return
@@ -87,7 +116,7 @@ class WebSocketInstance {
 		}
 
 		reconnect.setTimeout = setTimeout(() => {
-			console.log(`try reconnect（number: ${reconnect.curNumber}, next timeout: ${reconnect.initTime} ms）`);
+			console.log(`[ WS ] [ try reconnect ] number: ${reconnect.curNumber}, next timeout: ${reconnect.initTime} ms`);
 			this.createWebSocket();
 			reconnect.lockReconnect = false;
 			reconnect.curNumber++;
@@ -105,21 +134,7 @@ class WebSocketInstance {
 		this.idleDetect()
 	};
 
-	closeWebSocket = () => {
-		console.log('close web socket');
-		if (this.config.heartbeat.enabled) {
-			clearInterval(this.config.heartbeat.setInterval)
-		}
-		this.socket && this.socket.close();
-	};
-
-	sendMsg = (type, data) => {
-		console.log('[websocket] send msg: ', type, data, new Date().getTime());
-		if (!this.socket || this.socket.readyState !== 1) {
-			console.log('[websocket] websocket connect closed', this.socket);
-			return
-		}
-
+	onEncode = (seqId, command, data) => {
 		let str = JSON.stringify(data);
 		let bodyBytes = stringToByte(str);
 
@@ -132,11 +147,10 @@ class WebSocketInstance {
 		// 序列化算法（0：protobuf；1：json）
 		dataView.setInt8(5, 1);
 		// 命令（消息类型）
-		dataView.setInt8(6, type.code);
+		dataView.setInt8(6, command.code);
 		// 第 7 位保留
 
 		// seqId
-		let seqId = this.nextSeqId();
 		dataView.setBigInt64(8, BigInt(seqId));
 		// body 长度
 		dataView.setInt32(16, bodyBytes.length);
@@ -144,14 +158,25 @@ class WebSocketInstance {
 		for (let i = 0; i < bodyBytes.length; i++) {
 			dataView.setInt8(20 + i, bodyBytes[i])
 		}
+		return buffer
+	}
+
+	send = (command, data) => {
+		console.log('[ WS ] [ sendMsg ]', command, data, new Date().getTime());
+		if (!this.socket || this.socket.readyState !== 1) {
+			console.log('[ WS ] websocket connect closed', this.socket);
+			return
+		}
+
+		let seqId = new Date().getTime();
+		let buffer = this.onEncode(seqId, command, data)
 		this.socket.send(buffer);
 		// seqId 入确认队列
-		addAckQueue(seqId, data)
+		AckQueue.addSeqId(seqId, data)
 	};
 
-	recvMsg = (event) => {
-		let buffer = event.data;
-		let dataView = new DataView(buffer);
+	onDecode = (originData) => {
+		let dataView = new DataView(originData);
 		let magicNumber = dataView.getInt32(0);
 		if (magicNumber !== parseInt('19982021', 16)) {
 			return
@@ -168,14 +193,35 @@ class WebSocketInstance {
 		}
 		let str = byteToString(bytes);
 		let data = JSON.parse(str);
-		console.log('[websocket] recv msg: ', data);
-		handleMessage(command, seqId, data);
-		this.reset()
+
+		return {
+			command,
+			data
+		}
+	}
+
+	onMessage = (event) => {
+		let {command, data} = this.onDecode(event.data)
+
+		if (this.onCallBacks[command]) {
+			this.onCallBacks[command](data)
+			this.reset()
+		} else {
+			console.warn(`[ WS ] not find command [${commandMap[command]}]`)
+		}
 	};
 
-	nextSeqId = () => {
-		return new Date().getTime();
-	};
+	/**
+	 * 事件绑定
+	 *
+	 * @param commandEnum 消息类型
+	 * @param callBack 回调方法（消息处理器）
+	 */
+	onCommand = (commandEnum, callBack) => {
+		this.onCallBacks[commandEnum.code] = callBack
+		return this
+	}
+
 }
 
-export default new WebSocketInstance()
+export default TchatWebSocket

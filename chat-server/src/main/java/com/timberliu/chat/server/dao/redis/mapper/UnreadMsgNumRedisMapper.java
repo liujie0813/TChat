@@ -36,13 +36,12 @@ public class UnreadMsgNumRedisMapper {
 
 		List<Object> nums = stringRedisTemplate.opsForHash().multiGet(key, talkIdStrs);
 		Map<Long, Integer> res = new HashMap<>();
-		int index = 0;
+		int index = -1;
 		for (Long talkId : talkIds) {
-			if (nums.get(index) == null) {
+			if (nums.get(++index) == null) {
 				continue;
 			}
 			res.put(talkId, Integer.parseInt((String) nums.get(index)));
-			index++;
 		}
 		return res;
 	}

@@ -1,17 +1,17 @@
-import {Avatar, Image, List, message, Spin, Tooltip, Input, Button, Drawer} from "antd";
+import {Button, Drawer, Image, Input, List, message, Spin, Tooltip} from "antd";
 import Picker, {SKIN_TONE_NEUTRAL} from "emoji-picker-react";
 import img2 from "../../common/images/emoji.svg";
 import React, {useEffect, useRef, useState} from "react";
 import InfiniteScroll from 'react-infinite-scroller';
-import WebSocketInstance from '../websocket/webSocketInstance'
 import {useSelector} from "react-redux";
 import {getAvatar} from "../common/avatar";
-import {formatDate, getDateTime} from "../common/time";
+import {getDateTime} from "../common/time";
 import {messageType} from "../websocket/messageType";
-import {getJoinGroup, getJoinGroupNotice} from "../common/getJoinGroup";
+import {getJoinGroupNotice} from "../common/getJoinGroup";
 import {EllipsisOutlined} from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import UserInfoModal from "../person/personInfo";
+import SocketInstance from "../websocket/socketInstance";
 
 const { TextArea } = Input;
 
@@ -62,7 +62,7 @@ export default function ChatPage() {
 			return
 		}
 		let msgType = activeChat.type === 0 ? messageType.C2CSendRequestMessage : messageType.C2GSendRequestMessage
-		WebSocketInstance.sendMsg(msgType,{
+		SocketInstance.send(msgType,{
 			fromId: userInfo.userId,
 			talkId: activeChat.key,
 			content: v
@@ -142,9 +142,11 @@ export default function ChatPage() {
 										<div className='chatPageAvatar' style={{ paddingTop: (isShowTime ? '36px' : '0') }}>
 											{ record.fromId === userInfo.userId ?
 												getAvatar(userInfo.avatarUrl, 0, userInfo, 40) :
-												<div style={{ paddingTop: '8px' }}>
-													{ groupMap[chatRecord.groupId] && getAvatar(record.avatarUrl, 0, { account: groupMap[chatRecord.groupId].memberMap[record.fromId].account, ...record}, 40)  }
-												</div>
+													chatRecord.talkType === 0 ?
+													getAvatar(record.avatarUrl, 0, { account: chatRecord.account, ...record }, 40) :
+													<div style={{ paddingTop: '8px' }}>
+														{ groupMap[chatRecord.groupId] && getAvatar(record.avatarUrl, 0, { account: groupMap[chatRecord.groupId].memberMap[record.fromId].account, ...record}, 40)  }
+													</div>
 											}
 										</div>
 										<div className='chatPageContent' >

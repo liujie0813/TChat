@@ -15,7 +15,7 @@ const servicef = function(param) {
 
 service.interceptors.request.use(
 	config => {
-		console.log('[' + config.url + '] req param: ', config.method === "get" ? config.params : config.data);
+		console.log('[ HTTP ] [', config.url, '] req param: ', config.method === "get" ? config.params : config.data);
 		if (config.url.indexOf('/login-by-account') !== -1
 				|| config.url.indexOf('/refresh-token') !== -1) {
 			return config;
@@ -55,7 +55,7 @@ function refreshToken(lastResp) {
 
 service.interceptors.response.use(
 	response => {
-		console.log(response.config.url, response.data);
+		console.log('[ HTTP ] [', response.config.url, '] resp: ', response.data);
 		const res = response.data;
 		const code = res.code;
 		if (code === 0) {

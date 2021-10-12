@@ -10,7 +10,9 @@
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.16.13",
     "axios": "^0.21.1",
+    "cross-env": "^7.0.3",
     "css-loader": "^5.2.7",
+    "dotenv": "^10.0.0",
     "emoji-picker-react": "^3.4.8",
     "file-loader": "^6.2.0",
     "immutable": "^4.0.0-rc.14",
@@ -37,15 +39,13 @@
     "style-loader": "^2.0.0",
     "url-loader": "^4.1.1",
     "web-vitals": "^1.0.1",
-    "webpack": "^4.44.2",
+    "webpack": "^4.46.0",
+    "webpack-dev-server": "^4.3.1",
     "websocket": "^1.0.34"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "dev": "webpack serve --open --port 3000 --hot --progress --compress"
+    "dev": "cross-env NODE_ENV=development webpack serve --open --port 3000 --hot --progress --compress",
+    "build": "cross-env NODE_ENV=production webpack --open --port 3000 --hot --progress --compress"
   },
   "eslintConfig": {
     "extends": [
@@ -73,8 +73,8 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "history": "^4.10.1",
-    "html-webpack-plugin": "^4.0.0",
+    "html-webpack-plugin": "^4.5.2",
     "peer": "^0.6.1",
-    "webpack-cli": "^4.8.0"
+    "webpack-cli": "^4.9.0"
   }
 }

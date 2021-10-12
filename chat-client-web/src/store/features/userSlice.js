@@ -188,7 +188,6 @@ export const userSlice = createSlice({
 			state.chatRecordMap[talkId].record.unshift(records)
 		},
 		logout: (state, action) => {
-			console.log('[logout]')
 		}
 	},
 	extraReducers: {}

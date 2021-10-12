@@ -4,10 +4,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {getAvatar} from "../common/avatar";
 import {addContact, getContactList} from "../api/user";
 import {setContactList} from "../../store/features/userSlice";
+import {toGetContactList} from "../api/userEncapsulation";
 
 export default function UserInfoModal(props) {
 	const { userInfo, contactMap } = useSelector(state => state.user);
-	const dispatch = useDispatch();
 
 	let personInfo = props.userInfo;
 
@@ -22,14 +22,6 @@ export default function UserInfoModal(props) {
 			toGetContactList(userInfo.userId)
 		})
 	}
-
-	// 获取联系人列表
-	const toGetContactList = (userId) => {
-		let resp = getContactList(userId);
-		resp.then(data => {
-			dispatch(setContactList(data));
-		});
-	};
 
 	return (
 		<Modal visible={props.visible}

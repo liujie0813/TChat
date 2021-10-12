@@ -20,7 +20,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://123.56.9.126:3306/t_chat?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT
     username: root
-    password: WfNYnraEOynLn87e
+    password: VCOejNm5wJVlak7b
     hikari:
       connection-timeout: 30000
       idle-timeout: 600000

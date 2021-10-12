@@ -8,7 +8,6 @@ function App() {
   const { authToken } = useSelector(state => state.user);
 
   const checkLogin = () => {
-    console.log('[checkLogin]', authToken.accessToken);
     let isLogin = authToken.accessToken && authToken.accessToken.length > 0;
     return isLogin ? (
       <Home/>

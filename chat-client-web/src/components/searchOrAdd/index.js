@@ -7,6 +7,7 @@ import {getAvatar} from "../common/avatar";
 import {isDigitOrLetter} from "../../common/util/stringUtil";
 import {useDispatch, useSelector} from "react-redux";
 import {initChatRecord, setContactList, setGroupList, setOrUpdateGroupChatData} from "../../store/features/userSlice";
+import {toGetGroupList, toGetTalkList} from "../api/userEncapsulation";
 
 const { Search } = Input;
 
@@ -75,23 +76,9 @@ export default function SearchBox() {
 		resp.then(data => {
 			setCreateGroupPageVisible(false)
 			toGetGroupList(userInfo.userId)
-			toGetTalkList(userInfo.userId)
+			toGetTalkList(userInfo.userId, true)
 		})
 	}
-
-	const toGetGroupList = (userId) => {
-		let resp = getGroupList(userId);
-		resp.then(data => {
-			dispatch(setGroupList(data));
-		});
-	}
-
-	const toGetTalkList = (userId) => {
-		let resp = getTalkList(userId);
-		resp.then(data => {
-			dispatch(initChatRecord(data))
-		})
-	};
 
 	return (
 		<div style={{ borderBottom: 'solid 1px #e0e0e0', width: '300px', height: '64px' }}>

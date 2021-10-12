@@ -1,53 +1,32 @@
 import React, {useEffect} from 'react'
 import {useHistory} from 'react-router-dom'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {Button, Form, Input} from 'antd'
 import './login.css'
 
 import {setContactList, setLoginResp, initChatRecord, setGroupList} from "../../store/features/userSlice";
 import {getContactList, getGroupList, getTalkList, loginByAccount} from "../../components/api/user";
-import WebSocketInstance from "../../components/websocket/webSocketInstance";
+import SocketInstance from "../../components/websocket/socketInstance";
 import {messageType} from "../../components/websocket/messageType";
+import {getAccessToken} from "../../common/js/accessToken";
+import {toGetContactList, toGetGroupList, toGetTalkList} from "../../components/api/userEncapsulation";
 
 export default function Login() {
 	const history = useHistory();
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		WebSocketInstance.createWebSocket();
+		SocketInstance.connect()
 	}, []);
-
-	// 获取会话列表
-	const toGetTalkList = (userId) => {
-		let resp = getTalkList(userId);
-		resp.then(data => {
-			dispatch(initChatRecord(data))
-		})
-	};
-
-	// 获取联系人列表
-	const toGetContactList = (userId) => {
-		let resp = getContactList(userId);
-		resp.then(data => {
-			dispatch(setContactList(data));
-		});
-	};
-
-	const toGetGroupList = (userId) => {
-		let resp = getGroupList(userId);
-		resp.then(data => {
-			dispatch(setGroupList(data));
-		});
-	}
 
 	// 登录
 	const toLogin = (params) => {
 		let resp = loginByAccount(params.account, params.password);
 		resp.then(data => {
 			dispatch(setLoginResp(data));
-			WebSocketInstance.sendMsg(messageType.AuthRequestMessage, {
+			SocketInstance.send(messageType.AuthRequestMessage, {
 				accessToken: data.accessToken
-			});
+			})
 			let userId = data.userInfoDTO.userId;
 			toGetTalkList(userId);
 			toGetContactList(userId);

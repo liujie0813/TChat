@@ -18,6 +18,7 @@ import com.timberliu.chat.server.bean.dto.contact.GroupMemberDTO;
 import com.timberliu.chat.server.dao.redis.mapper.TalkIdRedisMapper;
 import com.timberliu.chat.server.exception.BizException;
 import com.timberliu.chat.server.protocol.message.c2g.C2GPushRequestMessage;
+import com.timberliu.chat.server.protocol.message.c2g.JoinGroupRequestMessage;
 import com.timberliu.chat.server.service.IContactService;
 import com.timberliu.chat.server.service.IPushService;
 import com.timberliu.chat.server.service.IStorageService;
@@ -91,10 +92,10 @@ public class ContactServiceImpl implements IContactService {
 				.setFromId(createGroupDTO.getCreateUserId()).setContent(content);
 		HistoryMsgEntity historyMsgEntity = storageService.storageMessage(messageStorageDTO);
 
-		C2GPushRequestMessage c2gPushRequestMessage = new C2GPushRequestMessage()
-				.setMsgId(historyMsgEntity.getId()).setFromId(createGroupDTO.getCreateUserId())
-				.setTalkId(groupDTO.getTalkId()).setContent(content);
-		pushService.pushGroupMessage(c2gPushRequestMessage);
+		JoinGroupRequestMessage joinGroupRequestMessage = new JoinGroupRequestMessage()
+				.setCreateUserId(createGroupDTO.getCreateUserId())
+				.setMemberIds(createGroupDTO.getMemberIds()).setTalkId(historyMsgEntity.getTalkId());
+		pushService.pushJoinGroupMessage(joinGroupRequestMessage);
 
 		return groupDTO;
 	}
