@@ -9,8 +9,11 @@ import com.timberliu.chat.server.bean.dto.user.UserInfoDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginReqDTO;
 import com.timberliu.chat.server.bean.dto.user.UserLoginRespDTO;
 import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
+import com.timberliu.chat.server.bean.enums.UserRelationStatusEnum;
+import com.timberliu.chat.server.dao.mysql.entity.UserApplyEntity;
 import com.timberliu.chat.server.dao.mysql.entity.UserInfoEntity;
 import com.timberliu.chat.server.dao.mysql.entity.UserRelationEntity;
+import com.timberliu.chat.server.dao.mysql.mapper.UserApplyMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
 import com.timberliu.chat.server.exception.BizException;
@@ -18,6 +21,7 @@ import com.timberliu.chat.server.service.IAuthService;
 import com.timberliu.chat.server.service.IUserService;
 import com.timberliu.chat.server.util.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,14 +36,19 @@ public class UserServiceImpl implements IUserService {
 	@Resource
 	private UserInfoMapper userInfoMapper;
 
+	@Autowired
+	private UserApplyMapper userApplyMapper;
+
+	@Autowired
+	private UserRelationMapper userRelationMapper;
+
 	@Resource
 	private IAuthService authService;
 
 	@Override
 	public UserLoginRespDTO login(UserLoginReqDTO userLoginReqDTO, String createIp) {
 		// 获取用户信息
-		UserInfoEntity userInfoEntity = userInfoMapper.selectOne(
-				new QueryWrapper<UserInfoEntity>().eq("account", userLoginReqDTO.getAccount()));
+		UserInfoEntity userInfoEntity = userInfoMapper.searchByAccount(userLoginReqDTO.getAccount());
 		if (userInfoEntity == null) {
 			// 如果账号不存在，则创建
 			userInfoEntity = createUser(userLoginReqDTO);
@@ -76,18 +85,32 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public Boolean existAccount(String account) {
-		QueryWrapper<UserInfoEntity> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("account", account);
-		Integer count = userInfoMapper.selectCount(queryWrapper);
-		return count > 0;
+		return userInfoMapper.searchByAccount(account) != null;
 	}
 
 	@Override
-	public SearchAccountRespDTO searchByAccount(String account) {
-		QueryWrapper<UserInfoEntity> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("account", account);
-		UserInfoEntity userInfoEntity = userInfoMapper.selectOne(queryWrapper);
-		return UserConvert.INSTANCE.convertSearch(userInfoEntity);
+	public SearchAccountRespDTO searchByAccount(Long userId, String account) {
+		UserInfoEntity userInfoEntity = userInfoMapper.searchByAccount(account);
+		if (userInfoEntity == null) {
+			throw new BizException(ErrorCodeEnum.USER_ACCOUNT_NOT_EXIST);
+		}
+		SearchAccountRespDTO searchAccountRespDTO = UserConvert.INSTANCE.convertSearch(userInfoEntity);
+
+		// 是否为好友
+		UserRelationEntity userRelationEntity = userRelationMapper.getByBothUserId(userId, userInfoEntity.getId());
+		if (userRelationEntity != null) {
+			searchAccountRespDTO.setRelationStatus(UserRelationStatusEnum.ADDED);
+		} else {
+			// 是否申请
+			UserApplyEntity userApplyEntity = userApplyMapper.getByBothUserId(userId, userInfoEntity.getId());
+			if (userApplyEntity == null || userApplyEntity.getApplyStatus().equals(UserRelationStatusEnum.OVERDUE)) {
+				searchAccountRespDTO.setRelationStatus(UserRelationStatusEnum.UN_APPLY);
+			} else {
+				searchAccountRespDTO.setRelationStatus(userApplyEntity.getApplyStatus());
+			}
+		}
+
+		return searchAccountRespDTO;
 	}
 
 }

@@ -15,7 +15,8 @@ public enum MsgTypeEnum {
 
 	TEXT(0, "文本"),
 	IMAGE(1, "图片"),
-	JOIN_GROUP_NOTICE(2, "通知")
+	JOIN_GROUP_NOTICE(2, "加入群组通知"),
+	CREATE_SINGLE_NOTICE(3, "创建单聊通知"),
 	;
 
 	private final Integer code;

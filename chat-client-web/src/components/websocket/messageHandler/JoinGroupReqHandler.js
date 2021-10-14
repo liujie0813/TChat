@@ -1,7 +1,4 @@
-import store from "../../../store";
-import {updateChatRecord} from "../../../store/features/userSlice";
 import BaseMessageHandler from "./baseMessageHandler";
-import AckQueue from '../ackQueue'
 import {toGetGroupList, toGetTalkList} from "../../api/userEncapsulation";
 
 export default class JoinGroupRequestMessageHandler extends BaseMessageHandler {

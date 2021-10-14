@@ -2,12 +2,12 @@ import {Avatar, Button, Dropdown, Form, Input, Menu, message, Modal, Transfer} f
 import React, {useState} from "react";
 import './search.css'
 import {PlusOutlined, TeamOutlined, UserAddOutlined, UsergroupAddOutlined} from "@ant-design/icons";
-import {addContact, createGroup, getContactList, getGroupList, getTalkList, searchByAccount} from "../api/user";
+import {applyAddContact, createGroup, searchByAccount} from "../api/user";
 import {getAvatar} from "../common/avatar";
 import {isDigitOrLetter} from "../../common/util/stringUtil";
 import {useDispatch, useSelector} from "react-redux";
-import {initChatRecord, setContactList, setGroupList, setOrUpdateGroupChatData} from "../../store/features/userSlice";
 import {toGetGroupList, toGetTalkList} from "../api/userEncapsulation";
+import {applyStatusMap} from "../../containers/home";
 
 const { Search } = Input;
 
@@ -15,7 +15,6 @@ export default function SearchBox() {
 	const {
 		userInfo, contactList, contactMap
 	} = useSelector(state => state.user);
-	const dispatch = useDispatch();
 
 	const [addVisible, setAddVisible] = useState(false);
 	const [addUserPageVisible, setAddUserPageVisible] = useState(false);
@@ -48,7 +47,7 @@ export default function SearchBox() {
 			message.warn('账号必须是 6-20 位数字或字母');
 			return
 		}
-		let resp = searchByAccount(account);
+		let resp = searchByAccount(userInfo.userId, account);
 		resp.then(data => {
 			setAddedUser(data)
 			setAddedUserItemVisible(true)
@@ -56,9 +55,9 @@ export default function SearchBox() {
 	}
 
 	const toAddUser = () => {
-		let resp = addContact(userInfo.userId, addedUser.userId);
+		let resp = applyAddContact(userInfo.userId, addedUser.userId);
 		resp.then(data => {
-
+			onSearchAccount(addedUser.account)
 		})
 	}
 
@@ -119,9 +118,9 @@ export default function SearchBox() {
 								<div style={{ display: 'inline-block', width: '300px', marginLeft: '8px' }}>
 									{ addedUser && (addedUser.nickname ? addedUser.nickname : addedUser.account) }
 								</div>
-								{ addedUser && (addedUser.account === userInfo.account || contactMap[addedUser.account]) ?
-										<Button type='primary' disabled>已添加</Button> :
-										<Button type='primary' onClick={toAddUser} style={{ marginLeft: '12px' }}>添加</Button>
+								{ addedUser && ((addedUser.account === userInfo.account || addedUser.relationStatus !== 0) ?
+										<Button type='primary' disabled> { applyStatusMap[addedUser.relationStatus] } </Button> :
+										<Button type='primary' onClick={toAddUser} style={{ marginLeft: '12px' }}> { applyStatusMap[addedUser.relationStatus] } </Button> )
 								}
 							</Menu.Item>
 						</Menu>

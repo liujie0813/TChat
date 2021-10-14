@@ -3,7 +3,9 @@ package com.timberliu.chat.server.service.impl;
 import com.timberliu.chat.server.dao.mysql.entity.UserRelationEntity;
 import com.timberliu.chat.server.dao.mysql.mapper.GroupUserRelationMapper;
 import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
+import com.timberliu.chat.server.dao.redis.mapper.UnreadApplyNumRedisMapper;
 import com.timberliu.chat.server.dao.redis.mapper.UnreadMsgNumRedisMapper;
+import com.timberliu.chat.server.protocol.message.c2c.ApplyRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2c.C2CPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2g.C2GPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2g.JoinGroupRequestMessage;
@@ -35,6 +37,9 @@ public class PushServiceImpl implements IPushService {
 
 	@Autowired
 	private UnreadMsgNumRedisMapper unreadMsgNumRedisMapper;
+
+	@Autowired
+	private UnreadApplyNumRedisMapper unreadApplyNumRedisMapper;
 
 	@Override
 	public void pushSingleMessage(C2CPushRequestMessage c2cPushRequestMessage) {
@@ -78,4 +83,16 @@ public class PushServiceImpl implements IPushService {
 			nettyChannelManager.send(userId, joinGroupRequestMessage);
 		}
 	}
+
+	@Override
+	public void pushApplyMessage(ApplyRequestMessage applyRequestMessage) {
+		Long subUserId = applyRequestMessage.getSubUserId();
+		unreadApplyNumRedisMapper.incr(subUserId);
+		// 离线跳过
+		if (!nettyChannelManager.online(subUserId)) {
+			return;
+		}
+		nettyChannelManager.send(subUserId, applyRequestMessage);
+	}
+
 }

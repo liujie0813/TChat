@@ -1,5 +1,6 @@
 package com.timberliu.chat.server.bean.dto;
 
+import com.timberliu.chat.server.bean.enums.UserRelationStatusEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,4 +19,7 @@ public class SearchAccountRespDTO {
 	private String nickname;
 
 	private String avatarUrl;
+	
+	private UserRelationStatusEnum relationStatus;
+
 }

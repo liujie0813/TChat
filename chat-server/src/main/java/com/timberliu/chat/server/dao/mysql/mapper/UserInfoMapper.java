@@ -1,5 +1,6 @@
 package com.timberliu.chat.server.dao.mysql.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.timberliu.chat.server.dao.mysql.entity.UserInfoEntity;
 import com.timberliu.chat.server.dao.mysql.po.TalkInfoPO;
@@ -21,6 +22,10 @@ import java.util.Set;
  */
 @Repository
 public interface UserInfoMapper extends BaseMapper<UserInfoEntity> {
+
+	default UserInfoEntity searchByAccount(String account) {
+		return selectOne(new QueryWrapper<UserInfoEntity>().eq("account", account));
+	}
 
 	List<TalkInfoPO> getUserTalkInfos(@Param("userId") Long userId, @Param("talkIds") Set<Long> talkIds);
 

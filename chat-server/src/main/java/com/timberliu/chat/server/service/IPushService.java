@@ -1,5 +1,6 @@
 package com.timberliu.chat.server.service;
 
+import com.timberliu.chat.server.protocol.message.c2c.ApplyRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2c.C2CPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2g.C2GPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2g.JoinGroupRequestMessage;
@@ -16,5 +17,7 @@ public interface IPushService {
 	void pushGroupMessage(C2GPushRequestMessage c2gPushRequestMessage);
 
 	void pushJoinGroupMessage(JoinGroupRequestMessage joinGroupRequestMessage);
+
+	void pushApplyMessage(ApplyRequestMessage applyRequestMessage);
 
 }

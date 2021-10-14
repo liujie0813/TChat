@@ -21,6 +21,16 @@ export function getTalkList(userId) {
 	})
 }
 
+export function getApplyList(userId) {
+	return request({
+		url: '/contact/get-applys',
+		method: 'GET',
+		params: {
+			userId
+		}
+	})
+}
+
 export function getContactList(userId) {
 	return request({
 		url: '/contact/get-contacts',
@@ -41,23 +51,36 @@ export function getChatRecords(userId) {
 	})
 }
 
-export function searchByAccount(account) {
+export function searchByAccount(userId, account) {
 	return request({
 		url: '/user/search-by-account',
 		method: 'GET',
 		params: {
+			userId,
 			account
 		}
 	})
 }
 
-export function addContact(mainUserId, subUserId) {
+export function applyAddContact(mainUserId, subUserId) {
 	return request({
-		url: '/contact/add-contact',
-		method: 'GET',
-		params: {
+		url: '/contact/apply-add-contact',
+		method: 'POST',
+		data: {
 			mainUserId,
 			subUserId
+		}
+	})
+}
+
+export function agreeAddContact(mainUserId, subUserId, nicknameRemark) {
+	return request({
+		url: '/contact/agree-add-contact',
+		method: 'POST',
+		data: {
+			mainUserId,
+			subUserId,
+			nicknameRemark
 		}
 	})
 }

@@ -2,21 +2,18 @@ package com.timberliu.chat.server.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.timberliu.chat.server.bean.convert.GroupConvert;
-import com.timberliu.chat.server.bean.dto.contact.ContactDTO;
-import com.timberliu.chat.server.bean.dto.contact.CreateGroupDTO;
-import com.timberliu.chat.server.bean.dto.contact.GroupDTO;
+import com.timberliu.chat.server.bean.dto.contact.*;
 import com.timberliu.chat.server.bean.dto.msg.MessageStorageDTO;
 import com.timberliu.chat.server.bean.enums.ErrorCodeEnum;
 import com.timberliu.chat.server.bean.enums.MsgTypeEnum;
 import com.timberliu.chat.server.bean.enums.TalkTypeEnum;
+import com.timberliu.chat.server.bean.enums.UserRelationStatusEnum;
 import com.timberliu.chat.server.dao.mysql.entity.*;
-import com.timberliu.chat.server.dao.mysql.mapper.GroupInfoMapper;
-import com.timberliu.chat.server.dao.mysql.mapper.GroupUserRelationMapper;
-import com.timberliu.chat.server.dao.mysql.mapper.UserInfoMapper;
-import com.timberliu.chat.server.dao.mysql.mapper.UserRelationMapper;
-import com.timberliu.chat.server.bean.dto.contact.GroupMemberDTO;
+import com.timberliu.chat.server.dao.mysql.mapper.*;
 import com.timberliu.chat.server.dao.redis.mapper.TalkIdRedisMapper;
 import com.timberliu.chat.server.exception.BizException;
+import com.timberliu.chat.server.protocol.message.c2c.ApplyRequestMessage;
+import com.timberliu.chat.server.protocol.message.c2c.C2CPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2g.C2GPushRequestMessage;
 import com.timberliu.chat.server.protocol.message.c2g.JoinGroupRequestMessage;
 import com.timberliu.chat.server.service.IContactService;
@@ -54,7 +51,15 @@ public class ContactServiceImpl implements IContactService {
 	private GroupUserRelationMapper groupUserRelationMapper;
 
 	@Autowired
+	private UserApplyMapper userApplyMapper;
+
+	@Autowired
 	private TalkIdRedisMapper talkIdRedisMapper;
+
+	@Override
+	public List<ApplyDTO> getApplyList(Long userId) {
+		return userApplyMapper.getApplyList(userId);
+	}
 
 	@Override
 	public List<ContactDTO> getContactList(Long userId) {
@@ -62,14 +67,17 @@ public class ContactServiceImpl implements IContactService {
 	}
 
 	@Override
-	public Boolean addContact(Long mainUserId, Long subUserId) {
-		existUserId(mainUserId);
-		existUserId(subUserId);
-		Long talkId = talkIdRedisMapper.incrAndGet();
-		userRelationMapper.insert(new UserRelationEntity()
-				.setMainUserId(mainUserId).setSubUserId(subUserId).setTalkId(talkId));
-		userRelationMapper.insert(new UserRelationEntity()
-				.setMainUserId(subUserId).setSubUserId(mainUserId).setTalkId(talkId));
+	public Boolean applyAddContact(ApplyAddContactDTO applyAddDTO) {
+		existUserId(applyAddDTO.getMainUserId());
+		existUserId(applyAddDTO.getSubUserId());
+		UserApplyEntity userApplyEntity = new UserApplyEntity()
+				.setMainUserId(applyAddDTO.getMainUserId()).setSubUserId(applyAddDTO.getSubUserId())
+				.setApplyRemark(applyAddDTO.getApplyRemark()).setApplyTime(new Date())
+				.setApplyStatus(UserRelationStatusEnum.APPLY);
+		userApplyMapper.insert(userApplyEntity);
+
+		pushService.pushApplyMessage(new ApplyRequestMessage()
+				.setMainUserId(applyAddDTO.getMainUserId()).setSubUserId(applyAddDTO.getSubUserId()));
 		return true;
 	}
 
@@ -78,6 +86,40 @@ public class ContactServiceImpl implements IContactService {
 		if (userInfoEntity == null) {
 			throw new BizException(ErrorCodeEnum.USER_USERID_NOT_EXIST);
 		}
+	}
+
+	/**
+	 * mainUserId 同意 subUserId 的好友申请
+	 */
+	@Override
+	public Boolean agreeAddContact(AgreeAddContactDTO agreeAddContactDTO) {
+		Long mainUserId = agreeAddContactDTO.getMainUserId();
+		Long subUserId = agreeAddContactDTO.getSubUserId();
+		// 更新 subUserId 对 mainUserId 的申请状态
+		userApplyMapper.updateApplyStatus(subUserId, mainUserId, UserRelationStatusEnum.ADDED);
+
+		Long talkId = talkIdRedisMapper.incrAndGet();
+		// mainUserId 对 subUserId 的备注
+		userRelationMapper.insert(new UserRelationEntity().setTalkId(talkId)
+				.setMainUserId(mainUserId).setSubUserId(subUserId)
+				.setSubNicknameRemark(agreeAddContactDTO.getNicknameRemark()));
+		userRelationMapper.insert(new UserRelationEntity().setTalkId(talkId)
+				.setMainUserId(subUserId).setSubUserId(mainUserId));
+
+		MessageStorageDTO messageStorageDTO = new MessageStorageDTO()
+				.setTalkId(talkId).setTalkType(TalkTypeEnum.SINGLE.getCode())
+				.setMsgType(MsgTypeEnum.CREATE_SINGLE_NOTICE.getCode())
+				.setFromId(mainUserId)
+				.setContent(JSONArray.toJSONString(Arrays.asList(mainUserId, subUserId)));
+		HistoryMsgEntity historyMsgEntity = storageService.storageMessage(messageStorageDTO);
+
+		C2CPushRequestMessage c2cPushRequestMessage = new C2CPushRequestMessage()
+				.setMsgId(historyMsgEntity.getId()).setMsgType(MsgTypeEnum.CREATE_SINGLE_NOTICE.getCode())
+				.setFromId(mainUserId).setTalkId(talkId)
+				.setSendTime(historyMsgEntity.getSendTime());
+		pushService.pushSingleMessage(c2cPushRequestMessage);
+
+		return true;
 	}
 
 	@Override

@@ -1,8 +1,6 @@
 package com.timberliu.chat.server.service;
 
-import com.timberliu.chat.server.bean.dto.contact.ContactDTO;
-import com.timberliu.chat.server.bean.dto.contact.CreateGroupDTO;
-import com.timberliu.chat.server.bean.dto.contact.GroupDTO;
+import com.timberliu.chat.server.bean.dto.contact.*;
 
 import java.util.List;
 
@@ -14,9 +12,19 @@ import java.util.List;
 public interface IContactService {
 
 	/**
-	 * 添加好友
+	 * 获取申请列表
 	 */
-	Boolean addContact(Long mainUserId, Long subUserId);
+	List<ApplyDTO> getApplyList(Long userId);
+
+	/**
+	 * 申请添加好友
+	 */
+	Boolean applyAddContact(ApplyAddContactDTO applyAddContactDTO);
+
+	/**
+	 * 同意添加好友
+	 */
+	Boolean agreeAddContact(AgreeAddContactDTO agreeAddContactDTO);
 
 	/**
 	 * 获取好友列表

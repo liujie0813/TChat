@@ -1,4 +1,8 @@
 
+export function getCreateSingleNotice(talkName) {
+	return '你已添加了' + talkName + ', 现在可以开始聊天了';
+}
+
 export function getJoinGroupNotice(groupMemberMap, selfUserId, inviterId, inviteeIdsStr, userIdMap) {
 	let inviter;
 	if (inviterId === selfUserId) {
@@ -16,5 +20,5 @@ export function getJoinGroupNotice(groupMemberMap, selfUserId, inviterId, invite
 			invitee.push(userIdMap[memberId] ? userIdMap[memberId] : groupMemberMap[memberId].nickname);
 		}
 	}
-	return inviter + ' 邀请 ' + invitee.join('、') + ' 加入了群组';
+	return inviter + '邀请' + invitee.join('、') + '加入了群组';
 }

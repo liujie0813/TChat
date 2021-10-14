@@ -25,6 +25,6 @@ public interface IUserService {
 	/**
 	 * 根据账号搜索
 	 */
-	SearchAccountRespDTO searchByAccount(String account);
+	SearchAccountRespDTO searchByAccount(Long userId, String account);
 
 }

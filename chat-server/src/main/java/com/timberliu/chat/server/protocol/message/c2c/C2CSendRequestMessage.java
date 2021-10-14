@@ -11,9 +11,9 @@ import lombok.Data;
 @Data
 public class C2CSendRequestMessage extends AbstractMessage {
 
-    private String fromId;
+    private Long fromId;
 
-    private String talkId;
+    private Long talkId;
 
     private String content;
 

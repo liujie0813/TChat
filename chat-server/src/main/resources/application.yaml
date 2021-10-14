@@ -51,6 +51,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
   mapper-locations: classpath*:/mappers/**.xml
+  type-enums-package: com.timberliu.chat.server.bean.enums
 
 auth:
   expire-times: # 单位：min

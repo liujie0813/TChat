@@ -42,6 +42,7 @@ public enum ErrorCodeEnum {
 	USER_USERID_NOT_EXIST(101003, "用户不存在"),
 	USER_NOT_FRIENDS(101004, "不是好友关系"),
 	USER_GROUP_NOT_EXIST(101005, "群组不存在"),
+	USER_ACCOUNT_NOT_EXIST(101006, "账号不存在"),
 
 	// 认证模块
 	AUTH_ACCESS_TOKEN_NOT_FOUND(102001, "访问令牌不存在"),

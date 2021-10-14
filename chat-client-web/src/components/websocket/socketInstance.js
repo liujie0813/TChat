@@ -8,6 +8,7 @@ import C2CPushRequestMessageHandler from "./messageHandler/c2cPushReqHandler";
 import AuthResponseMessageHandler from "./messageHandler/authRespHandler";
 import C2GPushRequestMessageHandler from "./messageHandler/c2gPushReqHandler";
 import JoinGroupRequestMessageHandler from "./messageHandler/JoinGroupReqHandler";
+import ApplyRequestMessageHandler from "./messageHandler/ApplyReqHandler";
 
 class SocketInstance {
 
@@ -38,6 +39,9 @@ class SocketInstance {
 			})
 			.onCommand(messageType.C2GPushRequestMessage, resp => {
 				new C2GPushRequestMessageHandler(resp).handle()
+			})
+			.onCommand(messageType.ApplyRequestMessage, resp => {
+				new ApplyRequestMessageHandler(resp).handle()
 			})
 			.onCommand(messageType.JoinGroupRequestMessage, resp => {
 				new JoinGroupRequestMessageHandler(resp).handle()

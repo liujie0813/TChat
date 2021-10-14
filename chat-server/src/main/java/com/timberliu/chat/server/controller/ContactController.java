@@ -1,9 +1,7 @@
 package com.timberliu.chat.server.controller;
 
 import com.timberliu.chat.server.bean.ApiResult;
-import com.timberliu.chat.server.bean.dto.contact.ContactDTO;
-import com.timberliu.chat.server.bean.dto.contact.CreateGroupDTO;
-import com.timberliu.chat.server.bean.dto.contact.GroupDTO;
+import com.timberliu.chat.server.bean.dto.contact.*;
 import com.timberliu.chat.server.service.IContactService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +19,21 @@ public class ContactController {
 	@Resource
 	private IContactService contactService;
 
-	/**
-	 * TODO 直接添加，无需同意
-	 */
-	@GetMapping("/add-contact")
-	public ApiResult<Boolean> addUser(@RequestParam("mainUserId") Long mainUserId,
-									  @RequestParam("subUserId") Long subUserId) {
-		Boolean success = contactService.addContact(mainUserId, subUserId);
+	@GetMapping("/get-applys")
+	public ApiResult<List<ApplyDTO>> getApplyList(@RequestParam("userId") Long userId) {
+		List<ApplyDTO> applyDTOList = contactService.getApplyList(userId);
+		return ApiResult.success(applyDTOList);
+	}
+
+	@PostMapping("/apply-add-contact")
+	public ApiResult<Boolean> applyAddUser(@RequestBody ApplyAddContactDTO applyAddContactDTO) {
+		Boolean success = contactService.applyAddContact(applyAddContactDTO);
+		return ApiResult.success(success);
+	}
+
+	@PostMapping("/agree-add-contact")
+	public ApiResult<Boolean> agreeAddUser(@RequestBody AgreeAddContactDTO agreeAddContactDTO) {
+		Boolean success = contactService.agreeAddContact(agreeAddContactDTO);
 		return ApiResult.success(success);
 	}
 

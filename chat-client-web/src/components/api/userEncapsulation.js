@@ -1,6 +1,13 @@
 import store from "../../store";
-import {getContactList, getGroupList, getTalkList} from "./user";
-import {initChatRecord, setChatData, setContactList, setGroupList} from "../../store/features/userSlice";
+import {getApplyList, getContactList, getGroupList, getTalkList} from "./user";
+import {
+	initChatRecord,
+	setApplyList,
+	setChatData,
+	setContactData,
+	setContactList,
+	setGroupList
+} from "../../store/features/userSlice";
 
 // 获取会话列表
 export const toGetTalkList = (userId, activeChat) => {
@@ -15,6 +22,16 @@ export const toGetTalkList = (userId, activeChat) => {
 		}
 	})
 };
+
+export const toGetApplyList = (userId, activeContact) => {
+	let resp = getApplyList(userId);
+	resp.then(data => {
+		store.dispatch(setApplyList(data));
+		if (activeContact) {
+			store.dispatch(setContactData(activeContact))
+		}
+	});
+}
 
 // 获取联系人列表
 export const toGetContactList = (userId) => {

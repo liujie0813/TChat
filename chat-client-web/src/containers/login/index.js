@@ -1,15 +1,14 @@
 import React, {useEffect} from 'react'
 import {useHistory} from 'react-router-dom'
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import {Button, Form, Input} from 'antd'
 import './login.css'
 
-import {setContactList, setLoginResp, initChatRecord, setGroupList} from "../../store/features/userSlice";
-import {getContactList, getGroupList, getTalkList, loginByAccount} from "../../components/api/user";
+import {setLoginResp} from "../../store/features/userSlice";
+import {loginByAccount} from "../../components/api/user";
 import SocketInstance from "../../components/websocket/socketInstance";
 import {messageType} from "../../components/websocket/messageType";
-import {getAccessToken} from "../../common/js/accessToken";
-import {toGetContactList, toGetGroupList, toGetTalkList} from "../../components/api/userEncapsulation";
+import {toGetApplyList, toGetContactList, toGetGroupList, toGetTalkList} from "../../components/api/userEncapsulation";
 
 export default function Login() {
 	const history = useHistory();
@@ -29,6 +28,7 @@ export default function Login() {
 			})
 			let userId = data.userInfoDTO.userId;
 			toGetTalkList(userId);
+			toGetApplyList(userId);
 			toGetContactList(userId);
 			toGetGroupList(userId);
 			history.push('/home')

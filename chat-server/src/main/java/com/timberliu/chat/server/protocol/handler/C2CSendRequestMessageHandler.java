@@ -61,6 +61,7 @@ public class C2CSendRequestMessageHandler implements MessageHandler<C2CSendReque
 	private void pushMessage(C2CSendRequestMessage c2cSendRequestMessage, Long msgId, Long sendTime) {
 		C2CPushRequestMessage c2cPushRequestMessage = MessageConvert.INSTANCE.convertPush(c2cSendRequestMessage);
 		c2cPushRequestMessage.setMsgId(msgId);
+		c2cPushRequestMessage.setMsgType(MsgTypeEnum.TEXT.getCode());
 		c2cPushRequestMessage.setSendTime(sendTime);
 		pushService.pushSingleMessage(c2cPushRequestMessage);
 	}

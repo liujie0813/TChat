@@ -18,6 +18,7 @@ public enum RedisKeyEnum {
 	AUTH_ACCESS_TOKEN("auth_access_token:%s", RedisKeyTypeEnum.STRING, AuthAccessTokenEntity.class, Duration.ofHours(2)),
 	CHAT_RECORD("chat_record:%s", RedisKeyTypeEnum.STRING, HistoryMsgEntity.class, Duration.ofDays(15)),
 	UNREAD_MSG_NUM("unread_msg_num:%s", RedisKeyTypeEnum.STRING, HistoryMsgEntity.class, Duration.ofDays(15)),
+	UNREAD_APPLY_NUM("unread_apply_num:%s", RedisKeyTypeEnum.STRING, HistoryMsgEntity.class, Duration.ofDays(15)),
 	TALK_ID("talk_id", RedisKeyTypeEnum.STRING, Long.class, Duration.ZERO);
 
 	private final String keyTemplate;

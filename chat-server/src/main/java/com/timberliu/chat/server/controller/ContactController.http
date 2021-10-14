@@ -1,5 +1,5 @@
-GET http://localhost:18080/contact/get-contacts?userId=1
+GET http://localhost:18080/contact/get-applys?userId=17
 Accept: application/json
-Authorization: 33b2ab22511f41bebd0ac7eaace17be1
+Authorization: 0aa41a0b4f094a14befc489db9ff17b1
 
 ###

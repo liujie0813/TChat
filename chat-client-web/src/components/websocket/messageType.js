@@ -1,20 +1,3 @@
-/**
- * 0,  LoginRequestMessage
- * 1,  LoginResponseMessage
- * 2,  LogoutRequestMessage
- * 3,  LogoutResponseMessage
- * 4,  C2CSendRequestMessage
- * 5,  C2CSendResponseMessage
- * 6,  C2CPushRequestMessage
- * 7,  C2CPushResponseMessage
- * 8,  C2GSendRequestMessage
- * 9,  C2GSendResponseMessage
- * 10, C2GPushRequestMessage
- * 11, C2GPushResponseMessage
- * 12, HeartBeatRequestMessage
- * 13, HeartBeatResponseMessage
- */
-
 export const messageType = {
 
 	AuthRequestMessage:       { code: 0,  desc: 'AuthRequestMessage'      },
@@ -31,6 +14,8 @@ export const messageType = {
 	HeartBeatResponseMessage: { code: 11, desc: 'HeartBeatResponseMessage' },
 	JoinGroupRequestMessage:  { code: 12, desc: 'JoinGroupRequestMessage'  },
 	JoinGroupResponseMessage: { code: 13, desc: 'JoinGroupResponseMessage' },
+	ApplyRequestMessage:      { code: 14, desc: 'ApplyRequestMessage'      },
+	ApplyResponseMessage:     { code: 15, desc: 'ApplyResponseMessage'     },
 	GenericMessage:           { code: 99, desc: 'GenericMessage'           },
 };
 
@@ -50,5 +35,7 @@ commandMap.set(messageType.HeartBeatRequestMessage .code, messageType.HeartBeatR
 commandMap.set(messageType.HeartBeatResponseMessage.code, messageType.HeartBeatResponseMessage);
 commandMap.set(messageType.JoinGroupRequestMessage .code, messageType.JoinGroupRequestMessage );
 commandMap.set(messageType.JoinGroupResponseMessage.code, messageType.JoinGroupResponseMessage);
+commandMap.set(messageType.ApplyRequestMessage     .code, messageType.ApplyRequestMessage     );
+commandMap.set(messageType.ApplyResponseMessage    .code, messageType.ApplyResponseMessage    );
 commandMap.set(messageType.GenericMessage          .code, messageType.GenericMessage          );
 

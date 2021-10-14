@@ -5,25 +5,26 @@ import com.timberliu.chat.server.dao.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
-
 /**
  * <p>
- * 好友关系表
+ * 好友申请表
  * </p>
  *
  * @author liujie
- * @since 2021-09-23
+ * @since 2021-10-14
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("user_relation")
+@TableName("user_apply")
 @Accessors(chain = true)
-public class UserRelationEntity extends BaseEntity {
+public class UserApplyEntity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,18 +42,24 @@ public class UserRelationEntity extends BaseEntity {
     private Long subUserId;
 
     /**
-     * 会话Id
+     * 申请状态
      */
-    private Long talkId;
+    private UserRelationStatusEnum applyStatus;
 
     /**
-     * 好友昵称备注
+     * 申请时间
      */
-    private String subNicknameRemark;
+    private Date applyTime;
+
+    /**
+     * 申请备注
+     */
+    private String applyRemark;
 
     /**
      * 是否删除
      */
-    private Integer deleted;
+    private Boolean deleted;
+
 
 }

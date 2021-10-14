@@ -1,30 +1,33 @@
 import React, {useState} from 'react'
-import {Avatar, Badge, Button, Collapse, List, Tabs} from 'antd'
+import {Avatar, Badge, Tabs} from 'antd'
 import './home.css'
 import img6 from '../../common/images/quit.png';
 import SearchBox from "../../components/searchOrAdd";
 import {useDispatch, useSelector} from "react-redux";
-import InfiniteScroll from 'react-infinite-scroller';
 import {logout, setChatData, setContactData, setMenuData,} from "../../store/features/userSlice";
 import DataPage from "../../components/dataPage";
 import UserInfoModal from "../../components/person/personInfo";
 import {useHistory} from "react-router-dom";
 import {getAvatar} from "../../components/common/avatar";
-import {getDateTime} from "../../components/common/time";
-import {updateUnreadNum} from "../../components/api/user";
-import {getJoinGroupNotice} from "../../components/common/getJoinGroup";
 import SocketInstance from "../../components/websocket/socketInstance";
+import {ChatMenuPage} from "../../components/menuPage/chatMenuPage";
+import {ContactMenuPage} from "../../components/menuPage/contactMenuPage";
 
 const { TabPane } = Tabs;
-const { Panel } = Collapse;
+
+export const applyStatusMap = {
+	0: '添加',
+	1: '已申请',
+	2: '已添加',
+	3: '已过期'
+}
 
 export default function Home() {
 	const history = useHistory();
 	const {
 		userInfo,
 		activeMenu, chatMenuImg, contactMenuImg,
-		activeChat, chatList, activeContact, contactList, groupList, groupMap, userIdMap,
-		chatRecordList, chatRecordMap,
+		activeChat, activeContact,
 		totalUnreadNum
 	} = useSelector(state => state.user);
 	const [userInfoVisible, setUserInfoVisible] = useState(false);
@@ -48,23 +51,6 @@ export default function Home() {
 		} else if (key === 'contactMenu' && activeContact != null) {
 			dispatch(setContactData(activeContact))
 		}
-	};
-
-	const chatTabClick = (type, key) => {
-		dispatch(setChatData({
-			type,
-			key
-		}));
-		if (chatRecordMap[key].unreadNum) {
-			updateUnreadNum(userInfo.userId, chatRecordMap[key].talkId);
-		}
-	};
-
-	const contactTabClick = (type, key) => {
-		dispatch(setContactData({
-			type,
-			key
-		}))
 	};
 
 	return (
@@ -94,57 +80,7 @@ export default function Home() {
 						{/* 搜索框 */}
 						<SearchBox/>
 
-						<div style={{ overflow: 'auto', height: 'calc(100vh - 64px)' }}>
-							<InfiniteScroll
-								pageStart={0}
-								loadMore={() => {}}
-								hasMore={false}
-								loader={ <div/> }
-								useWindow={false}
-								className='singleContactList'>
-								{/* 循环遍历 */}
-								<List
-									dataSource={ chatRecordList }
-									renderItem={ chatRecord => {
-										let recordLen = chatRecord.records.length;
-										let lastRecord;
-										if (recordLen > 0) {
-											lastRecord = chatRecord.records[recordLen - 1]
-										}
-										return (
-											<List.Item key={chatRecord.talkId} className={ (activeChat && chatRecord.talkId === activeChat.key) ? 'contactActive' : ''}>
-												<Button type='link' style={{ height: '72px' }}
-																onClick={() => chatTabClick(chatRecord.talkType, chatRecord.talkId)}>
-													<div style={{ width: '299px', height: '70px', padding: '0 16px', textAlign: 'left', display: 'flex' }}>
-														<div style={{ padding: '15px 0'}}>
-															<Badge count={chatRecord.unreadNum} size='small' offset={[-3, 3]}>
-																{ getAvatar(chatRecord.avatarUrl, chatRecord.talkType, chatRecord, 40) }
-															</Badge>
-														</div>
-														<div style={{ marginLeft: '10px', padding: '12px 0', display: 'flex', flexDirection: 'column' }}>
-															<div style={{ display: 'flex' }}>
-																<div style={{ width: '156px', color: '#000' }}>{ chatRecord.talkName }</div>
-																<div style={{ width: '60px', textAlign: 'right', fontSize: '10px', color: 'rgba(153, 153, 153)' }}>
-																	{ recordLen > 0 && getDateTime(chatRecord.records[recordLen - 1].sendTime, false) }
-																</div>
-															</div>
-															<div style={{ fontSize: '12px', paddingTop: '6px', color: 'rgba(153, 153, 153)', maxWidth: '216px' }}
-																	className='overWidth'>
-																{ recordLen > 0 &&
-																	(lastRecord.msgType === 2
-																		? ( groupMap[chatRecord.groupId] && getJoinGroupNotice(groupMap[chatRecord.groupId].memberMap, userInfo.userId, lastRecord.fromId, lastRecord.content, userIdMap) )
-																		: chatRecord.records[recordLen - 1].content )
-																}
-															</div>
-														</div>
-													</div>
-												</Button>
-											</List.Item>
-										)
-									}}>
-								</List>
-							</InfiniteScroll>
-						</div>
+						<ChatMenuPage/>
 					</div>
 				</TabPane>
 
@@ -159,73 +95,7 @@ export default function Home() {
 						<SearchBox/>
 
 						{/* 联系人列表 */}
-						<Collapse accordion className='secondList'>
-							<Panel header='新的联系人' key='newContactList'>
-								<div style={{ overflow: 'auto', height: 'calc(100vh - 202px)' }}>
-									无
-								</div>
-							</Panel>
-							<Panel header='群组' key='groupList'>
-								<div style={{ overflow: 'auto', maxHeight: 'calc(100vh - 202px)' }}>
-									<InfiniteScroll
-										pageStart={0}
-										loadMore={() => {}}
-										hasMore={false}
-										loader={ <div/> }
-										useWindow={false}
-										className='singleContactList'>
-										{/* 循环遍历 */}
-										<List
-											dataSource={ groupList }
-											renderItem={ group => (
-												<List.Item key={group.groupId} className={ (activeContact && group.groupId === activeContact.key) ? 'contactActive' : ''}>
-													<Button type='link' style={{ height: '68px' }}
-																	onClick={() => contactTabClick(1, group.groupId)}>
-														<div style={{ width: '252px', margin: '0 12px 0 36px', textAlign: 'left'}}>
-															{ group &&
-															getAvatar(group.avatarUrl, 1, group, 36)}
-															<div style={{ display: 'inline-block', marginLeft: '12px' }}>
-																{ group.groupNameRemark ? group.groupNameRemark : group.groupName }
-															</div>
-														</div>
-													</Button>
-												</List.Item>
-											)}>
-										</List>
-									</InfiniteScroll>
-								</div>
-							</Panel>
-							<Panel header='联系人' key='contactList'>
-								<div style={{ overflow: 'auto', maxHeight: 'calc(100vh - 202px)' }}>
-									<InfiniteScroll
-											pageStart={0}
-											loadMore={() => {}}
-											hasMore={false}
-											loader={ <div/> }
-											useWindow={false}
-											className='singleContactList'>
-										{/* 循环遍历 */}
-										<List
-											dataSource={ contactList }
-											renderItem={ contact => (
-												<List.Item key={contact.account} className={ (activeContact && contact.account === activeContact.key) ? 'contactActive' : ''}>
-													<Button type='link' style={{ height: '68px' }}
-																	onClick={() => contactTabClick(2, contact.account)}>
-														<div style={{ width: '252px', margin: '0 12px 0 36px', textAlign: 'left'}}>
-															{ contact &&
-																getAvatar(contact.avatarUrl, 0, contact, 36)}
-															<div style={{ display: 'inline-block', marginLeft: '12px' }}>
-																{ contact.nicknameRemark ? contact.nicknameRemark : contact.nickname }
-															</div>
-														</div>
-													</Button>
-												</List.Item>
-											)}>
-										</List>
-									</InfiniteScroll>
-								</div>
-							</Panel>
-						</Collapse>
+						<ContactMenuPage/>
 					</div>
 				</TabPane>
 
@@ -238,7 +108,9 @@ export default function Home() {
 					key="quitMenu">
 				</TabPane>
 			</Tabs>
+
 			<DataPage/>
+
 			<UserInfoModal
 				userInfo={userInfo}
 				style={{ marginTop: '-45px', marginLeft: '72px' }}

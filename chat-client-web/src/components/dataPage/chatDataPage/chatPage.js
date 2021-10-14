@@ -1,17 +1,17 @@
-import {Button, Drawer, Image, Input, List, message, Spin, Tooltip} from "antd";
+import {Button, Image, Input, List, message, Spin, Tooltip} from "antd";
 import Picker, {SKIN_TONE_NEUTRAL} from "emoji-picker-react";
-import img2 from "../../common/images/emoji.svg";
+import img2 from "../../../common/images/emoji.svg";
 import React, {useEffect, useRef, useState} from "react";
 import InfiniteScroll from 'react-infinite-scroller';
 import {useSelector} from "react-redux";
-import {getAvatar} from "../common/avatar";
-import {getDateTime} from "../common/time";
-import {messageType} from "../websocket/messageType";
-import {getJoinGroupNotice} from "../common/getJoinGroup";
+import {getAvatar} from "../../common/avatar";
+import {getDateTime} from "../../common/time";
+import {messageType} from "../../websocket/messageType";
+import {getCreateSingleNotice, getJoinGroupNotice} from "../../common/getJoinGroup";
 import {EllipsisOutlined} from "@ant-design/icons";
-import Search from "antd/es/input/Search";
-import UserInfoModal from "../person/personInfo";
-import SocketInstance from "../websocket/socketInstance";
+import UserInfoModal from "../../person/personInfo";
+import SocketInstance from "../../websocket/socketInstance";
+import {ChatPageDrawer} from "./chatPageDrawer";
 
 const { TextArea } = Input;
 
@@ -19,13 +19,12 @@ export default function ChatPage() {
 	const [content, setContent] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [drawerVisible, setDrawerVisible] = useState(false);
-
 	const [memberInfoVisible, setMemberInfoVisible] = useState(false);
 	const [member, setMember] = useState({});
 
 	const recordEnd = useRef(null);
 
-	const { userInfo, activeChat, chatRecordList, groupMap, chatRecordMap, userIdMap } = useSelector(state => state.user);
+	const { userInfo, activeChat, groupMap, chatRecordMap, userIdMap } = useSelector(state => state.user);
 	const chatRecord = chatRecordMap[activeChat.key];
 
 	if (chatRecord) {
@@ -88,15 +87,6 @@ export default function ChatPage() {
 		setDrawerVisible(true)
 	}
 
-	const memberClick = (member) => {
-		setMember(member);
-		setMemberInfoVisible(true)
-	}
-
-	const onSearchMember = () => {
-
-	}
-
 	return (
 		<div style={{height: '100%', width: 'calc(100% - 330px)', backgroundColor: '#f3f3f3'}}>
 			<div style={{borderBottom: 'solid 1px #e0e0e0', height: '64px', display: 'flex'}}>
@@ -123,14 +113,17 @@ export default function ChatPage() {
 							dataSource={ chatRecord.records }
 							renderItem={ (record, index) => {
 								let isShowTime = showTime(record.sendTime, index);
-								if (record.msgType === 2) {
+								if (record.msgType === 2 || record.msgType === 3) {
 									return (
 										<div style={{ textAlign: 'center', color: 'rgba(153, 153, 153)'}}>
 											<div style={{ textAlign: 'center', paddingTop: '8px', paddingBottom: '20px' }}>
 												{getDateTime(record.sendTime, true)}
 											</div>
 											<div style={{ paddingBottom: '12px' }}>
-												{ getJoinGroupNotice(groupMap[chatRecord.groupId].memberMap, userInfo.userId, record.fromId, record.content, userIdMap) }
+												{chatRecord.talkType === 0 ?
+													getCreateSingleNotice(chatRecord.talkName) :
+													getJoinGroupNotice(groupMap[chatRecord.groupId].memberMap, userInfo.userId, record.fromId, record.content, userIdMap)
+												}
 											</div>
 										</div>
 									)
@@ -219,64 +212,18 @@ export default function ChatPage() {
 				</div>
 			</div>
 
-			<Drawer className='chatPageDrawer'
-							closable={false}
-							width={260}
-							maskStyle={{ backgroundColor: 'transparent'}}
-							placement="right"
-							style={{ marginTop: '63px' }}
-							drawerStyle={{ border: '1px solid #e0e0e0', backgroundColor: '#fff' }}
-							// bodyStyle={{ backgroundColor: '#fff' }}
-							onClose={() => setDrawerVisible(false)}
-							visible={drawerVisible}>
-				<div style={{ color: 'rgba(153, 153, 153)', fontSize: '12px' }}>
-					群组名称
-				</div>
-				<div style={{ margin: '4px 0 14px' }}>
-					{ groupMap[chatRecord.groupId] && groupMap[chatRecord.groupId].groupName }
-				</div>
-				<div style={{ color: 'rgba(153, 153, 153)', fontSize: '12px' }}>
-					备注
-				</div>
-				<div style={{ margin: '4px 0 24px' }}>
-					{ groupMap[chatRecord.groupId] && (groupMap[chatRecord.groupId].groupNameRemark ? groupMap[chatRecord.groupId].groupNameRemark : '无')  }
-				</div>
-				<Search placeholder="搜索群成员" allowClear onSearch={ onSearchMember }
-								style={{ marginLeft: '-2px', marginBottom: '10px', width: '222px' }}/>
-				<div style={{ overflow: 'auto', maxHeight: 'calc(100vh - 202px)' }}>
-					<InfiniteScroll
-						pageStart={0}
-						loadMore={() => {}}
-						hasMore={false}
-						loader={ <div/> }
-						useWindow={false}
-						className='singleContactList'>
-						{/* 循环遍历 */}
-						<List
-							dataSource={ groupMap[chatRecord.groupId] ? groupMap[chatRecord.groupId].members : [] }
-							renderItem={ member => (
-								<List.Item key={member.account}>
-									<Button type='text' style={{ height: '56px' }} onClick={() => memberClick(member)}>
-										<div style={{ textAlign: 'left'}}>
-											{ member &&
-											getAvatar(member.avatarUrl, 0, member, 36)}
-											<div style={{ display: 'inline-block', marginLeft: '12px' }}>
-												{ member.nicknameRemark ? member.nicknameRemark : member.nickname }
-											</div>
-										</div>
-									</Button>
-								</List.Item>
-							)}>
-						</List>
-					</InfiniteScroll>
-				</div>
-			</Drawer>
+			<ChatPageDrawer
+				drawerVisible={drawerVisible}
+				setDrawerVisible={setDrawerVisible}
+				setMember={setMember}
+				setMemberInfoVisible={setMemberInfoVisible}
+			/>
 
 			<UserInfoModal
-				userInfo={member}
-				visible={memberInfoVisible}
-				toSetUserInfoVisible={setMemberInfoVisible}
-				style={{ }}
+				member={member}
+				memberInfoVisible={memberInfoVisible}
+				setMemberInfoVisible={setMemberInfoVisible}
+				style={{ marginRight: '261px' }}
 			/>
 		</div>
 	)

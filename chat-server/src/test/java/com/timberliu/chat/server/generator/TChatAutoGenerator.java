@@ -36,7 +36,7 @@ public class TChatAutoGenerator {
 		dsc.setUrl("jdbc:mysql://123.56.9.126:3306/t_chat?useUnicode=true&useSSL=false&characterEncoding=utf8");
 		dsc.setDriverName("com.mysql.jdbc.Driver");
 		dsc.setUsername("root");
-		dsc.setPassword("WfNYnraEOynLn87e");
+		dsc.setPassword("VCOejNm5wJVlak7b");
 		mpg.setDataSource(dsc);
 
 		// 包配置
@@ -110,7 +110,8 @@ public class TChatAutoGenerator {
 		// 写于父类中的公共字段
 		strategy.setSuperEntityColumns("create_time", "update_time");
 //		strategy.setInclude("user_info", "user_relation", "group_info", "group_user_relation", "history_msg_single", "history_msg_group");
-		strategy.setInclude("history_msg", "talk_info", "group_info");
+//		strategy.setInclude("history_msg", "talk_info", "group_info");
+		strategy.setInclude("user_apply");
 //		strategy.setControllerMappingHyphenStyle(true);
 //		strategy.setTablePrefix(pc.getModuleName() + "_");
 		mpg.setStrategy(strategy);

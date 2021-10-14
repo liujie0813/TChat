@@ -1,6 +1,7 @@
 package com.timberliu.chat.server.dao.mysql.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.timberliu.chat.server.bean.dto.contact.ApplyDTO;
 import com.timberliu.chat.server.bean.dto.contact.ContactDTO;
 import com.timberliu.chat.server.dao.mysql.entity.UserRelationEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -19,7 +20,7 @@ import java.util.List;
 @Repository
 public interface UserRelationMapper extends BaseMapper<UserRelationEntity> {
 
-	default UserRelationEntity getByMainAndSubUserId(Long mainUserId, Long subUserId) {
+	default UserRelationEntity getByBothUserId(Long mainUserId, Long subUserId) {
 		return selectOne(new QueryWrapper<UserRelationEntity>()
 				.eq("main_user_id", mainUserId).eq("sub_user_id", subUserId));
 	}

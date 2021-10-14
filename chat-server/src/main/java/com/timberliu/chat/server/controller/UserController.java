@@ -62,8 +62,9 @@ public class UserController {
 	}
 
 	@GetMapping("/search-by-account")
-	public ApiResult<SearchAccountRespDTO> searchByAccount(@RequestParam("account") String account) {
-		SearchAccountRespDTO searchAccountRespDTO = userService.searchByAccount(account);
+	public ApiResult<SearchAccountRespDTO> searchByAccount(@RequestParam("userId") Long userId,
+														   @RequestParam("account") String account) {
+		SearchAccountRespDTO searchAccountRespDTO = userService.searchByAccount(userId, account);
 		return ApiResult.success(searchAccountRespDTO);
 	}
 
